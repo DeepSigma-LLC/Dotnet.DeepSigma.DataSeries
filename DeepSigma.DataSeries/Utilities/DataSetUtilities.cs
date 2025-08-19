@@ -15,11 +15,11 @@ namespace DeepSigma.DataSeries.Utilities
         internal static SortedDictionary<TKey, TValue> GetSingleSeries<TKey, TValue, TDataModel>(SortedDictionary<TKey, TDataModel> data, Expression<Func<TDataModel, TValue>> target_property)
         where TKey : notnull
         {
-            var compiled = target_property.Compile();
+            Func<TDataModel, TValue> compiled_function = ObjectUtilities.ExpressionToExecutableFunction(target_property);
 
             Dictionary<TKey, TValue> dict = data.ToDictionary(
                 kvp => kvp.Key,
-                kvp => compiled(kvp.Value));
+                kvp => compiled_function(kvp.Value));
 
             return dict.ToSortedDictionary();
         }
