@@ -11,5 +11,5 @@ namespace DeepSigma.DataSeries.DataModels
     /// </summary>
     /// <param name="Price">The price at which the trade was executed.</param>
     /// <param name="Volume">The quantity of the asset that was traded.</param>
-    public record class TradeObservation(decimal Price, decimal Volume) : IDataModel;
+    public record class TradeObservation(decimal Price, decimal Volume);
 }

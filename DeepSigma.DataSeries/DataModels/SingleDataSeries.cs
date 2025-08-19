@@ -10,5 +10,5 @@ namespace DeepSigma.DataSeries.DataModels
     /// Represents a single data series value.
     /// </summary>
     /// <param name="Value">The data series value.</param>
-    public record class SingleDataSeries(decimal Value): IDataModel;
+    public record class SingleDataSeries(decimal Value);
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeepSigma.DataSeries.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace DeepSigma.DataSeries.DataModels
     /// </summary>
     /// <param name="Bid">The bid price.</param>
     /// <param name="Ask">The ask price.</param>
-    public record class BidAskSpread(decimal Bid, decimal Ask) : IDataModel
+    public record class BidAskSpread(decimal Bid, decimal Ask)
     {
         /// Calculates the spread, which is the difference between the ask and bid prices.
         /// </summary>

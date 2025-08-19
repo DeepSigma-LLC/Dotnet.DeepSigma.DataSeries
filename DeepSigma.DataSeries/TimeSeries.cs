@@ -6,8 +6,19 @@ using System.Threading.Tasks;
 
 namespace DeepSigma.DataSeries
 {
-    public class TimeSeries<TValue> where TValue : notnull
+    /// <summary>
+    /// Represents a time series data structure that holds data points indexed by DateTime.
+    /// </summary>
+    /// <typeparam name="TValueDataType"></typeparam>
+    public class TimeSeries<TValueDataType> : BaseDataSeries<KeyValuePair<DateTime, TValueDataType>> where TValueDataType : notnull
     {
-        public SortedDictionary<DateTime, TValue> Data { get; private set; } = [];
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TimeSeries{TValue}"/> class with an empty sorted dictionary.
+        /// </summary>
+        public TimeSeries(SortedDictionary<DateTime, TValueDataType> data) : base(data)
+        {
+
+        }
+
     }
 }
