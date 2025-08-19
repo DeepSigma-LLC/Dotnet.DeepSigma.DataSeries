@@ -13,27 +13,32 @@ namespace DeepSigma.DataSeries
     /// </summary>
     /// <typeparam name="XDataType"></typeparam>
     /// <typeparam name="YDataType"></typeparam>
-    public class NonFunctionalSeries<XDataType, YDataType> : BaseDataSeries<(XDataType, YDataType)> where XDataType : notnull where YDataType : notnull
+    public class NonFunctionalSeries<XDataType, YDataType> : BaseSeriesAbstract<(XDataType, YDataType), SeriesTransformation> where XDataType : struct where YDataType : struct
     {
-
         /// <summary>
-        /// Non-functional data series.
+        /// Initializes a new instance of the <see cref="NonFunctionalSeries{XDataType, YDataType}"/> class with the provided data.
         /// </summary>
-        /// <param name="data"></param>
-        public NonFunctionalSeries(ICollection<(XDataType, YDataType)> data): base(data)
+        /// <param name="data">A collection of tuples can be passed. Either a list or an array for increased perfromance is the size of the array is not expect to change often. 
+        /// Array memory is allocated, and fixed at initialization. So changing the size means copying all values to a bigger region of continuous memory. Avoid! </param>
+        public NonFunctionalSeries(ICollection<(XDataType, YDataType)> data) : base()
         {
-
+            Data = data;
         }
 
-        private static List<(T, T)> RectangularArrayToTuples<T>(T[,] data)
+        public override void Clear()
         {
-            List<(T, T)> points = [];
+            Data.Clear();
+        }
 
-            for (int i = 0; i < data.GetLength(0); i++)
-            {
-                points.Add((data[i, 0], data[i, 1]));
-            }
-            return points;
+        public override int GetSubSeriesCount()
+        {
+            return 1; // Non-functional series is treated as a single series.
+        }
+
+        public override ICollection<(XDataType, YDataType)> GetTransformedSeriesData()
+        {
+            throw new NotImplementedException("Transformation logic is not implemented for NonFunctionalSeries.");
+            return Data;
         }
     }
 }

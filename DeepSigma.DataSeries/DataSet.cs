@@ -1,6 +1,8 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.General.Extensions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,6 +41,28 @@ namespace DeepSigma.DataSeries
             {
                 Data.Add(kvp.Key, kvp.Value);
             }
+        }
+
+        /// <summary>
+        /// Selects each element.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public IEnumerable<Z> Select<Z>(Func<KeyValuePair<TKeyDataType, TValueDataType>, Z> expression)
+        {
+            return Data.Select(expression);
+        }
+
+        /// <summary>
+        /// Filters the data set based on a provided expression.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public DataSet<TKeyDataType, TValueDataType> Where(Func<KeyValuePair<TKeyDataType, TValueDataType>, bool> expression)
+        {
+            DataSet<TKeyDataType, TValueDataType> new_data_set = new();
+            new_data_set.Add(Data.Where(expression).ToSortedDictionary());
+            return new_data_set;
         }
 
         /// <summary>

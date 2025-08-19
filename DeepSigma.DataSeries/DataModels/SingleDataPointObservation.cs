@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeepSigma.DataSeries.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,5 @@ namespace DeepSigma.DataSeries.DataModels
     /// Represents a single data series value.
     /// </summary>
     /// <param name="Value">The data series value.</param>
-    public record class SingleDataSeries(decimal Value);
+    public record class SingleDataPointObservation(DataPointValue Value) : IDataModel;
 }

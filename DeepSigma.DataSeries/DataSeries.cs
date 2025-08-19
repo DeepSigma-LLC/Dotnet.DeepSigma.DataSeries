@@ -15,15 +15,32 @@ namespace DeepSigma.DataSeries
     /// </summary>
     /// <typeparam name="TKeyDataType"></typeparam>
     /// <typeparam name="TValueDataType"></typeparam>
-    public class DataSeries<TKeyDataType, TValueDataType> : BaseDataSeries<KeyValuePair<TKeyDataType, TValueDataType>> where TKeyDataType : IComparable<TKeyDataType> where TValueDataType : notnull
+    public class DataSeries<TKeyDataType, TValueDataType> : BaseSeriesAbstract<KeyValuePair<TKeyDataType, TValueDataType>, SeriesTransformation> where TKeyDataType : IComparable<TKeyDataType> where TValueDataType : struct
     {
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataSeries{TKey, TValue}"/> class with an empty data series.
         /// </summary>
-        public DataSeries() : base(new SortedDictionary<TKeyDataType, TValueDataType>())
+        public DataSeries() : base()
         {
+            Data = new SortedDictionary<TKeyDataType, TValueDataType>();
+        }
 
+
+        public override void Clear()
+        {
+            Data.Clear();
+        }
+
+        public override int GetSubSeriesCount()
+        {
+            return 1; // DataSeries is treated as a single series.
+        }
+
+        public override ICollection<KeyValuePair<TKeyDataType, TValueDataType>> GetTransformedSeriesData()
+        {
+            throw new NotImplementedException("Transformation logic is not implemented for DataSeries.");
+            return Data;
         }
 
         /// <summary>
@@ -36,5 +53,6 @@ namespace DeepSigma.DataSeries
         {
             Data = DataSetUtilities.GetSingleSeries<TKeyDataType, TValueDataType, IModel>(data.GetAllData(), selected_property);
         }
+
     }
 }

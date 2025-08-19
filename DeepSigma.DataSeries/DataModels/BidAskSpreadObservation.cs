@@ -12,15 +12,15 @@ namespace DeepSigma.DataSeries.DataModels
     /// </summary>
     /// <param name="Bid">The bid price.</param>
     /// <param name="Ask">The ask price.</param>
-    public record class BidAskSpread(decimal Bid, decimal Ask)
+    public record class BidAskSpreadObservation(DataPointValue Bid, DataPointValue Ask) : IDataModel
     {
         /// Calculates the spread, which is the difference between the ask and bid prices.
         /// </summary>
-        public decimal Spread => Ask - Bid;
+        public decimal Spread => Ask.Value - Bid.Value;
 
         /// <summary>
         /// Calculates the mid price, which is the average of the bid and ask prices.
         /// </summary>
-        public decimal Mid => (Bid + Ask) / 2;
+        public decimal Mid => (Bid.Value + Ask.Value) / 2;
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using DeepSigma.DataSeries.Interfaces;
 
 namespace DeepSigma.DataSeries.DataModels
 {
@@ -15,12 +16,12 @@ namespace DeepSigma.DataSeries.DataModels
     /// <param name="Low">The lowest price of the candle during the time period.</param>
     /// <param name="Close">The closing price of the candle at the end of the time period.</param>
     /// <param name="Volume">The volume of trades that occurred during the time period represented by the candle.</param>
-    public record class Candle(decimal Open, decimal High, decimal Low, decimal Close, decimal Volume)
+    public record class CandleObservation(DataPointValue Open, DataPointValue High, DataPointValue Low, DataPointValue Close, DataPointValue Volume) : IDataModel
     {
         /// <summary>
         /// Calculates the range of the candle, which is the difference between the high and low prices.
         /// </summary>
-        public decimal Range => High - Low;
+        public decimal Range => High.Value - Low.Value;
 
     }
 }
