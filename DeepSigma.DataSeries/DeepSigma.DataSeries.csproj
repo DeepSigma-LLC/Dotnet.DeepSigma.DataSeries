@@ -16,10 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Utilities\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="DeepSigma.General" Version="1.0.0.3" />
   </ItemGroup>
 

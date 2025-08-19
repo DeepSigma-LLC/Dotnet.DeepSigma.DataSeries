@@ -63,5 +63,14 @@ namespace DeepSigma.DataSeries
             }
             return default;
         }
+
+        /// <summary>
+        /// Retrieves all data from the data set as a sorted dictionary.
+        /// </summary>
+        /// <returns></returns>
+        public SortedDictionary<TKey, TValue> GetAllData()
+        {
+            return Data;
+        }
     }
 }
