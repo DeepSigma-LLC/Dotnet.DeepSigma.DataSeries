@@ -57,10 +57,10 @@ namespace DeepSigma.DataSeries.Tests
             );
 
             var bar2 = new BarObservation(
-                open: 100m,
-                high: 110m,
-                low: 90m,
-                close: 105m,
+                open_price: 100m,
+                high_price: 110m,
+                low_price: 90m,
+                close_price: 105m,
                 volume: 5000m
             );
             bar2.Close.Value.ToString("C");
