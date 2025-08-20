@@ -59,6 +59,9 @@ namespace DeepSigma.DataSeries
         /// <returns></returns>
         public abstract int GetSubSeriesCount();
 
+        /// <summary>
+        /// Clears the data series, removing all data points.
+        /// </summary>
         public abstract void Clear();
 
 

@@ -13,7 +13,7 @@ namespace DeepSigma.DataSeries.Tests
     {
         internal static void Test()
         {
-            DataSet<DateTime, CandleObservation> dataSet = new();
+            DataSet<DateTime, BarObservation> dataSet = new();
             DataSeries<DateTime, decimal> dataSeries = new();
             dataSeries.LoadFromDataModel(dataSet, x => x.Low.Value);
 
@@ -35,6 +35,7 @@ namespace DeepSigma.DataSeries.Tests
             sortedDictionary.Add(DateTime.Now, bidAskSpread);
 
             DataSet<DateTime, BidAskSpreadObservation> bid_ask_data = new();
+
             bid_ask_data.Add(sortedDictionary);
 
 
@@ -46,6 +47,24 @@ namespace DeepSigma.DataSeries.Tests
 
             TimeSeriesCollection timeSeriesCollection = new();
             timeSeriesCollection.Add(MathematicalOperation.Add, ask_series);
+
+            var bar = new BarObservation(
+                Open: new DataPointValue(100m),
+                High: new DataPointValue(110m),
+                Low: new DataPointValue(90m),
+                Close: new DataPointValue(105m),
+                Volume: new DataPointValue(5000m)
+            );
+
+            var bar2 = new BarObservation(
+                open: 100m,
+                high: 110m,
+                low: 90m,
+                close: 105m,
+                volume: 5000m
+            );
+            bar2.Close.Value.ToString("C");
+
         }
     }
 }

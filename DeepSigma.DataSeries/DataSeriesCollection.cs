@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DeepSigma.DataSeries
 {
-    internal class DataSeriesCollection : SeriesCollection<KeyValuePair<decimal, decimal>, SeriesTransformation>
+    internal class DataSeriesCollection : SeriesCollectionAbstract<KeyValuePair<decimal, decimal>, SeriesTransformation>
     {
         public override ICollection<KeyValuePair<decimal, decimal>> GetSeriesData()
         {
