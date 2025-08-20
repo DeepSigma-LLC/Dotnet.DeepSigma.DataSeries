@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace DeepSigma.DataSeries
 {
-    internal class TimeSeriesCollection : SeriesCollection<KeyValuePair<DateTime, decimal>, TimeSeriesTransformation> 
+    internal class NonFunctionalSeriesCollection : SeriesCollection<(decimal, decimal), SeriesTransformation>
     {
-        public override ICollection<KeyValuePair<DateTime, decimal>> GetSeriesData()
+        public override ICollection<(decimal, decimal)> GetSeriesData()
         {
             if (GetSubSeriesCount() == 1)
             {
@@ -18,19 +18,21 @@ namespace DeepSigma.DataSeries
             }
 
             bool isFirst = true;
-            SortedDictionary<DateTime, decimal> CombinedSeries = [];
+            ICollection<(decimal, decimal)> CombinedSeries = new List<(decimal, decimal)>(SubSeriesCollection.First().Series.GetSeriesData().Count);
             foreach (var series in SubSeriesCollection)
             {
                 if (isFirst == true)
                 {
                     isFirst = false;
-                    CombinedSeries = (SortedDictionary<DateTime, decimal>)series.Series.GetSeriesData();
+                    CombinedSeries = (List<(decimal, decimal)>)series.Series.GetSeriesData();
                     continue;
                 }
-                SortedDictionary<DateTime, decimal> seriesData = (SortedDictionary<DateTime, decimal>)series.Series.GetSeriesData();
-                CombinedSeries = (SortedDictionary<DateTime, decimal>)SeriesUtilities.GetCombinedSeries(CombinedSeries, seriesData, series.MathematicalOperation);
+                List<(decimal, decimal)> seriesData = (List<(decimal, decimal)>)series.Series.GetSeriesData();
+                CombinedSeries = SeriesUtilities.GetCombinedSeries(CombinedSeries, seriesData, series.MathematicalOperation);
             }
             return CombinedSeries;
         }
+
+  
     }
 }

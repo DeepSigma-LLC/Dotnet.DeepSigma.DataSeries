@@ -5,12 +5,21 @@ using DeepSigma.DataSeries.Utilities;
 
 namespace DeepSigma.DataSeries
 {
-    public class SeriesCollection<TDataType, Transformation> : ISeries<TDataType, Transformation> where TDataType : notnull where Transformation : notnull
+    /// <summary>
+    /// Represents a collection of time series data, allowing for mathematical operations on sub-series.
+    /// </summary>
+    /// <typeparam name="TDataType"></typeparam>
+    /// <typeparam name="Transformation"></typeparam>
+    public abstract class SeriesCollection<TDataType, Transformation> : ISeries<TDataType, Transformation> where TDataType : notnull where Transformation : class
     {
         /// <summary>
         /// Collection of time series sub series.
         /// </summary>
-        private List<SeriesCollectionPair<TDataType, Transformation>> SubSeriesCollection { get; set; } = [];
+        protected List<SeriesCollectionPair<TDataType, Transformation>> SubSeriesCollection { get; set; } = [];
+
+        /// <summary>
+        /// Name of the series.
+        /// </summary>
         public string SeriesName { get; set; } = string.Empty;
         Transformation? ISeries<TDataType, Transformation>.Transformation { get; set; }
 
@@ -78,38 +87,31 @@ namespace DeepSigma.DataSeries
         /// Returns combined series data from all sub series.
         /// </summary>
         /// <returns></returns>
-        public ICollection<TDataType> GetSeriesData()
-        {
-            if (this.GetSubSeriesCount() == 1)
-            {
-                return SubSeriesCollection.First().Series.GetSeriesData();
-            }   
+        public abstract ICollection<TDataType> GetSeriesData();
 
-            bool isFirst = true;
-            ICollection<TDataType> CombinedSeries = [];
-            foreach (var series in SubSeriesCollection)
-            {
-                if(isFirst == true)
-                {
-                    isFirst = false;
-                    CombinedSeries = series.Series.GetSeriesData();
-                    continue;
-                }
-                CombinedSeries = SeriesUtilities.GetCombinedSeries<TDataType>(CombinedSeries, series.Series.GetSeriesData(), series.MathematicalOperation);
-            }
-            return CombinedSeries;
-        }
 
+        /// <summary>
+        /// Clears the collection of sub series.
+        /// </summary>
         public void Clear()
         {
             SubSeriesCollection.Clear();
         }
 
+        /// <summary>
+        /// Returns the count of sub-series in the data series.
+        /// </summary>
+        /// <returns></returns>
         public int GetSubSeriesCount()
         {
             return SubSeriesCollection.Count;
         }
 
+        /// <summary>
+        /// Returns the transformed data series.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public ICollection<TDataType> GetTransformedSeriesData()
         {
             throw new NotImplementedException("Transformation logic is not implemented for SeriesCollection.");

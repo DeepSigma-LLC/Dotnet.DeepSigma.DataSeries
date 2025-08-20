@@ -1,10 +1,9 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DeepSigma.General.Enums;
+using System.Runtime.CompilerServices;
+using DeepSigma.General.Extensions;
+using System.Reflection;
+using System.Numerics;
 
 namespace DeepSigma.DataSeries.Utilities
 {
@@ -13,80 +12,68 @@ namespace DeepSigma.DataSeries.Utilities
     /// </summary>
     public static class SeriesUtilities
     {
-        public static ICollection<T> GetTransformedSeriesData<T>(ICollection<T> Data, SeriesTransformation transformation)
+        /// <summary>
+        /// Gets series data transformed by a specified transformation.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Data"></param>
+        /// <param name="transformation"></param>
+        /// <returns></returns>
+        public static ICollection<(T, decimal)> GetTransformedSeriesData<T>(ICollection<(T, decimal)> Data, SeriesTransformation transformation)
         {
             return SeriesUtilities.GetScaledSeries(Data, transformation.Scalar);
+        }
+
+
+        /// <summary>
+        /// Gets series data multiplied by a specified scalar.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
+        public static ICollection<(T, decimal)> GetScaledSeries<T>(ICollection<(T, decimal)> data, decimal scalar)
+        {
+            if (scalar == 1) return data;
+
+            List<(T, decimal)> result = new(data.Count);
+            foreach ((T x, decimal y) item in data)
+            {
+                result.Add((item.x, item.y * scalar));
+            }   
+            return result;
         }
 
         /// <summary>
         /// Gets series data multiplied by a specified scalar.
         /// </summary>
-        /// <param name="Data"></param>
-        /// <param name="Scalar"></param>
+        /// <param name="data"></param>
+        /// <param name="scalar"></param>
         /// <returns></returns>
-        public static ICollection<T> GetScaledSeries<T>(ICollection<T> Data, decimal Scalar)
+        public static ICollection<KeyValuePair<TKeyDataType, decimal>> GetScaledSeries<TKeyDataType>(ICollection<KeyValuePair<TKeyDataType, decimal>> data, decimal scalar) where TKeyDataType : IComparable<TKeyDataType>
         {
-            if (Scalar == 1) return Data;
+            if (scalar == 1) return data;
 
-            foreach (T item in Data)
+            List<KeyValuePair<TKeyDataType, decimal>> result = new(data.Count);
+            foreach (var item in data)
             {
-                if (item is KeyValuePair<T, decimal> kvp)
-                {
-                    yield return (T)(object)(kvp.Value * Scalar);
-                }
-                else if (item is KeyValuePair<T, T> pair)
-                {
-                    yield return (T)(object)(pair.Value * Scalar);
-                }
-
-                if (item is decimal value)
-                {
-                    yield return (T)(object)(value * Scalar);
-                }
-                else if (item is int intValue)
-                {
-                    yield return (T)(object)(intValue * Scalar);
-                }
-                else if (item is float floatValue)
-                {
-                    yield return (T)(object)(floatValue * (float)Scalar);
-                }
-                else if (item is double doubleValue)
-                {
-                    yield return (T)(object)(doubleValue * (double)Scalar);
-                }
-                else if (item is long longValue)
-                {
-                    yield return (T)(object)(longValue * (long)Scalar);
-                }
-                else if (item is short shortValue)
-                {
-                    yield return (T)(object)(shortValue * (short)Scalar);
-                }
-                else if (item is KeyValuePair<> valuevalue)
-                {
-                    yield return (T)(object)(byteValue * (byte)Scalar);
-                }
-                else
-                {
-                    throw new InvalidOperationException("Data type must be decimal for scaling.");
-                }
+                result.Add(new KeyValuePair<TKeyDataType, decimal>(item.Key, item.Value * scalar));
             }
+            return result;
         }
-
 
         /// <summary>
         /// Get one series by mathmatically combining two series.
         /// </summary>
+        /// <typeparam name="K"></typeparam>
         /// <typeparam name="T"></typeparam>
         /// <param name="Data"></param>
         /// <param name="Data2"></param>
         /// <param name="mathematicalOperation"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public static SortedDictionary<T, decimal> GetCombinedSeries<T>(SortedDictionary<T, decimal> Data, SortedDictionary<T, decimal> Data2, MathematicalOperation mathematicalOperation)
+        public static ICollection<KeyValuePair<K, T>> GetCombinedSeries<K, T>(SortedDictionary<K, T> Data, SortedDictionary<K, T> Data2, MathematicalOperation mathematicalOperation) where K : IComparable<K> where T : INumber<T>
         {
-            Func<decimal, decimal, decimal> function;
+            Func<T, T, T> function;
             switch (mathematicalOperation)
             {
                 case (MathematicalOperation.Add):
@@ -107,38 +94,95 @@ namespace DeepSigma.DataSeries.Utilities
             return GetCombinedSeriesFrom2SeriesWithMethodApplied(Data, Data2, function);
         }
 
-        private static SortedDictionary<T, decimal> GetCombinedSeriesFrom2SeriesWithMethodApplied<T>(SortedDictionary<T, decimal> Data, SortedDictionary<T, decimal> Data2, Func<decimal, decimal, decimal> CalculationMethod)
+        /// <summary>
+        /// Get one series by mathmatically combining two series.
+        /// </summary>
+        /// <typeparam name="X"></typeparam>
+        /// <typeparam name="Y"></typeparam>
+        /// <param name="Data"></param>
+        /// <param name="Data2"></param>
+        /// <param name="mathematicalOperation"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public static ICollection<(X, Y)> GetCombinedSeries<X, Y>(ICollection<(X, Y)> Data, ICollection<(X, Y)> Data2, MathematicalOperation mathematicalOperation) where X : notnull where Y : INumber<Y>
         {
-            SortedDictionary<T, decimal> results = new SortedDictionary<T, decimal>();
-            foreach (KeyValuePair<T, decimal> kvp in Data)
+            Func<Y, Y, Y> function;
+            switch (mathematicalOperation)
             {
-                if (Data2.ContainsKey(kvp.Key) == true)
+                case (MathematicalOperation.Add):
+                    function = Add;
+                    break;
+                case MathematicalOperation.Subtract:
+                    function = Subtract;
+                    break;
+                case MathematicalOperation.Multiply:
+                    function = Multiply;
+                    break;
+                case MathematicalOperation.Divide:
+                    function = Divide;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+            return GetCombinedSeriesFrom2SeriesWithMethodApplied(Data, Data2, function);
+        }
+
+        private static ICollection<(K, T)> GetCombinedSeriesFrom2SeriesWithMethodApplied<K, T>(ICollection<(K, T)> Data, ICollection<(K, T)> Data2, Func<T, T, T> CalculationMethod) where K : notnull where T : INumber<T>
+        {
+            ICollection<(K, T)> results = new List<(K, T)>(Data.Count);
+            int index = 0;
+            foreach ((K x, T y) point in Data)
+            {
+                T resultingValue = CalculationMethod(point.y, Data2.ElementAt(index).Item2);
+                results.Add((point.x, resultingValue));
+                index++;
+            }
+            return results;
+        }
+
+        private static SortedDictionary<X, Y> GetCombinedSeriesFrom2SeriesWithMethodApplied<X, Y>(SortedDictionary<X, Y> Data, SortedDictionary<X, Y> Data2, Func<Y, Y, Y> CalculationMethod) where X : notnull where Y : INumber<Y>
+        {
+            SortedDictionary<X, Y> results = []; 
+            foreach (var point in Data)
+            {
+                if (Data2.ContainsKey(point.Key) == true)
                 {
-                    decimal resultingValue = CalculationMethod(kvp.Value, Data2[kvp.Key]);
-                    results.Add(kvp.Key, resultingValue);
+                    Y resultingValue = CalculationMethod(point.Value, Data2[point.Key]);
+                    results.Add(point.Key, resultingValue);
                 }
             }
             return results;
         }
 
 
-        private static decimal Add(decimal value, decimal value2)
+        private static T Add<T>(T value, T value2) where T : INumber<T>
         {
             return value + value2;
         }
 
-        private static decimal Subtract(decimal value, decimal value2)
-        {
+        private static T Subtract<T>(T value, T value2) where T : INumber<T>
+        { 
             return value - value2;
         }
 
-        private static decimal Multiply(decimal value, decimal value2)
+        private static T Multiply<T>(T value, T value2) where T : INumber<T>
         {
             return value * value2;
         }
 
-        private static decimal Divide(decimal value, decimal value2)
+        /// <summary>
+        /// Divides two values of type T.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <param name="value2"></param>
+        /// <returns>Returns null is divide by zero encountered.</returns>
+        private static T Divide<T>(T value, T value2) where T : INumber<T>
         {
+            if (value2 == T.Zero)
+            {
+                throw new DivideByZeroException("Cannot divide by zero.");
+            }
             return value / value2;
         }
     }

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DeepSigma.General.Enums;
 
-namespace DeepSigma.DataSeries
+namespace DeepSigma.DataSeries.Tests
 {
     internal class TestScript
     {
@@ -31,20 +31,20 @@ namespace DeepSigma.DataSeries
             DataPointValue dataPoint = new(1.0m);
             DataPointValue dataPoint2 = new(2.0m, true, false);
             BidAskSpreadObservation bidAskSpread = new(dataPoint, dataPoint2);
-            SortedDictionary<DateTime, BidAskSpreadObservation> sortedDictionary = new();
+            SortedDictionary<DateTime, BidAskSpreadObservation> sortedDictionary = [];
             sortedDictionary.Add(DateTime.Now, bidAskSpread);
 
             DataSet<DateTime, BidAskSpreadObservation> bid_ask_data = new();
             bid_ask_data.Add(sortedDictionary);
 
 
-            TimeSeries<decimal> ask_series = new(new());
+            TimeSeries<decimal> ask_series = new([]);
             ask_series.LoadFromDataModel(bid_ask_data.Where(x => x.Value.Ask.IsRolled == false), x => x.Ask.Value);
 
             ask_series.Transformation.Scalar = 200;
             ask_series.Transformation.DataTransformation = Enums.TimeSeriesDataTransformation.CumulativeReturn;
 
-            TimeSeriesCollection<decimal> timeSeriesCollection = new();
+            TimeSeriesCollection timeSeriesCollection = new();
             timeSeriesCollection.Add(MathematicalOperation.Add, ask_series);
         }
     }
