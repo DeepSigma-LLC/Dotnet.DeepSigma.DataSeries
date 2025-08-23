@@ -48,14 +48,6 @@ namespace DeepSigma.DataSeries.Tests
             TimeSeriesCollection timeSeriesCollection = new();
             timeSeriesCollection.Add(MathematicalOperation.Add, ask_series);
 
-            var bar = new BarObservation(
-                Open: new DataPointValue(100m),
-                High: new DataPointValue(110m),
-                Low: new DataPointValue(90m),
-                Close: new DataPointValue(105m),
-                Volume: new DataPointValue(5000m)
-            );
-
             var bar2 = new BarObservation(
                 open_price: 100m,
                 high_price: 110m,
