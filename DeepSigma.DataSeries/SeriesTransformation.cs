@@ -1,15 +1,13 @@
 ﻿
-namespace DeepSigma.DataSeries
+namespace DeepSigma.DataSeries;
+
+/// <summary>
+/// Represents a transformation applied to a data series.
+/// </summary>
+public class SeriesTransformation
 {
     /// <summary>
-    /// Represents a transformation applied to a data series.
+    /// Data series scalar multiplier.
     /// </summary>
-    public class SeriesTransformation
-    {
-        /// <summary>
-        /// Data series scalar multiplier.
-        /// </summary>
-        public decimal Scalar { get; set; } = 1;
-
-    }
+    public decimal Scalar { get; set; } = 1;
 }
