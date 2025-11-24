@@ -8,26 +8,26 @@ namespace DeepSigma.DataSeries.Models;
 /// Represents a collection of time series data, allowing for mathematical operations on sub-series.
 /// </summary>
 /// <typeparam name="TDataType"></typeparam>
-/// <typeparam name="Transformation"></typeparam>
-public abstract class AbstractSeriesCollection<TDataType, Transformation> : ISeries<TDataType, Transformation> where TDataType : notnull where Transformation : class
+/// <typeparam name="TTransformation"></typeparam>
+public abstract class AbstractSeriesCollection<TDataType, TTransformation> : ISeries<TDataType, TTransformation> where TDataType : notnull where TTransformation : class
 {
     /// <summary>
     /// Collection of time series sub series.
     /// </summary>
-    protected List<SeriesCollectionPair<TDataType, Transformation>> SubSeriesCollection { get; set; } = [];
+    protected List<SeriesCollectionPair<TDataType, TTransformation>> SubSeriesCollection { get; set; } = [];
 
-    /// <summary>
-    /// Name of the series.
-    /// </summary>
+    /// <inheritdoc/>
     public string SeriesName { get; set; } = string.Empty;
-    Transformation ISeries<TDataType, Transformation>.Transformation { get; set; }
+
+    /// <inheritdoc/>
+    public required TTransformation Transformation { get; set; }
 
     /// <summary>
     /// Selects each element.
     /// </summary>
     /// <param name="expression"></param>
     /// <returns></returns>
-    public IEnumerable<Z> Select<Z>(Func<SeriesCollectionPair<TDataType, Transformation>, Z> expression)
+    public IEnumerable<Z> Select<Z>(Func<SeriesCollectionPair<TDataType, TTransformation>, Z> expression)
     {
         return SubSeriesCollection.Select(expression);
     }
@@ -37,7 +37,7 @@ public abstract class AbstractSeriesCollection<TDataType, Transformation> : ISer
     /// </summary>
     /// <param name="expression"></param>
     /// <returns></returns>
-    public IEnumerable<SeriesCollectionPair<TDataType, Transformation>> Where(Func<SeriesCollectionPair<TDataType, Transformation>, bool> expression)
+    public IEnumerable<SeriesCollectionPair<TDataType, TTransformation>> Where(Func<SeriesCollectionPair<TDataType, TTransformation>, bool> expression)
     {
         return SubSeriesCollection.Where(expression);
     }
@@ -47,9 +47,9 @@ public abstract class AbstractSeriesCollection<TDataType, Transformation> : ISer
     /// </summary>
     /// <param name="mathematical_operation"></param>
     /// <param name="data_series"></param>
-    public void Add(MathematicalOperation mathematical_operation, ISeries<TDataType, Transformation> data_series)
+    public void Add(MathematicalOperation mathematical_operation, ISeries<TDataType, TTransformation> data_series)
     {
-        SeriesCollectionPair<TDataType, Transformation> pair = new(mathematical_operation, data_series);
+        SeriesCollectionPair<TDataType, TTransformation> pair = new(mathematical_operation, data_series);
         SubSeriesCollection.Add(pair);
     }
 
@@ -67,7 +67,7 @@ public abstract class AbstractSeriesCollection<TDataType, Transformation> : ISer
     /// </summary>
     /// <param name="index"></param>
     /// <returns></returns>
-    internal SeriesCollectionPair<TDataType, Transformation> ElementAt(int index)
+    internal SeriesCollectionPair<TDataType, TTransformation> ElementAt(int index)
     {
         return SubSeriesCollection.ElementAt(index);
     }
@@ -76,18 +76,16 @@ public abstract class AbstractSeriesCollection<TDataType, Transformation> : ISer
     /// Returns all collection data.
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<SeriesCollectionPair<TDataType, Transformation>> GetAllData()
+    public IEnumerable<SeriesCollectionPair<TDataType, TTransformation>> GetAllData()
     {
         return SubSeriesCollection;
     }
-
 
     /// <summary>
     /// Returns combined series data from all sub series.
     /// </summary>
     /// <returns></returns>
     public abstract ICollection<TDataType> GetSeriesData();
-
 
     /// <summary>
     /// Clears the collection of sub series.

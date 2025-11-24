@@ -1,7 +1,6 @@
 ﻿
 using DeepSigma.DataSeries.Models;
 using DeepSigma.General.Enums;
-using DeepSigma.General.Extensions;
 using System.Numerics;
 
 namespace DeepSigma.DataSeries.Utilities;
@@ -106,6 +105,15 @@ public static class SeriesUtilities
         return GetCombinedSeriesFrom2SeriesWithMethodApplied(Data, Data2, function);
     }
 
+    /// <summary>
+    /// Get one series by mathmatically combining two series.
+    /// </summary>
+    /// <typeparam name="K"></typeparam>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="Data"></param>
+    /// <param name="Data2"></param>
+    /// <param name="CalculationMethod"></param>
+    /// <returns></returns>
     private static ICollection<(K, T)> GetCombinedSeriesFrom2SeriesWithMethodApplied<K, T>(ICollection<(K, T)> Data, ICollection<(K, T)> Data2, Func<T, T, (T? Value, Exception? Error)> CalculationMethod) where K : notnull where T : INumber<T>
     {
         ICollection<(K, T)> results = new List<(K, T)>(Data.Count);
@@ -121,6 +129,15 @@ public static class SeriesUtilities
         return results;
     }
 
+    /// <summary>
+    /// Get one series by mathmatically combining two series.
+    /// </summary>
+    /// <typeparam name="X"></typeparam>
+    /// <typeparam name="Y"></typeparam>
+    /// <param name="Data"></param>
+    /// <param name="Data2"></param>
+    /// <param name="CalculationMethod"></param>
+    /// <returns></returns>
     private static SortedDictionary<X, Y> GetCombinedSeriesFrom2SeriesWithMethodApplied<X, Y>(SortedDictionary<X, Y> Data, SortedDictionary<X, Y> Data2, Func<Y, Y, (Y? Value, Exception? Error)> CalculationMethod) where X : notnull where Y : INumber<Y>
     {
         SortedDictionary<X, Y> results = []; 
@@ -137,24 +154,45 @@ public static class SeriesUtilities
         return results;
     }
 
-
+    /// <summary>
+    /// Adds two values of type T.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="value"></param>
+    /// <param name="value2"></param>
+    /// <returns></returns>
     private static (T? result, Exception? error) Add<T>(T value, T value2) where T : INumber<T>
     {
         return (value + value2, null);
     }
 
+    /// <summary>
+    /// Subtracts two values of type T.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="value"></param>
+    /// <param name="value2"></param>
+    /// <returns></returns>
     private static (T? result, Exception? error) Subtract<T>(T value, T value2) where T : INumber<T>
     { 
         return (value - value2, null);
     }
 
+    /// <summary>
+    /// Multiplies two values of type T.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="value"></param>
+    /// <param name="value2"></param>
+    /// <returns></returns>
     private static (T? result, Exception? error) Multiply<T>(T value, T value2) where T : INumber<T>
     {
         return (value * value2, null);
     }
 
     /// <summary>
-    /// Divides two values of type T.
+    /// Divides two values of type T. 
+    /// Returns null value and error if divide by zero encountered.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="value"></param>

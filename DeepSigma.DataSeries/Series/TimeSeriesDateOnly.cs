@@ -8,6 +8,9 @@ namespace DeepSigma.DataSeries.Series;
 
 /// <summary>
 /// Represents a time series data structure that holds data points indexed by DateOnly.
+/// Note: I was forced to create this class because DateOnly and DateTime do not share a common interface or base class that I could use for a more generic implementation.
+/// Normally, I would have preferred to have a single TimeSeries class that could handle both DateTime and DateOnly types through a common interface or base class.
+/// It would have reduced code duplication and improved maintainability, but I due not want to introduce unnecessary complexity with additional abstractions (or a wrapper class) just for this purpose.
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
 public class TimeSeriesDateOnly<TValueDataType> : AbstractBaseSeries<KeyValuePair<DateOnly, TValueDataType>, TimeSeriesTransformation> where TValueDataType : struct
