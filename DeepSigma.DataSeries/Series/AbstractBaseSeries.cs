@@ -9,6 +9,27 @@ namespace DeepSigma.DataSeries.Series;
 /// <typeparam name="TTransformation"></typeparam>
 public abstract class AbstractBaseSeries<TValue, TTransformation> : ISeries<TValue, TTransformation> where TValue : notnull where TTransformation : class, new()
 {
+    /// <summary>
+    /// Indicates whether the series is empty.
+    /// </summary>
+    public bool IsEmpty => Data.Count == 0;
+
+    /// <summary>
+    /// Indicates whether multiple sub-series are allowed.
+    /// </summary>
+    public bool AllowMultipleSubSeries { get; init; } = true;
+
+    /// <summary>
+    /// Indicates whether the series is an aggregated series.
+    /// </summary>
+    public bool IsAggregatedSeries => GetSubSeriesCount() > 1;
+
+    /// <summary>
+    /// Indicates whether duplicate data points are allowed.
+    /// </summary>
+    public bool AllowDuplicateDataPoints { get; init; } = false;
+
+
     /// <inheritdoc cref="AbstractBaseSeries{TValue, TTransformation}"/>
     protected AbstractBaseSeries()
     {
@@ -49,7 +70,5 @@ public abstract class AbstractBaseSeries<TValue, TTransformation> : ISeries<TVal
     {
         Data.Clear();
     }
-
-
 
 }

@@ -16,21 +16,15 @@ namespace DeepSigma.DataSeries.Strategies
         /// <exception cref="NotImplementedException"></exception>
         public static Func<T, T, bool> GetTradeIndicatedAlgo<T>(TimeSeriesAlgo Algo) where T : INumber<T>
         {
-            switch (Algo)
+            return Algo switch
             {
-                case TimeSeriesAlgo.SignalGreaterThanTrigger:
-                    return SignalGreaterThanTrigger;
-                case TimeSeriesAlgo.SignalLessThanTrigger:
-                    return SignalLessThanTrigger;
-                case TimeSeriesAlgo.SignalGreaterThanOrEqualToTrigger:
-                    return SignalGreaterThanOrEqualToTrigger;
-                case TimeSeriesAlgo.SignalLessThanOrEqualToTrigger:
-                    return SignalLessThanOrEqualToTrigger;
-                case TimeSeriesAlgo.SignalEqualToTrigger:
-                     return SignalEqualToTrigger;
-                default:
-                     throw new NotImplementedException();
-            }
+                TimeSeriesAlgo.SignalGreaterThanTrigger => SignalGreaterThanTrigger,
+                TimeSeriesAlgo.SignalLessThanTrigger => SignalLessThanTrigger,
+                TimeSeriesAlgo.SignalGreaterThanOrEqualToTrigger => SignalGreaterThanOrEqualToTrigger,
+                TimeSeriesAlgo.SignalLessThanOrEqualToTrigger => SignalLessThanOrEqualToTrigger,
+                TimeSeriesAlgo.SignalEqualToTrigger => SignalEqualToTrigger,
+                _ => throw new NotImplementedException(),
+            };
         }
 
         /// <summary>

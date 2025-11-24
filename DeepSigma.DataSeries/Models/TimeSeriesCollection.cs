@@ -11,13 +11,13 @@ internal class TimeSeriesCollection : AbstractSeriesCollection<KeyValuePair<Date
             return SubSeriesCollection.First().Series.GetSeriesData();
         }
 
-        bool isFirst = true;
+        bool is_first_element = true;
         SortedDictionary<DateTime, decimal> CombinedSeries = [];
         foreach (var series in SubSeriesCollection)
         {
-            if (isFirst == true)
+            if (is_first_element == true)
             {
-                isFirst = false;
+                is_first_element = false;
                 CombinedSeries = (SortedDictionary<DateTime, decimal>)series.Series.GetSeriesData();
                 continue;
             }

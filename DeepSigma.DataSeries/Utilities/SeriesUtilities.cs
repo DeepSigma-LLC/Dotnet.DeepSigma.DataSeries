@@ -72,25 +72,15 @@ public static class SeriesUtilities
     /// <exception cref="NotImplementedException"></exception>
     public static ICollection<KeyValuePair<K, T>> GetCombinedSeries<K, T>(SortedDictionary<K, T> Data, SortedDictionary<K, T> Data2, MathematicalOperation mathematicalOperation) where K : IComparable<K> where T : INumber<T>
     {
-        Func<T, T, T> function;
-        switch (mathematicalOperation)
+        Func<T, T, (T? Value, Exception? Error)> function = mathematicalOperation switch
         {
-            case (MathematicalOperation.Add):
-                function = Add;
-                break;
-            case MathematicalOperation.Subtract:
-                function = Subtract;
-                break;
-            case MathematicalOperation.Multiply:
-                function = Multiply;
-                break;
-            case MathematicalOperation.Divide:
-                function = Divide;
-                break;
-            default:
-                throw new NotImplementedException();
-        }
-        return GetCombinedSeriesFrom2SeriesWithMethodApplied(Data, Data2, function);
+            (MathematicalOperation.Add) => Add,
+            MathematicalOperation.Subtract => Subtract,
+            MathematicalOperation.Multiply => Multiply,
+            MathematicalOperation.Divide => Divide,
+            _ => throw new NotImplementedException(),
+        };
+        return GetCombinedSeriesFrom2SeriesWithMethodApplied<K, T>(Data, Data2, function);
     }
 
     /// <summary>
@@ -105,68 +95,62 @@ public static class SeriesUtilities
     /// <exception cref="NotImplementedException"></exception>
     public static ICollection<(X, Y)> GetCombinedSeries<X, Y>(ICollection<(X, Y)> Data, ICollection<(X, Y)> Data2, MathematicalOperation mathematicalOperation) where X : notnull where Y : INumber<Y>
     {
-        Func<Y, Y, Y> function;
-        switch (mathematicalOperation)
+        Func<Y, Y, (Y?, Exception?)> function = mathematicalOperation switch
         {
-            case (MathematicalOperation.Add):
-                function = Add;
-                break;
-            case MathematicalOperation.Subtract:
-                function = Subtract;
-                break;
-            case MathematicalOperation.Multiply:
-                function = Multiply;
-                break;
-            case MathematicalOperation.Divide:
-                function = Divide;
-                break;
-            default:
-                throw new NotImplementedException();
-        }
+            (MathematicalOperation.Add) => Add,
+            MathematicalOperation.Subtract => Subtract,
+            MathematicalOperation.Multiply => Multiply,
+            MathematicalOperation.Divide => Divide,
+            _ => throw new NotImplementedException(),
+        };
         return GetCombinedSeriesFrom2SeriesWithMethodApplied(Data, Data2, function);
     }
 
-    private static ICollection<(K, T)> GetCombinedSeriesFrom2SeriesWithMethodApplied<K, T>(ICollection<(K, T)> Data, ICollection<(K, T)> Data2, Func<T, T, T> CalculationMethod) where K : notnull where T : INumber<T>
+    private static ICollection<(K, T)> GetCombinedSeriesFrom2SeriesWithMethodApplied<K, T>(ICollection<(K, T)> Data, ICollection<(K, T)> Data2, Func<T, T, (T? Value, Exception? Error)> CalculationMethod) where K : notnull where T : INumber<T>
     {
         ICollection<(K, T)> results = new List<(K, T)>(Data.Count);
         int index = 0;
         foreach ((K x, T y) point in Data)
         {
-            T resultingValue = CalculationMethod(point.y, Data2.ElementAt(index).Item2);
-            results.Add((point.x, resultingValue));
+            (T? Value, Exception? Error)= CalculationMethod(point.y, Data2.ElementAt(index).Item2);
+            if (Error is not null || Value is null) continue;
+
+            results.Add((point.x, Value));
             index++;
         }
         return results;
     }
 
-    private static SortedDictionary<X, Y> GetCombinedSeriesFrom2SeriesWithMethodApplied<X, Y>(SortedDictionary<X, Y> Data, SortedDictionary<X, Y> Data2, Func<Y, Y, Y> CalculationMethod) where X : notnull where Y : INumber<Y>
+    private static SortedDictionary<X, Y> GetCombinedSeriesFrom2SeriesWithMethodApplied<X, Y>(SortedDictionary<X, Y> Data, SortedDictionary<X, Y> Data2, Func<Y, Y, (Y? Value, Exception? Error)> CalculationMethod) where X : notnull where Y : INumber<Y>
     {
         SortedDictionary<X, Y> results = []; 
         foreach (var point in Data)
         {
             if (Data2.ContainsKey(point.Key) == true)
             {
-                Y resultingValue = CalculationMethod(point.Value, Data2[point.Key]);
-                results.Add(point.Key, resultingValue);
+                (Y? Value, Exception? Error) = CalculationMethod(point.Value, Data2[point.Key]);
+                if(Error is not null || Value is null) continue;
+
+                results.Add(point.Key, Value);
             }
         }
         return results;
     }
 
 
-    private static T Add<T>(T value, T value2) where T : INumber<T>
+    private static (T? result, Exception? error) Add<T>(T value, T value2) where T : INumber<T>
     {
-        return value + value2;
+        return (value + value2, null);
     }
 
-    private static T Subtract<T>(T value, T value2) where T : INumber<T>
+    private static (T? result, Exception? error) Subtract<T>(T value, T value2) where T : INumber<T>
     { 
-        return value - value2;
+        return (value - value2, null);
     }
 
-    private static T Multiply<T>(T value, T value2) where T : INumber<T>
+    private static (T? result, Exception? error) Multiply<T>(T value, T value2) where T : INumber<T>
     {
-        return value * value2;
+        return (value * value2, null);
     }
 
     /// <summary>
@@ -176,12 +160,12 @@ public static class SeriesUtilities
     /// <param name="value"></param>
     /// <param name="value2"></param>
     /// <returns>Returns null is divide by zero encountered.</returns>
-    private static T Divide<T>(T value, T value2) where T : INumber<T>
+    private static (T? result, Exception? error) Divide<T>(T value, T value2) where T : INumber<T>
     {
         if (value2 == T.Zero)
         {
-            throw new DivideByZeroException("Cannot divide by zero.");
+            return (default, new DivideByZeroException("Cannot divide by zero."));
         }
-        return value / value2;
+        return (value / value2, null);
     }
 }

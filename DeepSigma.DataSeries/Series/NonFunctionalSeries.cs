@@ -11,6 +11,12 @@ namespace DeepSigma.DataSeries.Series;
 /// <typeparam name="YDataType"></typeparam>
 public class NonFunctionalSeries<XDataType, YDataType> : AbstractBaseSeries<(XDataType, YDataType), SeriesTransformation> where XDataType : struct where YDataType : struct
 {
+    /// <inheritdoc cref="NonFunctionalSeries{XDataType, YDataType}"/>
+    public NonFunctionalSeries() : base()
+    {
+        AllowDuplicateDataPoints = true;
+    }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="NonFunctionalSeries{XDataType, YDataType}"/> class with the provided data.
     /// </summary>

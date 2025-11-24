@@ -21,6 +21,7 @@ public class CategoricalSeries<TValueDataType> : AbstractBaseSeries<KeyValuePair
         return 1; // Series is treated as a single series.
     }
 
+    /// <inheritdoc/>
     public override ICollection<KeyValuePair<string, TValueDataType>> GetTransformedSeriesData()
     {
         throw new NotImplementedException("Transformation logic is not implemented for DataSeries.");

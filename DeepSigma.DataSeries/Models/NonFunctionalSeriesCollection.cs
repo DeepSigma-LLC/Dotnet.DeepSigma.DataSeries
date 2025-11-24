@@ -11,13 +11,13 @@ internal class NonFunctionalSeriesCollection : AbstractSeriesCollection<(decimal
             return SubSeriesCollection.First().Series.GetSeriesData();
         }
 
-        bool isFirst = true;
+        bool is_first_element = true;
         ICollection<(decimal, decimal)> CombinedSeries = new List<(decimal, decimal)>(SubSeriesCollection.First().Series.GetSeriesData().Count);
         foreach (var series in SubSeriesCollection)
         {
-            if (isFirst == true)
+            if (is_first_element == true)
             {
-                isFirst = false;
+                is_first_element = false;
                 CombinedSeries = (List<(decimal, decimal)>)series.Series.GetSeriesData();
                 continue;
             }
