@@ -53,10 +53,12 @@ public class FunctionalDataSet_Tests
         dataSet.Add(1, new DataPointValue(11m));
         dataSet.Add(2, new DataPointValue(12m));
         dataSet.Add(3, new DataPointValue(13m));
-        var filteredDataSet = dataSet.Where(kvp => kvp.Data.Value > 11m);
-        var filteredData = filteredDataSet.Select(kvp => kvp).ToList();
-        Assert.Equal(2, filteredData.Count);
-        Assert.Equal(12m, filteredData[0].Data.Value);
-        Assert.Equal(13m, filteredData[1].Data.Value);
+
+        var filteredDataSet = dataSet.Where(kvp => kvp.Data.Value >= 12m);
+        var selected_keys = filteredDataSet.Select(kvp => kvp.Key).ToList();
+
+        Assert.Equal(2, selected_keys.Count);
+        Assert.Equal(2, selected_keys[0]);
+        Assert.Equal(3, selected_keys[1]);
     }
 }
