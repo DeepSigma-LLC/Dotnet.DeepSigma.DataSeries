@@ -1,7 +1,7 @@
 ﻿using DeepSigma.DataSeries.Enums;
 using DeepSigma.General.Enums;
 
-namespace DeepSigma.DataSeries;
+namespace DeepSigma.DataSeries.Models;
 
 /// <summary>
 /// Represents a transformation applied to time series data.

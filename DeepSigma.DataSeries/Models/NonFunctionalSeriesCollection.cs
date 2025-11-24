@@ -1,6 +1,6 @@
 ﻿using DeepSigma.DataSeries.Utilities;
 
-namespace DeepSigma.DataSeries;
+namespace DeepSigma.DataSeries.Models;
 
 internal class NonFunctionalSeriesCollection : AbstractSeriesCollection<(decimal, decimal), SeriesTransformation>
 {

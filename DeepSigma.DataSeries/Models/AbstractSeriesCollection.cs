@@ -2,7 +2,7 @@
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.General.Extensions;
 
-namespace DeepSigma.DataSeries;
+namespace DeepSigma.DataSeries.Models;
 
 /// <summary>
 /// Represents a collection of time series data, allowing for mathematical operations on sub-series.

@@ -1,5 +1,6 @@
 ﻿using DeepSigma.DataSeries.DataSets;
 using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Models;
 using DeepSigma.DataSeries.Utilities;
 using System.Linq.Expressions;
 

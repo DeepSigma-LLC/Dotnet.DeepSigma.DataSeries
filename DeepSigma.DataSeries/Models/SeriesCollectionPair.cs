@@ -1,7 +1,7 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.General.Enums;
 
-namespace DeepSigma.DataSeries;
+namespace DeepSigma.DataSeries.Models;
 
 public class SeriesCollectionPair<TDataType, Transformation> where TDataType : notnull where Transformation : class
 {

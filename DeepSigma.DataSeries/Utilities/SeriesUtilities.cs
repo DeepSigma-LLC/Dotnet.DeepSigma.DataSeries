@@ -1,4 +1,5 @@
 ﻿
+using DeepSigma.DataSeries.Models;
 using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
 using System.Numerics;

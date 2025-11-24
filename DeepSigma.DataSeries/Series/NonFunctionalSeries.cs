@@ -1,4 +1,6 @@
-﻿namespace DeepSigma.DataSeries.Series;
+﻿using DeepSigma.DataSeries.Models;
+
+namespace DeepSigma.DataSeries.Series;
 
 /// <summary>
 /// Non-functional data series. Usage:

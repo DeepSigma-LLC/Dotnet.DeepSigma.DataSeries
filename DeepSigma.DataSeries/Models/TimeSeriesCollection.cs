@@ -1,6 +1,6 @@
 ﻿using DeepSigma.DataSeries.Utilities;
 
-namespace DeepSigma.DataSeries;
+namespace DeepSigma.DataSeries.Models;
 
 internal class TimeSeriesCollection : AbstractSeriesCollection<KeyValuePair<DateTime, decimal>, TimeSeriesTransformation> 
 {

@@ -1,5 +1,4 @@
-﻿
-namespace DeepSigma.DataSeries;
+﻿namespace DeepSigma.DataSeries.Models;
 
 /// <summary>
 /// Represents a transformation applied to a data series.
