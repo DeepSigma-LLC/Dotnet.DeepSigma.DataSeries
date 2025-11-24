@@ -4,6 +4,7 @@ namespace DeepSigma.DataSeries.Models;
 
 internal class NonFunctionalSeriesCollection : AbstractSeriesCollection<(decimal, decimal), SeriesTransformation>
 {
+    /// <inheritdoc/>
     public override ICollection<(decimal, decimal)> GetSeriesData()
     {
         if (GetSubSeriesCount() == 1)

@@ -39,6 +39,6 @@ public class TimeSeriesDateOnly<TValueDataType> : AbstractBaseSeries<KeyValuePai
     /// <param name="selected_property">Seleted property from data model.</param>
     public void LoadFromDataModel<IModel>(FunctionalDataSet<DateOnly, IModel> data, Expression<Func<IModel, TValueDataType>> selected_property) where IModel : IDataModel
     {
-        Data = DataSetUtilities.GetSingleSeries<DateTime, TValueDataType, IModel>(data.GetAllData(), selected_property);
+        Data = DataSetUtilities.GetSingleSeries<DateOnly, TValueDataType, IModel>(data.GetAllData(), selected_property);
     }
 }

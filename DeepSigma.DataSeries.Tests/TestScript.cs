@@ -2,6 +2,7 @@
 using DeepSigma.DataSeries.DataSets;
 using DeepSigma.DataSeries.Series;
 using DeepSigma.General.Enums;
+using DeepSigma.DataSeries.Models;
 
 namespace DeepSigma.DataSeries.Tests;
 
@@ -41,8 +42,8 @@ internal class TestScript
         ask_series.Transformation.Scalar = 200;
         ask_series.Transformation.DataTransformation = Enums.TimeSeriesDataTransformation.CumulativeReturn;
 
-        TimeSeriesCollection timeSeriesCollection = new();
-        timeSeriesCollection.Add(MathematicalOperation.Add, ask_series);
+        //TimeSeriesCollection timeSeriesCollection = new();
+        //timeSeriesCollection.Add(MathematicalOperation.Add, ask_series);
 
         var bar2 = new BarObservation(
             open_price: 100m,
