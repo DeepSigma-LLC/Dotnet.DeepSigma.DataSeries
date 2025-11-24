@@ -6,10 +6,7 @@ internal class TimeSeriesCollection : AbstractSeriesCollection<KeyValuePair<Date
 {
     public override ICollection<KeyValuePair<DateTime, decimal>> GetSeriesData()
     {
-        if (GetSubSeriesCount() == 1)
-        {
-            return SubSeriesCollection.First().Series.GetSeriesData();
-        }
+        if (GetSubSeriesCount() == 1) return SubSeriesCollection.First().Series.GetSeriesData();
 
         bool is_first_element = true;
         SortedDictionary<DateTime, decimal> CombinedSeries = [];
