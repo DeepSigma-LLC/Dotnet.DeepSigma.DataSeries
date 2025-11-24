@@ -16,5 +16,4 @@ public record class SingleDataPointObservation(DataPointValue Value) : IDataMode
     {
         //Nothing to do here, all initialization is handled by the primary constructor
     }
-   
 };

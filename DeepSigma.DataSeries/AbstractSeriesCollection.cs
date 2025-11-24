@@ -9,7 +9,7 @@ namespace DeepSigma.DataSeries;
 /// </summary>
 /// <typeparam name="TDataType"></typeparam>
 /// <typeparam name="Transformation"></typeparam>
-public abstract class SeriesCollectionAbstract<TDataType, Transformation> : ISeries<TDataType, Transformation> where TDataType : notnull where Transformation : class
+public abstract class AbstractSeriesCollection<TDataType, Transformation> : ISeries<TDataType, Transformation> where TDataType : notnull where Transformation : class
 {
     /// <summary>
     /// Collection of time series sub series.

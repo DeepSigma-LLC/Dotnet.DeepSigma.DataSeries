@@ -1,18 +1,16 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 
-namespace DeepSigma.DataSeries;
+namespace DeepSigma.DataSeries.Series;
 
 /// <summary>
 /// Base class for data series.
 /// </summary>
 /// <typeparam name="TValue"></typeparam>
 /// <typeparam name="TTransformation"></typeparam>
-public abstract class BaseSeriesAbstract<TValue, TTransformation> : ISeries<TValue, TTransformation> where TValue : notnull where TTransformation : class, new()
+public abstract class AbstractBaseSeries<TValue, TTransformation> : ISeries<TValue, TTransformation> where TValue : notnull where TTransformation : class, new()
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="BaseSeriesAbstract{TValue, TTransformation}"/> class with an empty transformation.
-    /// </summary>
-    protected BaseSeriesAbstract()
+    /// <inheritdoc cref="AbstractBaseSeries{TValue, TTransformation}"/>
+    protected AbstractBaseSeries()
     {
         Transformation = new();
     }
@@ -22,14 +20,10 @@ public abstract class BaseSeriesAbstract<TValue, TTransformation> : ISeries<TVal
     /// </summary>
     protected ICollection<TValue> Data { get; set; } = [];
 
-    /// <summary>
-    /// Name of the series.
-    /// </summary>
+    /// <inheritdoc/>
     public string SeriesName { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Transformation applied to the data series.
-    /// </summary>
+    /// <inheritdoc/>
     public TTransformation Transformation { get; set; }
 
     /// <summary>
@@ -47,16 +41,14 @@ public abstract class BaseSeriesAbstract<TValue, TTransformation> : ISeries<TVal
     /// <returns></returns>
     public abstract ICollection<TValue> GetTransformedSeriesData();
 
-    /// <summary>
-    /// Returns the count of sub-series in the data series.
-    /// </summary>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public abstract int GetSubSeriesCount();
 
-    /// <summary>
-    /// Clears the data series, removing all data points.
-    /// </summary>
-    public abstract void Clear();
+    /// <inheritdoc/>
+    public void Clear()
+    {
+        Data.Clear();
+    }
 
 
 

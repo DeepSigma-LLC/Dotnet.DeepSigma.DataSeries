@@ -1,37 +1,30 @@
-﻿using DeepSigma.DataSeries.Interfaces;
+﻿using DeepSigma.DataSeries.DataSets;
+using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Utilities;
 using System.Linq.Expressions;
 
-
-namespace DeepSigma.DataSeries;
+namespace DeepSigma.DataSeries.Series;
 
 /// <summary>
 /// Represents a generic data series.
 /// </summary>
 /// <typeparam name="TKeyDataType"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
-public class DataSeries<TKeyDataType, TValueDataType> : BaseSeriesAbstract<KeyValuePair<TKeyDataType, TValueDataType>, SeriesTransformation> where TKeyDataType : IComparable<TKeyDataType> where TValueDataType : struct
+public class DataSeries<TKeyDataType, TValueDataType> : AbstractBaseSeries<KeyValuePair<TKeyDataType, TValueDataType>, SeriesTransformation> where TKeyDataType : IComparable<TKeyDataType> where TValueDataType : struct
 {
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DataSeries{TKey, TValue}"/> class with an empty data series.
-    /// </summary>
+    /// <inheritdoc cref="DataSeries{TKeyDataType, TValueDataType}"/>
     public DataSeries() : base()
     {
         Data = new SortedDictionary<TKeyDataType, TValueDataType>();
     }
 
-
-    public override void Clear()
-    {
-        Data.Clear();
-    }
-
+    /// <inheritdoc/>
     public override int GetSubSeriesCount()
     {
         return 1; // DataSeries is treated as a single series.
     }
 
+    /// <inheritdoc/>
     public override ICollection<KeyValuePair<TKeyDataType, TValueDataType>> GetTransformedSeriesData()
     {
         throw new NotImplementedException("Transformation logic is not implemented for DataSeries.");
@@ -44,9 +37,8 @@ public class DataSeries<TKeyDataType, TValueDataType> : BaseSeriesAbstract<KeyVa
     /// <typeparam name="IModel"></typeparam>
     /// <param name="data">Data set containing original data.</param>
     /// <param name="selected_property">Seleted property from data model.</param>
-    public void LoadFromDataModel<IModel>(DataSet<TKeyDataType, IModel> data, Expression<Func<IModel, TValueDataType>> selected_property) where IModel : IDataModel
+    public void LoadFromDataModel<IModel>(FunctionalDataSet<TKeyDataType, IModel> data, Expression<Func<IModel, TValueDataType>> selected_property) where IModel : IDataModel
     {
         Data = DataSetUtilities.GetSingleSeries<TKeyDataType, TValueDataType, IModel>(data.GetAllData(), selected_property);
     }
-
 }

@@ -1,5 +1,4 @@
-﻿
-namespace DeepSigma.DataSeries;
+﻿namespace DeepSigma.DataSeries.Series;
 
 /// <summary>
 /// Non-functional data series. Usage:
@@ -8,7 +7,7 @@ namespace DeepSigma.DataSeries;
 /// </summary>
 /// <typeparam name="XDataType"></typeparam>
 /// <typeparam name="YDataType"></typeparam>
-public class NonFunctionalSeries<XDataType, YDataType> : BaseSeriesAbstract<(XDataType, YDataType), SeriesTransformation> where XDataType : struct where YDataType : struct
+public class NonFunctionalSeries<XDataType, YDataType> : AbstractBaseSeries<(XDataType, YDataType), SeriesTransformation> where XDataType : struct where YDataType : struct
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="NonFunctionalSeries{XDataType, YDataType}"/> class with the provided data.
@@ -20,16 +19,13 @@ public class NonFunctionalSeries<XDataType, YDataType> : BaseSeriesAbstract<(XDa
         Data = data;
     }
 
-    public override void Clear()
-    {
-        Data.Clear();
-    }
-
+    /// <inheritdoc/>
     public override int GetSubSeriesCount()
     {
         return 1; // Non-functional series is treated as a single series.
     }
 
+    /// <inheritdoc/>
     public override ICollection<(XDataType, YDataType)> GetTransformedSeriesData()
     {
         throw new NotImplementedException("Transformation logic is not implemented for NonFunctionalSeries.");

@@ -1,27 +1,19 @@
-﻿
-namespace DeepSigma.DataSeries;
+﻿namespace DeepSigma.DataSeries.Series;
 
 /// <summary>
 /// Represents a generic categorial data series.
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
-public class CategoricalSeries<TValueDataType> : BaseSeriesAbstract<KeyValuePair<string, TValueDataType>, SeriesTransformation> where TValueDataType : struct
+public class CategoricalSeries<TValueDataType> : AbstractBaseSeries<KeyValuePair<string, TValueDataType>, SeriesTransformation> where TValueDataType : struct
 {
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DataSeries{TKey, TValue}"/> class with an empty data series.
-    /// </summary>
+    /// <inheritdoc cref="CategoricalSeries{TValueDataType}"/>
     public CategoricalSeries() : base()
     {
         Data = new SortedDictionary<string, TValueDataType>();
     }
 
-
-    public override void Clear()
-    {
-        Data.Clear();
-    }
-
+    /// <inheritdoc/>
     public override int GetSubSeriesCount()
     {
         return 1; // Series is treated as a single series.

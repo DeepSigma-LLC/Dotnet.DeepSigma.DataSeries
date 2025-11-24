@@ -1,4 +1,6 @@
 ﻿using DeepSigma.DataSeries.DataModels;
+using DeepSigma.DataSeries.DataSets;
+using DeepSigma.DataSeries.Series;
 using DeepSigma.General.Enums;
 
 namespace DeepSigma.DataSeries.Tests;
@@ -7,7 +9,7 @@ internal class TestScript
 {
     internal static void Test()
     {
-        DataSet<DateTime, BarObservation> dataSet = new();
+        FunctionalDataSet<DateTime, BarObservation> dataSet = new();
         DataSeries<DateTime, decimal> dataSeries = new();
         dataSeries.LoadFromDataModel(dataSet, x => x.Low.Value);
 
@@ -28,7 +30,7 @@ internal class TestScript
         SortedDictionary<DateTime, BidAskSpreadObservation> sortedDictionary = [];
         sortedDictionary.Add(DateTime.Now, bidAskSpread);
 
-        DataSet<DateTime, BidAskSpreadObservation> bid_ask_data = new();
+        FunctionalDataSet<DateTime, BidAskSpreadObservation> bid_ask_data = new();
 
         bid_ask_data.Add(sortedDictionary);
 

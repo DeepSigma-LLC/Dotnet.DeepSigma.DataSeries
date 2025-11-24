@@ -2,7 +2,7 @@
 
 namespace DeepSigma.DataSeries;
 
-internal class DataSeriesCollection : SeriesCollectionAbstract<KeyValuePair<decimal, decimal>, SeriesTransformation>
+internal class DataSeriesCollection : AbstractSeriesCollection<KeyValuePair<decimal, decimal>, SeriesTransformation>
 {
     public override ICollection<KeyValuePair<decimal, decimal>> GetSeriesData()
     {

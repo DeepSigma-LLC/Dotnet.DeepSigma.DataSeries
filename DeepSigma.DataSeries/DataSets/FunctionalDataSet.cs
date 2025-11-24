@@ -1,14 +1,17 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.General.Extensions;
 
-namespace DeepSigma.DataSeries;
+namespace DeepSigma.DataSeries.DataSets;
 
 /// <summary>
-/// Represents a generic data set that can hold key-value pairs.
+/// Represents a generic data set that can hold key-value pairs. 
+/// The data is stored in a sorted dictionary to maintain order based on keys to facilitate efficient retrieval and manipulation.
+/// If duplicate keys are added, an exception will be thrown. 
+/// If duplicate keys are a possibility, consider using NonFunctionalDataSet instead.
 /// </summary>
 /// <typeparam name="TKeyDataType"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
-public class DataSet<TKeyDataType, TValueDataType> where TKeyDataType : IComparable<TKeyDataType> where TValueDataType : IDataModel
+public class FunctionalDataSet<TKeyDataType, TValueDataType> where TKeyDataType : IComparable<TKeyDataType> where TValueDataType : IDataModel
 {
     /// <summary>
     /// A sorted dictionary to hold the data, where keys are of type TKey and values are of type TValue.
@@ -52,9 +55,9 @@ public class DataSet<TKeyDataType, TValueDataType> where TKeyDataType : ICompara
     /// </summary>
     /// <param name="expression"></param>
     /// <returns></returns>
-    public DataSet<TKeyDataType, TValueDataType> Where(Func<KeyValuePair<TKeyDataType, TValueDataType>, bool> expression)
+    public FunctionalDataSet<TKeyDataType, TValueDataType> Where(Func<KeyValuePair<TKeyDataType, TValueDataType>, bool> expression)
     {
-        DataSet<TKeyDataType, TValueDataType> new_data_set = new();
+        FunctionalDataSet<TKeyDataType, TValueDataType> new_data_set = new();
         new_data_set.Add(Data.Where(expression).ToSortedDictionary());
         return new_data_set;
     }

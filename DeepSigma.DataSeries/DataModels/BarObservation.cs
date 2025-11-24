@@ -18,7 +18,6 @@ public record class BarObservation(DataPointValue Open, DataPointValue High, Dat
     /// </summary>
     public decimal Range => High.Value - Low.Value;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="BarObservation"/> class with specified decimal values for open, high, low, close, and volume.
     /// </summary>
