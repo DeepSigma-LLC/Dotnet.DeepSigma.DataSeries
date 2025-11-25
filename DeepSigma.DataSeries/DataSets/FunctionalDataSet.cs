@@ -11,7 +11,9 @@ namespace DeepSigma.DataSeries.DataSets;
 /// </summary>
 /// <typeparam name="TKeyDataType"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
-public class FunctionalDataSet<TKeyDataType, TValueDataType> where TKeyDataType : IComparable<TKeyDataType> where TValueDataType : IDataModel
+public class FunctionalDataSet<TKeyDataType, TValueDataType> 
+    where TKeyDataType : IComparable<TKeyDataType> 
+    where TValueDataType : class, IDataModel<TValueDataType>
 {
     /// <summary>
     /// A sorted dictionary to hold the data, where keys are of type TKey and values are of type TValue.

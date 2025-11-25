@@ -1,11 +1,13 @@
-﻿using DeepSigma.DataSeries.Utilities;
+﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Transformations;
+using DeepSigma.DataSeries.Utilities;
 using System.Numerics;
 
 namespace DeepSigma.DataSeries.Models;
 
 internal class TimeSeriesCollection<K, V> : AbstractSeriesCollection<KeyValuePair<K, V>, TimeSeriesTransformation>
     where K : IComparable<K>
-    where V : INumber<V>
+    where V : class, IDataModel<V>
 {
     public override ICollection<KeyValuePair<K, V>> GetSeriesData()
     {

@@ -5,6 +5,7 @@ using DeepSigma.DataSeries.Utilities;
 using System.Linq.Expressions;
 using System.Numerics;
 using DeepSigma.DataSeries.Enums;
+using DeepSigma.DataSeries.Transformations;
 namespace DeepSigma.DataSeries.Series;
 
 /// <summary>

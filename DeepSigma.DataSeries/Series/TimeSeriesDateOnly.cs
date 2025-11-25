@@ -1,6 +1,7 @@
 ﻿using DeepSigma.DataSeries.DataSets;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Models;
+using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using System.Linq.Expressions;
 using System.Numerics;
@@ -15,10 +16,17 @@ namespace DeepSigma.DataSeries.Series;
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
 public class TimeSeriesDateOnly<TValueDataType> : AbstractBaseSeries<KeyValuePair<DateOnly, TValueDataType>, TimeSeriesTransformation> 
-    where TValueDataType : INumber<TValueDataType>
+    where TValueDataType : class, IDataModel<TValueDataType>
 {
+
     /// <inheritdoc cref="TimeSeries{TValueDataType}"/>
-    public TimeSeriesDateOnly(SortedDictionary<DateOnly, TValueDataType> data) : base()
+    public TimeSeriesDateOnly() : base()
+    {
+        SubSeriesCollection = new TimeSeriesCollection<DateOnly, TValueDataType>();
+    }
+
+    /// <inheritdoc cref="TimeSeries{TValueDataType}"/>
+    public TimeSeriesDateOnly(SortedDictionary<DateOnly, TValueDataType> data) : this()
     {
         SubSeriesCollection = new TimeSeriesCollection<DateOnly, TValueDataType>();
     }

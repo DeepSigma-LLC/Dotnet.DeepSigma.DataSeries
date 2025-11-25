@@ -14,7 +14,8 @@ namespace DeepSigma.DataSeries.Strategies
         /// <param name="Algo"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public static Func<T, T, bool> GetTradeIndicatedAlgo<T>(TimeSeriesAlgo Algo) where T : INumber<T>
+        public static Func<T, T, bool> GetTradeIndicatedAlgo<T>(TimeSeriesAlgo Algo) 
+            where T : INumber<T>
         {
             return Algo switch
             {
@@ -33,12 +34,10 @@ namespace DeepSigma.DataSeries.Strategies
         /// <param name="signal_value"></param>
         /// <param name="trigger_value"></param>
         /// <returns></returns>
-        public static bool SignalGreaterThanTrigger<T>(T signal_value, T trigger_value) where T : INumber<T>
+        public static bool SignalGreaterThanTrigger<T>(T signal_value, T trigger_value) 
+            where T : INumber<T>
         {
-            if (signal_value > trigger_value)
-            {
-                return true;
-            }
+            if (signal_value > trigger_value) return true;
             return false;
         }
 
@@ -48,12 +47,10 @@ namespace DeepSigma.DataSeries.Strategies
         /// <param name="signal_value"></param>
         /// <param name="trigger_value"></param>
         /// <returns></returns>
-        public static bool SignalLessThanTrigger<T>(T signal_value, T trigger_value) where T : INumber<T>
+        public static bool SignalLessThanTrigger<T>(T signal_value, T trigger_value) 
+            where T : INumber<T>
         {
-            if (signal_value < trigger_value)
-            {
-                return true;
-            }
+            if (signal_value < trigger_value) return true;
             return false;
         }
 
@@ -65,10 +62,7 @@ namespace DeepSigma.DataSeries.Strategies
         /// <returns></returns>
         public static bool SignalGreaterThanOrEqualToTrigger<T>(T signal_value, T trigger_value) where T : INumber<T>
         {
-            if (signal_value >= trigger_value)
-            {
-                return true;
-            }
+            if (signal_value >= trigger_value) return true;
             return false;
         }
 
@@ -80,10 +74,7 @@ namespace DeepSigma.DataSeries.Strategies
         /// <returns></returns>
         public static bool SignalLessThanOrEqualToTrigger<T>(T signal_value, T trigger_value) where T : INumber<T>
         {
-            if (signal_value <= trigger_value)
-            {
-                return true;
-            }
+            if (signal_value <= trigger_value) return true;
             return false;
         }
 

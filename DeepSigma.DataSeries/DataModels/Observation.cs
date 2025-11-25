@@ -1,6 +1,5 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
+using DeepSigma.General.Enums;
 
 namespace DeepSigma.DataSeries.DataModels;
 
@@ -17,6 +16,19 @@ public record class Observation(decimal Value, bool IsRolled = false, bool IsSyn
     public Observation Scale(decimal scalar)
     {
         return new Observation(Value * scalar, IsRolled, IsSyntheticData);
+    }
+
+    /// <inheritdoc/>
+    public (Observation? result, Exception? error) Combine(Observation Item, MathematicalOperation mathematicalOperation)
+    {
+        return mathematicalOperation switch
+        {
+            MathematicalOperation.Add => Add(Item),
+            MathematicalOperation.Subtract => Subtract(Item),
+            MathematicalOperation.Multiply => Multiply(Item),
+            MathematicalOperation.Divide => Divide(Item),
+            _ => throw new NotImplementedException($"Mathematical operation {mathematicalOperation} is not implemented."),
+        };
     }
 
     /// <inheritdoc/>

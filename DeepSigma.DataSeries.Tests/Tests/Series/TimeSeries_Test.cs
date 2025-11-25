@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using DeepSigma.DataSeries.Series;
+using DeepSigma.DataSeries.DataModels;
 
 namespace DeepSigma.DataSeries.Tests.Tests.Series;
 
@@ -47,6 +48,10 @@ public class TimeSeries_Test
         // Act
         TimeSeries<decimal> timeSeries = new();
         timeSeries.SeriesName = "SPX Index";
+    }
 
+    public void Test_TimeSeries_WithDataModel()
+    {
+        TimeSeriesDateOnly<BarObservation> time_Series = new();
     }
 }

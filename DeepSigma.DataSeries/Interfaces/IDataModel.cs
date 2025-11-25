@@ -1,5 +1,7 @@
 ﻿
 
+using DeepSigma.General.Enums;
+
 namespace DeepSigma.DataSeries.Interfaces;
 
 /// <summary>
@@ -25,31 +27,39 @@ public interface IDataModel<T> where T : class
     public T Scale(decimal scalar);
 
     /// <summary>
+    /// Combines two data models using the specified mathematical operation.
+    /// </summary>
+    /// <param name="Item"></param>
+    /// <param name="mathematicalOperation"></param>
+    /// <returns></returns>
+    public (T? result, Exception? error) Combine(T Item, MathematicalOperation mathematicalOperation);
+
+    /// <summary>
     /// Adds two data models together.
     /// </summary>
-    /// <param name="value"></param>
+    /// <param name="Item"></param>
     /// <returns></returns>
-    public (T? result, Exception? error) Add(T value);
+    public (T? result, Exception? error) Add(T Item);
 
     /// <summary>
     /// Subtracts a data model from another.
     /// </summary>
-    /// <param name="value"></param>
+    /// <param name="Item"></param>
     /// <returns></returns>
 
-    public (T? result, Exception? error) Subtract(T value);
+    public (T? result, Exception? error) Subtract(T Item);
 
     /// <summary>
     /// Multiplies two data models together.
     /// </summary>
-    /// <param name="value"></param>
+    /// <param name="Item"></param>
     /// <returns></returns>
-    public (T? result, Exception? error) Multiply(T value);
+    public (T? result, Exception? error) Multiply(T Item);
 
     /// <summary>
     /// Divides the data model by another.
     /// </summary>
-    /// <param name="value"></param>
+    /// <param name="Item"></param>
     /// <returns></returns>
-    public (T? result, Exception? error) Divide(T value);
+    public (T? result, Exception? error) Divide(T Item);
 }
