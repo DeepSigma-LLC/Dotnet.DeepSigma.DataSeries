@@ -11,8 +11,10 @@ namespace DeepSigma.DataSeries.Models.Collections;
 /// </summary>
 /// <typeparam name="K"></typeparam>
 /// <typeparam name="V"></typeparam>
-public class FunctionalSeriesCollection<K, V> : AbstractSeriesCollection<KeyValuePair<K, V>, SeriesTransformation>, 
-    ISeriesCollection<KeyValuePair<K, V>, SeriesTransformation>
+/// <typeparam name="TTransformation"></typeparam>
+public class FunctionalSeriesCollection<K, V, TTransformation> : AbstractSeriesCollection<KeyValuePair<K, V>, TTransformation>, 
+    ISeriesCollection<KeyValuePair<K, V>, TTransformation>
+    where TTransformation : SeriesTransformation, new()
     where K : IComparable<K>
     where V : class, IDataModel<V>
 {

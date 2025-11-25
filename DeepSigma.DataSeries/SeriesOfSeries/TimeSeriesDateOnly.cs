@@ -5,7 +5,7 @@ using DeepSigma.DataSeries.Models.Collections;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using System.Linq.Expressions;
-using System.Numerics;
+
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -16,23 +16,18 @@ namespace DeepSigma.DataSeries.Series;
 /// It would have reduced code duplication and improved maintainability, but I due not want to introduce unnecessary complexity with additional abstractions (or a wrapper class) just for this purpose.
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
-public class TimeSeriesDateOnly<TValueDataType> : AbstractSeries<KeyValuePair<DateOnly, TValueDataType>, 
-    TimeSeriesTransformation, FunctionalSeriesCollection<DateOnly, TValueDataType>> 
+public class TimeSeriesDateOnly<TValueDataType> : 
+    AbstractSeries<
+        KeyValuePair<DateOnly, TValueDataType>, 
+        TimeSeriesTransformation, 
+        FunctionalSeriesCollection<DateOnly, TValueDataType, TimeSeriesTransformation>> 
     where TValueDataType : class, IDataModel<TValueDataType>
 {
 
     /// <inheritdoc cref="TimeSeries{TValueDataType}"/>
     public TimeSeriesDateOnly() : base()
     {
-        SubSeriesCollection = new TimeSeriesCollection<DateOnly, TValueDataType>();
     }
-
-    /// <inheritdoc cref="TimeSeries{TValueDataType}"/>
-    public TimeSeriesDateOnly(SortedDictionary<DateOnly, TValueDataType> data) : this()
-    {
-        SubSeriesCollection = new TimeSeriesCollection<DateOnly, TValueDataType>();
-    }
-
 
     /// <inheritdoc/>
     public override ICollection<KeyValuePair<DateOnly, TValueDataType>> GetTransformedSeriesData()

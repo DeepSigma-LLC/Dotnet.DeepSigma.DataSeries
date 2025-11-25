@@ -12,23 +12,17 @@ namespace DeepSigma.DataSeries.Series;
 /// Represents a time series data structure that holds data points indexed by DateTime.
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
-public class TimeSeries<TValueDataType> : AbstractSeries<KeyValuePair<DateTime, TValueDataType>, 
-    TimeSeriesTransformation, 
-    FunctionalSeriesCollection<DateTime, TValueDataType>
-    > 
+public class TimeSeries<TValueDataType> : 
+    AbstractSeries<
+        KeyValuePair<DateTime, TValueDataType>, 
+        TimeSeriesTransformation, 
+        FunctionalSeriesCollection<DateTime, TValueDataType, TimeSeriesTransformation>> 
     where TValueDataType : class, IDataModel<TValueDataType>
 {
     /// <summary>
     /// Purpose of the time series.
     /// </summary>
     public TimeSeriesPurpose TimeSeriesPurpose { get; set; } = TimeSeriesPurpose.Other;
-
-
-    /// <inheritdoc cref="TimeSeries{TValueDataType}"/>
-    public TimeSeries(SortedDictionary<DateTime, TValueDataType> data) : base()
-    {
-        this.SubSeriesCollection = new TimeSeriesCollection<DateTime, TValueDataType>();
-    }
 
     /// <inheritdoc cref="TimeSeries{TValueDataType}"/>
     public TimeSeries() : base(){}

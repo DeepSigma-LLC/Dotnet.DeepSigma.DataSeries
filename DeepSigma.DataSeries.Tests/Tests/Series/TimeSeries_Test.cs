@@ -58,6 +58,6 @@ public class TimeSeries_Test
         BarObservation bar2 = bar1.Scale(1.2m);
 
 
-        time_Series.Add();
+        time_Series.Add()
     }
 }
