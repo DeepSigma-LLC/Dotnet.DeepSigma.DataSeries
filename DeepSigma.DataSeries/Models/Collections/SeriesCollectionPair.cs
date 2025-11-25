@@ -1,7 +1,7 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.General.Enums;
 
-namespace DeepSigma.DataSeries.Models;
+namespace DeepSigma.DataSeries.Models.Collections;
 
 /// <summary>
 /// Represents a pair of mathematical operation and a data series.

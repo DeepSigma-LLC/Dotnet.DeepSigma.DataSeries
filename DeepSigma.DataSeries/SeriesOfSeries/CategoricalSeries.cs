@@ -1,20 +1,23 @@
-﻿using DeepSigma.DataSeries.Models;
+﻿using DeepSigma.DataSeries.Interfaces;
+
+using DeepSigma.DataSeries.Models.Collections;
 using DeepSigma.DataSeries.Transformations;
-using System.Numerics;
 
 namespace DeepSigma.DataSeries.Series;
 
 /// <summary>
 /// Represents a generic categorial data series.
 /// </summary>
-public class CategoricalSeries<TValueDataType> : AbstractBaseSeries<KeyValuePair<string, TValueDataType>, SeriesTransformation> 
-    where TValueDataType : INumber<TValueDataType>
+public class CategoricalSeries<TValueDataType> : 
+    AbstractSeries<KeyValuePair<string, TValueDataType>, 
+    SeriesTransformation, 
+    FunctionalSeriesCollection<string, TValueDataType>> 
+    where TValueDataType : class, IDataModel<TValueDataType>
 {
 
     /// <inheritdoc cref="CategoricalSeries{TValueDataType}"/>
     public CategoricalSeries() : base()
-    {
-        SubSeriesCollection = new SeriesCollection<string, TValueDataType>();
+    { 
     }
 
     /// <inheritdoc/>

@@ -1,6 +1,7 @@
 ﻿using DeepSigma.DataSeries.DataSets;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Models;
+using DeepSigma.DataSeries.Models.Collections;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using System.Linq.Expressions;
@@ -15,7 +16,8 @@ namespace DeepSigma.DataSeries.Series;
 /// It would have reduced code duplication and improved maintainability, but I due not want to introduce unnecessary complexity with additional abstractions (or a wrapper class) just for this purpose.
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
-public class TimeSeriesDateOnly<TValueDataType> : AbstractBaseSeries<KeyValuePair<DateOnly, TValueDataType>, TimeSeriesTransformation> 
+public class TimeSeriesDateOnly<TValueDataType> : AbstractSeries<KeyValuePair<DateOnly, TValueDataType>, 
+    TimeSeriesTransformation, FunctionalSeriesCollection<DateOnly, TValueDataType>> 
     where TValueDataType : class, IDataModel<TValueDataType>
 {
 
@@ -47,6 +49,7 @@ public class TimeSeriesDateOnly<TValueDataType> : AbstractBaseSeries<KeyValuePai
     /// <param name="selected_property">Seleted property from data model.</param>
     public void LoadFromDataModel<IModel>(FunctionalDataSet<DateOnly, IModel> data, Expression<Func<IModel, TValueDataType>> selected_property) where IModel : IDataModel
     {
+        throw new NotImplementedException();
         Data = DataSetUtilities.GetSingleSeries<DateOnly, TValueDataType, IModel>(data.GetAllData(), selected_property);
     }
 }

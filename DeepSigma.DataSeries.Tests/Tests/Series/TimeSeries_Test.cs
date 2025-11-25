@@ -53,5 +53,11 @@ public class TimeSeries_Test
     public void Test_TimeSeries_WithDataModel()
     {
         TimeSeriesDateOnly<BarObservation> time_Series = new();
+        BarObservation bar = new(12, 23, 44, 32);
+        BarObservation bar1 = new(12, 23, 44, 32);
+        BarObservation bar2 = bar1.Scale(1.2m);
+
+
+        time_Series.Add();
     }
 }

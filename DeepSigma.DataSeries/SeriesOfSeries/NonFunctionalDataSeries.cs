@@ -1,6 +1,8 @@
-﻿using DeepSigma.DataSeries.Models;
+﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Models;
 using DeepSigma.DataSeries.Transformations;
 using System.Numerics;
+using DeepSigma.DataSeries.Models.Collections;
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -11,9 +13,11 @@ namespace DeepSigma.DataSeries.Series;
 /// </summary>
 /// <typeparam name="XDataType"></typeparam>
 /// <typeparam name="YDataType"></typeparam>
-public class NonFunctionalDataSeries<XDataType, YDataType> : AbstractBaseSeries<(XDataType, YDataType), SeriesTransformation> 
-    where XDataType : INumber<XDataType> 
-    where YDataType : INumber<YDataType>
+public class NonFunctionalDataSeries<XDataType, YDataType> : AbstractSeries<Tuple<XDataType, YDataType>, 
+    SeriesTransformation,
+    NonFunctionalSeriesCollection<XDataType, YDataType>> 
+    where XDataType : IComparable<XDataType> 
+    where YDataType : class, IDataModel<YDataType>
 {
     /// <inheritdoc cref="NonFunctionalDataSeries{XDataType, YDataType}"/>
     public NonFunctionalDataSeries() : base()
@@ -28,12 +32,11 @@ public class NonFunctionalDataSeries<XDataType, YDataType> : AbstractBaseSeries<
     /// Array memory is allocated, and fixed at initialization. So changing the size means copying all values to a bigger region of continuous memory. Avoid! </param>
     public NonFunctionalDataSeries(ICollection<(XDataType, YDataType)> data) : base()
     {
-        SubSeriesCollection = new NonFunctionalSeriesCollection<XDataType, YDataType>();
     }
 
 
     /// <inheritdoc/>
-    public override ICollection<(XDataType, YDataType)> GetTransformedSeriesData()
+    public override ICollection<Tuple<XDataType, YDataType>> GetTransformedSeriesData()
     {
         throw new NotImplementedException("Transformation logic is not implemented for NonFunctionalSeries.");
         return Data;

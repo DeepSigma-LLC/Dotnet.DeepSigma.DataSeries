@@ -1,12 +1,20 @@
-﻿using DeepSigma.DataSeries.Transformations;
+﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
+using System.ComponentModel.DataAnnotations;
 using System.Numerics;
 
-namespace DeepSigma.DataSeries.Models;
+namespace DeepSigma.DataSeries.Models.Collections;
 
-internal class SeriesCollection<K, V> : AbstractSeriesCollection<KeyValuePair<K, V>, SeriesTransformation> 
+/// <summary>
+/// Represents a collection of functional data series.
+/// </summary>
+/// <typeparam name="K"></typeparam>
+/// <typeparam name="V"></typeparam>
+public class FunctionalSeriesCollection<K, V> : AbstractSeriesCollection<KeyValuePair<K, V>, SeriesTransformation>, 
+    ISeriesCollection<KeyValuePair<K, V>, SeriesTransformation>
     where K : IComparable<K>
-    where V : INumber<V>
+    where V : class, IDataModel<V>
 {
     /// <inheritdoc/>
     public override ICollection<KeyValuePair<K, V>> GetSeriesData()
@@ -28,6 +36,4 @@ internal class SeriesCollection<K, V> : AbstractSeriesCollection<KeyValuePair<K,
         }
         return CombinedSeries;
     }
-
-
 }

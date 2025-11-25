@@ -1,6 +1,7 @@
 ﻿using DeepSigma.DataSeries.DataSets;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Models;
+using DeepSigma.DataSeries.Models.Collections;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using System.Linq.Expressions;
@@ -13,15 +14,14 @@ namespace DeepSigma.DataSeries.Series;
 /// </summary>
 /// <typeparam name="TKeyDataType"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
-public class DataSeries<TKeyDataType, TValueDataType> : AbstractBaseSeries<KeyValuePair<TKeyDataType, TValueDataType>, SeriesTransformation> 
+public class DataSeries<TKeyDataType, TValueDataType> : AbstractSeries<KeyValuePair<TKeyDataType, TValueDataType>, 
+    SeriesTransformation, 
+    FunctionalSeriesCollection<TKeyDataType, TValueDataType>> 
     where TKeyDataType : INumber<TKeyDataType>
-    where TValueDataType : INumber<TValueDataType>
+    where TValueDataType : class, IDataModel<TValueDataType>
 {
     /// <inheritdoc cref="DataSeries{TKeyDataType, TValueDataType}"/>
-    public DataSeries() : base()
-    {
-        SubSeriesCollection = new SeriesCollection<TKeyDataType, TValueDataType>();
-    }
+    public DataSeries() : base(){}
 
 
     /// <inheritdoc/>

@@ -2,15 +2,16 @@
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Utilities;
 
-namespace DeepSigma.DataSeries.Models;
+namespace DeepSigma.DataSeries.Models.Collections;
 
 /// <summary>
 /// Represents a collection of time series data, allowing for mathematical operations on sub-series.
 /// </summary>
 /// <typeparam name="TDataType"></typeparam>
 /// <typeparam name="TTransformation"></typeparam>
-public abstract class AbstractSeriesCollection<TDataType, TTransformation> : ISeries<TDataType, TTransformation> 
-    where TDataType : notnull 
+public abstract class AbstractSeriesCollection<TDataType, TTransformation> : ISeries<TDataType, TTransformation>, 
+    ISeriesCollection<TDataType, TTransformation> 
+    where TDataType : notnull
     where TTransformation : class, new()
 {
     /// <summary>

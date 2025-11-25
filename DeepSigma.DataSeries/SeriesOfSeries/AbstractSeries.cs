@@ -1,5 +1,5 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
-using DeepSigma.DataSeries.Models;
+using DeepSigma.DataSeries.Models.Collections;
 using DeepSigma.General.Enums;
 
 namespace DeepSigma.DataSeries.Series;
@@ -9,15 +9,23 @@ namespace DeepSigma.DataSeries.Series;
 /// </summary>
 /// <typeparam name="TCollectionDataType">The data type of the underlying collection.</typeparam>
 /// <typeparam name="TTransformation">The data type of the transformation.</typeparam>
-public abstract class AbstractBaseSeries<TCollectionDataType, TTransformation> : ISeries<TCollectionDataType, TTransformation> 
+/// <typeparam name="TSeriesCollection">The type of the series collection.</typeparam>
+public abstract class AbstractSeries<TCollectionDataType, TTransformation, TSeriesCollection> : ISeries<TCollectionDataType, TTransformation> 
     where TCollectionDataType : notnull 
     where TTransformation : class, new()
+    where TSeriesCollection : ISeriesCollection<TCollectionDataType, TTransformation>, new()
 {
+    /// <inheritdoc cref="AbstractSeries{TValue, TTransformation, TSeriesCollection}"/>
+    protected AbstractSeries()
+    {
+        Transformation = new();
+        SubSeriesCollection = new();
+    }
 
     /// <summary>
     /// Collection of sub-series within the series.
     /// </summary>
-    public AbstractSeriesCollection<TCollectionDataType, TTransformation> SubSeriesCollection { get; set; }
+    public TSeriesCollection SubSeriesCollection { get; set; }
 
     /// <summary>
     /// Indicates whether the series is empty.
@@ -38,12 +46,6 @@ public abstract class AbstractBaseSeries<TCollectionDataType, TTransformation> :
     /// Indicates whether duplicate data points are allowed.
     /// </summary>
     public bool AllowDuplicateDataPoints { get; init; } = false;
-
-    /// <inheritdoc cref="AbstractBaseSeries{TValue, TTransformation}"/>
-    protected AbstractBaseSeries()
-    {
-        Transformation = new();
-    }
 
     /// <inheritdoc/>
     public string SeriesName { get; set; } = string.Empty;
@@ -78,7 +80,7 @@ public abstract class AbstractBaseSeries<TCollectionDataType, TTransformation> :
         SubSeriesCollection.Clear();
     }
 
-
+    /// <inheritdoc/>
     public void Add(ISeries<TCollectionDataType, TTransformation> series, MathematicalOperation mathematicalOperation = MathematicalOperation.Add)
     {
         SubSeriesCollection.Add(mathematicalOperation, series);

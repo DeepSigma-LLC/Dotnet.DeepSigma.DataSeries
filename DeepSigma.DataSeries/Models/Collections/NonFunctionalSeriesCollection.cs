@@ -1,15 +1,23 @@
-﻿using DeepSigma.DataSeries.Transformations;
+﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using System.Numerics;
 
-namespace DeepSigma.DataSeries.Models;
+namespace DeepSigma.DataSeries.Models.Collections;
 
-internal class NonFunctionalSeriesCollection<K, V> : AbstractSeriesCollection<(K, V), SeriesTransformation>
-    where K : INumber<K>
-    where V : INumber<V>
+/// <summary>
+/// Represents a collection of non-functional data series.
+/// </summary>
+/// <typeparam name="K"></typeparam>
+/// <typeparam name="V"></typeparam>
+public class NonFunctionalSeriesCollection<K, V> : AbstractSeriesCollection<Tuple<K,V>, 
+    SeriesTransformation>, 
+    ISeriesCollection<Tuple<K,V>, SeriesTransformation>
+    where K : IComparable<K>
+    where V : class, IDataModel<V>
 {
     /// <inheritdoc/>
-    public override ICollection<(K, V)> GetSeriesData()
+    public override ICollection<Tuple<K, V>> GetSeriesData()
     {
         if (GetSubSeriesCount() == 1) return SubSeriesCollection.First().Series.GetSeriesData();
 
