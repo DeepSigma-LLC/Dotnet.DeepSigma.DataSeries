@@ -1,8 +1,6 @@
 ﻿using DeepSigma.DataSeries.DataModels;
 using DeepSigma.DataSeries.DataSets;
 using DeepSigma.DataSeries.Series;
-using DeepSigma.General.Enums;
-using DeepSigma.DataSeries.Models;
 
 namespace DeepSigma.DataSeries.Tests;
 
@@ -12,7 +10,7 @@ internal class TestScript
     {
         FunctionalDataSet<DateTime, BarObservation> dataSet = new();
         DataSeries<DateTime, decimal> dataSeries = new();
-        dataSeries.LoadFromDataModel(dataSet, x => x.Low.Value);
+        dataSeries.LoadFromDataModel(dataSet, x => x.Low);
 
         NonFunctionalSeries<decimal, decimal> nonFunctionalSeries = new(new List<(decimal, decimal)>
         {
@@ -25,9 +23,7 @@ internal class TestScript
 
         NonFunctionalSeries<decimal, decimal> nonFunctionalSeries2 = new(numbers);
 
-        DataPointValue dataPoint = new(1.0m);
-        DataPointValue dataPoint2 = new(2.0m, true, false);
-        BidAskSpreadObservation bidAskSpread = new(dataPoint, dataPoint2);
+        BidAskSpreadObservation bidAskSpread = new(123, 143);
         SortedDictionary<DateTime, BidAskSpreadObservation> sortedDictionary = [];
         sortedDictionary.Add(DateTime.Now, bidAskSpread);
 
@@ -37,7 +33,7 @@ internal class TestScript
 
 
         TimeSeries<decimal> ask_series = new([]);
-        ask_series.LoadFromDataModel(bid_ask_data.Where(x => x.Value.Ask.IsRolled == false), x => x.Ask.Value);
+        ask_series.LoadFromDataModel(bid_ask_data.Where(x => x.Value.IsRolled == false), x => x.Ask);
 
         ask_series.Transformation.Scalar = 200;
         ask_series.Transformation.DataTransformation = Enums.TimeSeriesDataTransformation.CumulativeReturn;
@@ -45,14 +41,14 @@ internal class TestScript
         //TimeSeriesCollection timeSeriesCollection = new();
         //timeSeriesCollection.Add(MathematicalOperation.Add, ask_series);
 
-        var bar2 = new BarObservation(
-            open_price: 100m,
-            high_price: 110m,
-            low_price: 90m,
-            close_price: 105m,
-            volume: 5000m
+        var bar2 = new BarObservationWithVolume(
+            Open: 100m,
+            High: 110m,
+            Low: 90m,
+            Close: 105m,
+            Volume: 5000m
         );
-        bar2.Close.Value.ToString("C");
+        bar2.Close.ToString("C");
 
     }
 }

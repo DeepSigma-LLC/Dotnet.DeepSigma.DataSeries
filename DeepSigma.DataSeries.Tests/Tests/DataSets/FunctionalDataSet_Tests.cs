@@ -9,12 +9,12 @@ public class FunctionalDataSet_Tests
     [Fact]
     public void FunctionalDataSet_Add_MultipleValues()
     {
-        var dataSet = new FunctionalDataSet<int, DataPointValue>();
-        var dataToAdd = new SortedDictionary<int, DataPointValue>
+        var dataSet = new FunctionalDataSet<int, Observation>();
+        var dataToAdd = new SortedDictionary<int, Observation>
         {
-            { 1, new DataPointValue(11m) },
-            { 2, new DataPointValue(12m) },
-            { 3, new DataPointValue(13m) }
+            { 1, new Observation(11m) },
+            { 2, new Observation(12m) },
+            { 3, new Observation(13m) }
         };
         dataSet.Add(dataToAdd);
 
@@ -30,10 +30,10 @@ public class FunctionalDataSet_Tests
     [Fact]
     public void FunctionalDataSet_Add_DuplicateKey_ThrowsException()
     {
-        var dataSet = new FunctionalDataSet<int, DataPointValue>();
-        dataSet.Add(1, new DataPointValue(11m));
+        var dataSet = new FunctionalDataSet<int, Observation>();
+        dataSet.Add(1, new Observation(11m));
 
-        Assert.Throws<ArgumentException>(() => dataSet.Add(1, new DataPointValue(12m)));
+        Assert.Throws<ArgumentException>(() => dataSet.Add(1, new Observation(12m)));
     }
 
   

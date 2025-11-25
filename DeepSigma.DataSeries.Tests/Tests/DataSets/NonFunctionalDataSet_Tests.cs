@@ -9,9 +9,9 @@ public class NonFunctionalDataSet_Tests
     [Fact]
     public void NonFunctionalDataSet_Add_AcceptsDuplicates()
     {
-        var dataSet = new NonFunctionalDataSet<int, DataPointValue>();
-        dataSet.Add(1, new DataPointValue(11m));
-        dataSet.Add(1, new DataPointValue(12m));
+        var dataSet = new NonFunctionalDataSet<int, Observation>();
+        dataSet.Add(1, new Observation(11m));
+        dataSet.Add(1, new Observation(12m));
         Assert.Equal(2, dataSet.Get(1)?.Length);
     }
 
@@ -19,10 +19,10 @@ public class NonFunctionalDataSet_Tests
     [Fact]
     public void NonFunctionalDataSet_Where_FiltersDataCorrectly()
     {
-        var dataSet = new NonFunctionalDataSet<int, DataPointValue>();
-        dataSet.Add(1, new DataPointValue(11m));
-        dataSet.Add(2, new DataPointValue(12m));
-        dataSet.Add(3, new DataPointValue(13m));
+        var dataSet = new NonFunctionalDataSet<int, Observation>();
+        dataSet.Add(1, new Observation(11m));
+        dataSet.Add(2, new Observation(12m));
+        dataSet.Add(3, new Observation(13m));
 
         var filteredDataSet = dataSet.Where(kvp => kvp.Data.Value >= 12m);
         var selected_keys = filteredDataSet.Select(kvp => kvp.Key).ToList();
