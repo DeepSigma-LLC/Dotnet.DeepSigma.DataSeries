@@ -1,5 +1,6 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Models;
+using DeepSigma.General.Enums;
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -16,7 +17,7 @@ public abstract class AbstractBaseSeries<TCollectionDataType, TTransformation> :
     /// <summary>
     /// Collection of sub-series within the series.
     /// </summary>
-    public required AbstractSeriesCollection<TCollectionDataType, TTransformation> SubSeriesCollection { get; set; }
+    public AbstractSeriesCollection<TCollectionDataType, TTransformation> SubSeriesCollection { get; set; }
 
     /// <summary>
     /// Indicates whether the series is empty.
@@ -75,5 +76,11 @@ public abstract class AbstractBaseSeries<TCollectionDataType, TTransformation> :
     public void Clear()
     {
         SubSeriesCollection.Clear();
+    }
+
+
+    public void Add(ISeries<TCollectionDataType, TTransformation> series, MathematicalOperation mathematicalOperation = MathematicalOperation.Add)
+    {
+        SubSeriesCollection.Add(mathematicalOperation, series);
     }
 }

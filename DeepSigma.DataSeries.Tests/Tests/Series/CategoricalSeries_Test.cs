@@ -9,7 +9,15 @@ public class CategoricalSeries_Test
     public void CategoricalSeries_Initialization_Test()
     {
         // Arrange & Act
-        var categoricalSeries = new CategoricalSeries<int>();
+        CategoricalSeries<int> categoricalSeries = new();
+
+        SortedDictionary<string, int> Categories = [];
+        Categories.Add("Assets", 10);
+        Categories.Add("Liabilities", 20);
+
+        categoricalSeries.Add(, General.Enums.MathematicalOperation.Add);
+
+
         // Assert
         Assert.NotNull(categoricalSeries);
         Assert.True(categoricalSeries.IsEmpty);
