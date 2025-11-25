@@ -19,14 +19,9 @@ public class DataSeries<TKeyDataType, TValueDataType> : AbstractBaseSeries<KeyVa
     /// <inheritdoc cref="DataSeries{TKeyDataType, TValueDataType}"/>
     public DataSeries() : base()
     {
-        Data = new SortedDictionary<TKeyDataType, TValueDataType>();
+        SubSeriesCollection = new SeriesCollection<TKeyDataType, TValueDataType>();
     }
 
-    /// <inheritdoc/>
-    public override int GetSubSeriesCount()
-    {
-        return 1; // DataSeries is treated as a single series.
-    }
 
     /// <inheritdoc/>
     public override ICollection<KeyValuePair<TKeyDataType, TValueDataType>> GetTransformedSeriesData()
@@ -43,6 +38,7 @@ public class DataSeries<TKeyDataType, TValueDataType> : AbstractBaseSeries<KeyVa
     /// <param name="selected_property">Seleted property from data model.</param>
     public void LoadFromDataModel<IModel>(FunctionalDataSet<TKeyDataType, IModel> data, Expression<Func<IModel, TValueDataType>> selected_property) where IModel : IDataModel
     {
+        throw new NotImplementedException();
         Data = DataSetUtilities.GetSingleSeries<TKeyDataType, TValueDataType, IModel>(data.GetAllData(), selected_property);
     }
 }

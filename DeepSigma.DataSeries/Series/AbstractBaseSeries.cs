@@ -1,4 +1,5 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Models;
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -11,10 +12,16 @@ public abstract class AbstractBaseSeries<TCollectionDataType, TTransformation> :
     where TCollectionDataType : notnull 
     where TTransformation : class, new()
 {
+
+    /// <summary>
+    /// Collection of sub-series within the series.
+    /// </summary>
+    public required AbstractSeriesCollection<TCollectionDataType, TTransformation> SubSeriesCollection { get; set; }
+
     /// <summary>
     /// Indicates whether the series is empty.
     /// </summary>
-    public bool IsEmpty => Data.Count == 0;
+    public bool IsEmpty => SubSeriesCollection.GetSubSeriesCount() == 0;
 
     /// <summary>
     /// Indicates whether multiple sub-series are allowed.
@@ -37,11 +44,6 @@ public abstract class AbstractBaseSeries<TCollectionDataType, TTransformation> :
         Transformation = new();
     }
 
-    /// <summary>
-    /// Collection of data points in the series.
-    /// </summary>
-    protected ICollection<TCollectionDataType> Data { get; set; } = [];
-
     /// <inheritdoc/>
     public string SeriesName { get; set; } = string.Empty;
 
@@ -52,9 +54,9 @@ public abstract class AbstractBaseSeries<TCollectionDataType, TTransformation> :
     /// Returns the data points in the series.
     /// </summary>
     /// <returns></returns>
-    public virtual ICollection<TCollectionDataType> GetSeriesData()
+    public ICollection<TCollectionDataType> GetSeriesData()
     {
-        return Data;
+        return SubSeriesCollection.GetSeriesData();
     }
 
     /// <summary>
@@ -64,12 +66,14 @@ public abstract class AbstractBaseSeries<TCollectionDataType, TTransformation> :
     public abstract ICollection<TCollectionDataType> GetTransformedSeriesData();
 
     /// <inheritdoc/>
-    public abstract int GetSubSeriesCount();
+    public int GetSubSeriesCount()
+    {
+        return SubSeriesCollection.GetSubSeriesCount();
+    }
 
     /// <inheritdoc/>
     public void Clear()
     {
-        Data.Clear();
+        SubSeriesCollection.Clear();
     }
-
 }

@@ -20,14 +20,9 @@ public class TimeSeriesDateOnly<TValueDataType> : AbstractBaseSeries<KeyValuePai
     /// <inheritdoc cref="TimeSeries{TValueDataType}"/>
     public TimeSeriesDateOnly(SortedDictionary<DateOnly, TValueDataType> data) : base()
     {
-        Data = data;
+        SubSeriesCollection = new TimeSeriesCollection<DateOnly, TValueDataType>();
     }
 
-    /// <inheritdoc/>
-    public override int GetSubSeriesCount()
-    {
-        return 1; // TimeSeries is treated as a single series.
-    }
 
     /// <inheritdoc/>
     public override ICollection<KeyValuePair<DateOnly, TValueDataType>> GetTransformedSeriesData()

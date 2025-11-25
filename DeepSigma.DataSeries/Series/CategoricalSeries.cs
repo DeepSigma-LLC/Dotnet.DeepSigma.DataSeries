@@ -13,13 +13,7 @@ public class CategoricalSeries<TValueDataType> : AbstractBaseSeries<KeyValuePair
     /// <inheritdoc cref="CategoricalSeries{TValueDataType}"/>
     public CategoricalSeries() : base()
     {
-        Data = new SortedDictionary<string, TValueDataType>();
-    }
-
-    /// <inheritdoc/>
-    public override int GetSubSeriesCount()
-    {
-        return 1; // Series is treated as a single series.
+        SubSeriesCollection = new SeriesCollection<string, TValueDataType>();
     }
 
     /// <inheritdoc/>

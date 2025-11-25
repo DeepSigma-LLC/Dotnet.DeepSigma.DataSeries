@@ -4,7 +4,7 @@ using DeepSigma.DataSeries.Models;
 using DeepSigma.DataSeries.Utilities;
 using System.Linq.Expressions;
 using System.Numerics;
-
+using DeepSigma.DataSeries.Enums;
 namespace DeepSigma.DataSeries.Series;
 
 /// <summary>
@@ -14,20 +14,21 @@ namespace DeepSigma.DataSeries.Series;
 public class TimeSeries<TValueDataType> : AbstractBaseSeries<KeyValuePair<DateTime, TValueDataType>, TimeSeriesTransformation> 
     where TValueDataType : INumber<TValueDataType>
 {
+    /// <summary>
+    /// Purpose of the time series.
+    /// </summary>
+    public TimeSeriesPurpose TimeSeriesPurpose { get; set; } = TimeSeriesPurpose.Other;
+
+
     /// <inheritdoc cref="TimeSeries{TValueDataType}"/>
     public TimeSeries(SortedDictionary<DateTime, TValueDataType> data) : base()
     {
-        Data = data;
+        this.SubSeriesCollection = new TimeSeriesCollection<DateTime, TValueDataType>();
     }
 
     /// <inheritdoc cref="TimeSeries{TValueDataType}"/>
     public TimeSeries() : base(){}
 
-    /// <inheritdoc/>
-    public override int GetSubSeriesCount()
-    {
-        return 1; // TimeSeries is treated as a single series.
-    }
 
     /// <inheritdoc/>
     public override ICollection<KeyValuePair<DateTime, TValueDataType>> GetTransformedSeriesData()
@@ -44,6 +45,8 @@ public class TimeSeries<TValueDataType> : AbstractBaseSeries<KeyValuePair<DateTi
     /// <param name="selected_property">Seleted property from data model.</param>
     public void LoadFromDataModel<IModel>(FunctionalDataSet<DateTime, IModel> data, Expression<Func<IModel, TValueDataType>> selected_property) where IModel : IDataModel
     {
+        throw new NotImplementedException();
         Data = DataSetUtilities.GetSingleSeries<DateTime, TValueDataType, IModel>(data.GetAllData(), selected_property);
     }
+
 }

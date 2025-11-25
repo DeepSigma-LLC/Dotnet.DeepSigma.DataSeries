@@ -27,14 +27,9 @@ public class NonFunctionalDataSeries<XDataType, YDataType> : AbstractBaseSeries<
     /// Array memory is allocated, and fixed at initialization. So changing the size means copying all values to a bigger region of continuous memory. Avoid! </param>
     public NonFunctionalDataSeries(ICollection<(XDataType, YDataType)> data) : base()
     {
-        Data = data;
+        SubSeriesCollection = new NonFunctionalSeriesCollection<XDataType, YDataType>();
     }
 
-    /// <inheritdoc/>
-    public override int GetSubSeriesCount()
-    {
-        return 1; // Non-functional series is treated as a single series.
-    }
 
     /// <inheritdoc/>
     public override ICollection<(XDataType, YDataType)> GetTransformedSeriesData()

@@ -11,7 +11,7 @@ namespace DeepSigma.DataSeries.Models;
 /// <typeparam name="TTransformation"></typeparam>
 public abstract class AbstractSeriesCollection<TDataType, TTransformation> : ISeries<TDataType, TTransformation> 
     where TDataType : notnull 
-    where TTransformation : class
+    where TTransformation : class, new()
 {
     /// <summary>
     /// Collection of time series sub series.
@@ -22,7 +22,7 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation> : ISe
     public string SeriesName { get; set; } = string.Empty;
 
     /// <inheritdoc/>
-    public required TTransformation Transformation { get; set; }
+    public TTransformation Transformation { get; set; } = new();
 
     /// <summary>
     /// Selects each element.

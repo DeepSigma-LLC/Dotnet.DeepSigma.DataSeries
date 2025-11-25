@@ -1,25 +1,28 @@
 ﻿using DeepSigma.DataSeries.Utilities;
+using System.Numerics;
 
 namespace DeepSigma.DataSeries.Models;
 
-internal class TimeSeriesCollection : AbstractSeriesCollection<KeyValuePair<DateTime, decimal>, TimeSeriesTransformation> 
+internal class TimeSeriesCollection<K, V> : AbstractSeriesCollection<KeyValuePair<K, V>, TimeSeriesTransformation>
+    where K : IComparable<K>
+    where V : INumber<V>
 {
-    public override ICollection<KeyValuePair<DateTime, decimal>> GetSeriesData()
+    public override ICollection<KeyValuePair<K, V>> GetSeriesData()
     {
         if (GetSubSeriesCount() == 1) return SubSeriesCollection.First().Series.GetSeriesData();
 
         bool is_first_element = true;
-        SortedDictionary<DateTime, decimal> CombinedSeries = [];
+        SortedDictionary<K, V> CombinedSeries = [];
         foreach (var series in SubSeriesCollection)
         {
             if (is_first_element == true)
             {
                 is_first_element = false;
-                CombinedSeries = (SortedDictionary<DateTime, decimal>)series.Series.GetSeriesData();
+                CombinedSeries = (SortedDictionary<K, V>)series.Series.GetSeriesData();
                 continue;
             }
-            SortedDictionary<DateTime, decimal> seriesData = (SortedDictionary<DateTime, decimal>)series.Series.GetSeriesData();
-            CombinedSeries = (SortedDictionary<DateTime, decimal>)SeriesUtilities.GetCombinedSeries(CombinedSeries, seriesData, series.MathematicalOperation);
+            SortedDictionary<K, V> seriesData = (SortedDictionary<K, V>)series.Series.GetSeriesData();
+            CombinedSeries = (SortedDictionary<K, V>)SeriesUtilities.GetCombinedSeries(CombinedSeries, seriesData, series.MathematicalOperation);
         }
         return CombinedSeries;
     }
