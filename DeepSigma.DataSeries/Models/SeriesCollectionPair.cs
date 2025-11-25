@@ -7,23 +7,19 @@ namespace DeepSigma.DataSeries.Models;
 /// Represents a pair of mathematical operation and a data series.
 /// </summary>
 /// <typeparam name="TDataType"></typeparam>
-/// <typeparam name="Transformation"></typeparam>
-public class SeriesCollectionPair<TDataType, Transformation> where TDataType : notnull where Transformation : class
+/// <typeparam name="TTransformation">Transformation class</typeparam>
+public class SeriesCollectionPair<TDataType, TTransformation>(MathematicalOperation mathematical_operation, ISeries<TDataType, TTransformation> series) 
+    where TDataType : notnull 
+    where TTransformation : class
 {
     /// <summary>
     /// The mathematical operation to be applied to the series.
     /// </summary>
-    public MathematicalOperation MathematicalOperation { get; set; }
+    public MathematicalOperation MathematicalOperation { get; set; } = mathematical_operation;
 
     /// <summary>
     /// The data series associated with the mathematical operation.
     /// </summary>
-    public ISeries<TDataType, Transformation> Series { get; set; }
+    public ISeries<TDataType, TTransformation> Series { get; set; } = series;
 
-    /// <inheritdoc cref="SeriesCollectionPair{TDataType, Transformation}"/>
-    public SeriesCollectionPair(MathematicalOperation mathematical_operation, ISeries<TDataType, Transformation> series)
-    {
-        this.MathematicalOperation = mathematical_operation;
-        this.Series = series;
-    }
 }

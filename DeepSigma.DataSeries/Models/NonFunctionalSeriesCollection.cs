@@ -7,10 +7,7 @@ internal class NonFunctionalSeriesCollection : AbstractSeriesCollection<(decimal
     /// <inheritdoc/>
     public override ICollection<(decimal, decimal)> GetSeriesData()
     {
-        if (GetSubSeriesCount() == 1)
-        {
-            return SubSeriesCollection.First().Series.GetSeriesData();
-        }
+        if (GetSubSeriesCount() == 1) return SubSeriesCollection.First().Series.GetSeriesData();
 
         bool is_first_element = true;
         ICollection<(decimal, decimal)> CombinedSeries = new List<(decimal, decimal)>(SubSeriesCollection.First().Series.GetSeriesData().Count);

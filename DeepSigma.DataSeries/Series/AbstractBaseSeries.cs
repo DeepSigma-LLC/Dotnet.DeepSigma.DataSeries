@@ -5,9 +5,11 @@ namespace DeepSigma.DataSeries.Series;
 /// <summary>
 /// Base class for data series.
 /// </summary>
-/// <typeparam name="TValue"></typeparam>
-/// <typeparam name="TTransformation"></typeparam>
-public abstract class AbstractBaseSeries<TValue, TTransformation> : ISeries<TValue, TTransformation> where TValue : notnull where TTransformation : class, new()
+/// <typeparam name="TCollectionDataType">The data type of the underlying collection.</typeparam>
+/// <typeparam name="TTransformation">The data type of the transformation.</typeparam>
+public abstract class AbstractBaseSeries<TCollectionDataType, TTransformation> : ISeries<TCollectionDataType, TTransformation> 
+    where TCollectionDataType : notnull 
+    where TTransformation : class, new()
 {
     /// <summary>
     /// Indicates whether the series is empty.
@@ -29,7 +31,6 @@ public abstract class AbstractBaseSeries<TValue, TTransformation> : ISeries<TVal
     /// </summary>
     public bool AllowDuplicateDataPoints { get; init; } = false;
 
-
     /// <inheritdoc cref="AbstractBaseSeries{TValue, TTransformation}"/>
     protected AbstractBaseSeries()
     {
@@ -39,7 +40,7 @@ public abstract class AbstractBaseSeries<TValue, TTransformation> : ISeries<TVal
     /// <summary>
     /// Collection of data points in the series.
     /// </summary>
-    protected ICollection<TValue> Data { get; set; } = [];
+    protected ICollection<TCollectionDataType> Data { get; set; } = [];
 
     /// <inheritdoc/>
     public string SeriesName { get; set; } = string.Empty;
@@ -51,7 +52,7 @@ public abstract class AbstractBaseSeries<TValue, TTransformation> : ISeries<TVal
     /// Returns the data points in the series.
     /// </summary>
     /// <returns></returns>
-    public virtual ICollection<TValue> GetSeriesData()
+    public virtual ICollection<TCollectionDataType> GetSeriesData()
     {
         return Data;
     }
@@ -60,7 +61,7 @@ public abstract class AbstractBaseSeries<TValue, TTransformation> : ISeries<TVal
     /// Returns the transformed data points in the series.
     /// </summary>
     /// <returns></returns>
-    public abstract ICollection<TValue> GetTransformedSeriesData();
+    public abstract ICollection<TCollectionDataType> GetTransformedSeriesData();
 
     /// <inheritdoc/>
     public abstract int GetSubSeriesCount();

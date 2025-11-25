@@ -85,6 +85,30 @@ public static class SeriesUtilities
     /// <summary>
     /// Get one series by mathmatically combining two series.
     /// </summary>
+    /// <typeparam name="K"></typeparam>
+    /// <typeparam name="V"></typeparam>
+    /// <param name="Data"></param>
+    /// <param name="Data2"></param>
+    /// <param name="mathematicalOperation"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public static ICollection<KeyValuePair<K, V>> GetCombinedSeries<K, V>(ICollection<KeyValuePair<K, V>> Data, ICollection<KeyValuePair<K, V>> Data2, MathematicalOperation mathematicalOperation) where K : IComparable<K> where V : INumber<V>
+    {
+        Func<KeyValuePair<K, V>, KeyValuePair<K, V>, (KeyValuePair<K, V>? Value, Exception? Error)> function = mathematicalOperation switch
+        {
+            (MathematicalOperation.Add) => Add,
+            MathematicalOperation.Subtract => Subtract,
+            MathematicalOperation.Multiply => Multiply,
+            MathematicalOperation.Divide => Divide,
+            _ => throw new NotImplementedException(),
+        };
+        return GetCombinedSeriesFrom2SeriesWithMethodApplied<K, V>(Data, Data2, function);
+    }
+
+
+    /// <summary>
+    /// Get one series by mathmatically combining two series.
+    /// </summary>
     /// <typeparam name="X"></typeparam>
     /// <typeparam name="Y"></typeparam>
     /// <param name="Data"></param>
@@ -132,6 +156,31 @@ public static class SeriesUtilities
     /// <summary>
     /// Get one series by mathmatically combining two series.
     /// </summary>
+    /// <typeparam name="K"></typeparam>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="Data"></param>
+    /// <param name="Data2"></param>
+    /// <param name="CalculationMethod"></param>
+    /// <returns></returns>
+    private static ICollection<KeyValuePair<K, T>> GetCombinedSeriesFrom2SeriesWithMethodApplied<K, T>(ICollection<KeyValuePair<K, T>> Data, ICollection<KeyValuePair<K, T>> Data2, Func<KeyValuePair<K,T>, KeyValuePair<K, T>, (KeyValuePair<K, T>? Value, Exception? Error)> CalculationMethod) where K : IComparable<K> where T : INumber<T>
+    {
+        ICollection<KeyValuePair<K, T>> results = new List<KeyValuePair<K, T>>(Data.Count);
+        int index = 0;
+        foreach (KeyValuePair<K, T> point in Data)
+        {
+            (KeyValuePair<K,T>? Value, Exception? Error) = CalculationMethod(point, Data2.ElementAt(index));
+            if (Error is not null || Value is null) continue;
+
+            results.Add(new KeyValuePair<K,T>(point.Key, Value.Value.Value));
+            index++;
+        }
+        return results;
+    }
+
+
+    /// <summary>
+    /// Get one series by mathmatically combining two series.
+    /// </summary>
     /// <typeparam name="X"></typeparam>
     /// <typeparam name="Y"></typeparam>
     /// <param name="Data"></param>
@@ -166,6 +215,23 @@ public static class SeriesUtilities
         return (value + value2, null);
     }
 
+
+    /// <summary>
+    /// Adds two values of type T.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="K"></typeparam>
+    /// <param name="value"></param>
+    /// <param name="value2"></param>
+    /// <returns></returns>
+    private static (KeyValuePair<K, T>? result, Exception? error) Add<K, T>(KeyValuePair<K, T> value, KeyValuePair<K, T> value2) where T : INumber<T> where K : IComparable<K>
+    {
+        if(!value.Key.Equals(value2.Key)) return (null, new ArgumentException("Keys do not match for addition operation."));
+        KeyValuePair<K, T> pair = new(value.Key, value.Value + value2.Value);
+        return (pair, null);
+    }
+
+
     /// <summary>
     /// Subtracts two values of type T.
     /// </summary>
@@ -179,6 +245,22 @@ public static class SeriesUtilities
     }
 
     /// <summary>
+    /// Subtract two values of type T.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="K"></typeparam>
+    /// <param name="value"></param>
+    /// <param name="value2"></param>
+    /// <returns></returns>
+    private static (KeyValuePair<K, T>? result, Exception? error) Subtract<K, T>(KeyValuePair<K, T> value, KeyValuePair<K, T> value2) where T : INumber<T> where K : IComparable<K>
+    {
+        if (!value.Key.Equals(value2.Key)) return (null, new ArgumentException("Keys do not match for subtraction operation."));
+        KeyValuePair<K, T> pair = new(value.Key, value.Value - value2.Value);
+        return (pair, null);
+    }
+
+
+    /// <summary>
     /// Multiplies two values of type T.
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -189,6 +271,22 @@ public static class SeriesUtilities
     {
         return (value * value2, null);
     }
+
+    /// <summary>
+    /// Multiply two values of type T.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="K"></typeparam>
+    /// <param name="value"></param>
+    /// <param name="value2"></param>
+    /// <returns></returns>
+    private static (KeyValuePair<K, T>? result, Exception? error) Multiply<K, T>(KeyValuePair<K, T> value, KeyValuePair<K, T> value2) where T : INumber<T> where K : IComparable<K>
+    {
+        if (!value.Key.Equals(value2.Key)) return (null, new ArgumentException("Keys do not match for Multiply operation."));
+        KeyValuePair<K, T> pair = new(value.Key, value.Value * value2.Value);
+        return (pair, null);
+    }
+
 
     /// <summary>
     /// Divides two values of type T. 
@@ -205,5 +303,22 @@ public static class SeriesUtilities
             return (default, new DivideByZeroException("Cannot divide by zero."));
         }
         return (value / value2, null);
+    }
+
+    /// <summary>
+    /// Multiply two values of type T.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="K"></typeparam>
+    /// <param name="value"></param>
+    /// <param name="value2"></param>
+    /// <returns></returns>
+    private static (KeyValuePair<K, T>? result, Exception? error) Divide<K, T>(KeyValuePair<K, T> value, KeyValuePair<K, T> value2) where T : INumber<T> where K : IComparable<K>
+    {
+        if (!value.Key.Equals(value2.Key)) return (null, new ArgumentException("Keys do not match for Multiply operation."));
+        if (value2.Value == T.Zero) return (default, new DivideByZeroException("Cannot divide by zero."));
+
+        KeyValuePair<K, T> pair = new(value.Key, value.Value / value2.Value);
+        return (pair, null);
     }
 }

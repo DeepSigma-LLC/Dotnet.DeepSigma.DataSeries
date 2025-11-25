@@ -1,12 +1,13 @@
 ﻿using DeepSigma.DataSeries.Models;
+using System.Numerics;
 
 namespace DeepSigma.DataSeries.Series;
 
 /// <summary>
 /// Represents a generic categorial data series.
 /// </summary>
-/// <typeparam name="TValueDataType"></typeparam>
-public class CategoricalSeries<TValueDataType> : AbstractBaseSeries<KeyValuePair<string, TValueDataType>, SeriesTransformation> where TValueDataType : struct
+public class CategoricalSeries<TValueDataType> : AbstractBaseSeries<KeyValuePair<string, TValueDataType>, SeriesTransformation> 
+    where TValueDataType : INumber<TValueDataType>
 {
 
     /// <inheritdoc cref="CategoricalSeries{TValueDataType}"/>

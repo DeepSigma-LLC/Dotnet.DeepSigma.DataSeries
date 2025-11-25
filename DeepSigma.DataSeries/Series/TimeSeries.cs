@@ -3,6 +3,7 @@ using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Models;
 using DeepSigma.DataSeries.Utilities;
 using System.Linq.Expressions;
+using System.Numerics;
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -10,13 +11,17 @@ namespace DeepSigma.DataSeries.Series;
 /// Represents a time series data structure that holds data points indexed by DateTime.
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
-public class TimeSeries<TValueDataType> : AbstractBaseSeries<KeyValuePair<DateTime, TValueDataType>, TimeSeriesTransformation> where TValueDataType : struct
+public class TimeSeries<TValueDataType> : AbstractBaseSeries<KeyValuePair<DateTime, TValueDataType>, TimeSeriesTransformation> 
+    where TValueDataType : INumber<TValueDataType>
 {
     /// <inheritdoc cref="TimeSeries{TValueDataType}"/>
     public TimeSeries(SortedDictionary<DateTime, TValueDataType> data) : base()
     {
         Data = data;
     }
+
+    /// <inheritdoc cref="TimeSeries{TValueDataType}"/>
+    public TimeSeries() : base(){}
 
     /// <inheritdoc/>
     public override int GetSubSeriesCount()

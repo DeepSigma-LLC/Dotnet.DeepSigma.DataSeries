@@ -3,9 +3,11 @@
 /// <summary>
 /// Represents a generic series interface with transformation capabilities.
 /// </summary>
-/// <typeparam name="TValue"></typeparam>
-/// <typeparam name="TTransformation"></typeparam>
-public interface ISeries<TValue, TTransformation> where TValue : notnull where TTransformation : class
+/// <typeparam name="TCollectionDataType">Data type for the series data collection element.</typeparam>
+/// <typeparam name="TTransformation">Transformation type.</typeparam>
+public interface ISeries<TCollectionDataType, TTransformation> 
+    where TCollectionDataType: notnull 
+    where TTransformation : class
 {
     /// <summary>
     /// The name of the series.
@@ -26,13 +28,13 @@ public interface ISeries<TValue, TTransformation> where TValue : notnull where T
     /// Gets the data of the series.
     /// </summary>
     /// <returns></returns>
-    ICollection<TValue> GetSeriesData();
+    ICollection<TCollectionDataType> GetSeriesData();
 
     /// <summary>
     /// Gets the transformed data of the series.
     /// </summary>
     /// <returns></returns>
-    ICollection<TValue> GetTransformedSeriesData();
+    ICollection<TCollectionDataType> GetTransformedSeriesData();
 
     /// <summary>
     /// Gets the count of sub-series within the series.

@@ -1,6 +1,6 @@
 ﻿using DeepSigma.General.Enums;
 using DeepSigma.DataSeries.Interfaces;
-using DeepSigma.General.Extensions;
+using DeepSigma.DataSeries.Utilities;
 
 namespace DeepSigma.DataSeries.Models;
 
@@ -9,7 +9,9 @@ namespace DeepSigma.DataSeries.Models;
 /// </summary>
 /// <typeparam name="TDataType"></typeparam>
 /// <typeparam name="TTransformation"></typeparam>
-public abstract class AbstractSeriesCollection<TDataType, TTransformation> : ISeries<TDataType, TTransformation> where TDataType : notnull where TTransformation : class
+public abstract class AbstractSeriesCollection<TDataType, TTransformation> : ISeries<TDataType, TTransformation> 
+    where TDataType : notnull 
+    where TTransformation : class
 {
     /// <summary>
     /// Collection of time series sub series.
@@ -82,12 +84,6 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation> : ISe
     }
 
     /// <summary>
-    /// Returns combined series data from all sub series.
-    /// </summary>
-    /// <returns></returns>
-    public abstract ICollection<TDataType> GetSeriesData();
-
-    /// <summary>
     /// Clears the collection of sub series.
     /// </summary>
     public void Clear()
@@ -103,6 +99,12 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation> : ISe
     {
         return SubSeriesCollection.Count;
     }
+
+    /// <summary>
+    /// Returns combined series data from all sub series.
+    /// </summary>
+    /// <returns></returns>
+    public abstract ICollection<TDataType> GetSeriesData();
 
     /// <summary>
     /// Returns the transformed data series.

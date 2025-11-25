@@ -9,10 +9,10 @@ internal class TestScript
     internal static void Test()
     {
         FunctionalDataSet<DateTime, BarObservation> dataSet = new();
-        DataSeries<DateTime, decimal> dataSeries = new();
+        TimeSeries<decimal> dataSeries = new(null);
         dataSeries.LoadFromDataModel(dataSet, x => x.Low);
 
-        NonFunctionalSeries<decimal, decimal> nonFunctionalSeries = new(new List<(decimal, decimal)>
+        NonFunctionalDataSeries<decimal, decimal> nonFunctionalSeries = new(new List<(decimal, decimal)>
         {
             (1.0m, 2.0m),
             (2.0m, 3.0m),
@@ -21,7 +21,7 @@ internal class TestScript
 
         (decimal, decimal)[] numbers = { (1, 2), (4, 5), (4, 3) };
 
-        NonFunctionalSeries<decimal, decimal> nonFunctionalSeries2 = new(numbers);
+        NonFunctionalDataSeries<decimal, decimal> nonFunctionalSeries2 = new(numbers);
 
         BidAskSpreadObservation bidAskSpread = new(123, 143);
         SortedDictionary<DateTime, BidAskSpreadObservation> sortedDictionary = [];

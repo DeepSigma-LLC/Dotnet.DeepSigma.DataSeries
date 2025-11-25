@@ -3,6 +3,7 @@ using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Models;
 using DeepSigma.DataSeries.Utilities;
 using System.Linq.Expressions;
+using System.Numerics;
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -13,7 +14,8 @@ namespace DeepSigma.DataSeries.Series;
 /// It would have reduced code duplication and improved maintainability, but I due not want to introduce unnecessary complexity with additional abstractions (or a wrapper class) just for this purpose.
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
-public class TimeSeriesDateOnly<TValueDataType> : AbstractBaseSeries<KeyValuePair<DateOnly, TValueDataType>, TimeSeriesTransformation> where TValueDataType : struct
+public class TimeSeriesDateOnly<TValueDataType> : AbstractBaseSeries<KeyValuePair<DateOnly, TValueDataType>, TimeSeriesTransformation> 
+    where TValueDataType : INumber<TValueDataType>
 {
     /// <inheritdoc cref="TimeSeries{TValueDataType}"/>
     public TimeSeriesDateOnly(SortedDictionary<DateOnly, TValueDataType> data) : base()

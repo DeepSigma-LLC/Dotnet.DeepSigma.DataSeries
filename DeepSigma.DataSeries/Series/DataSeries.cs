@@ -3,6 +3,7 @@ using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Models;
 using DeepSigma.DataSeries.Utilities;
 using System.Linq.Expressions;
+using System.Numerics;
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -11,7 +12,9 @@ namespace DeepSigma.DataSeries.Series;
 /// </summary>
 /// <typeparam name="TKeyDataType"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
-public class DataSeries<TKeyDataType, TValueDataType> : AbstractBaseSeries<KeyValuePair<TKeyDataType, TValueDataType>, SeriesTransformation> where TKeyDataType : IComparable<TKeyDataType> where TValueDataType : struct
+public class DataSeries<TKeyDataType, TValueDataType> : AbstractBaseSeries<KeyValuePair<TKeyDataType, TValueDataType>, SeriesTransformation> 
+    where TKeyDataType : INumber<TKeyDataType>
+    where TValueDataType : INumber<TValueDataType>
 {
     /// <inheritdoc cref="DataSeries{TKeyDataType, TValueDataType}"/>
     public DataSeries() : base()
