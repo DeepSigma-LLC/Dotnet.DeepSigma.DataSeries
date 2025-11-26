@@ -1,0 +1,67 @@
+﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Transformations;
+using DeepSigma.General.Enums;
+
+namespace DeepSigma.DataSeries.Models;
+
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TCollectionDataType"></typeparam>
+/// <typeparam name="TTransformation"></typeparam>
+public abstract class AbstractSeries<TCollectionDataType, TTransformation> : ISeries<TCollectionDataType, TTransformation>
+    where TCollectionDataType : notnull
+    where TTransformation : SeriesTransformation, new()
+{
+
+    /// <inheritdoc cref="AbstractSeries{TCollectionDataType, TTransformation}"/>
+    protected AbstractSeries()
+    {
+        Transformation = new();
+    }
+
+    /// <summary>
+    /// Indicates whether the series is empty.
+    /// </summary>
+    public virtual bool IsEmpty { get; }
+
+    /// <summary>
+    /// Indicates whether the series is an aggregated series.
+    /// </summary>
+    public virtual bool IsAggregatedSeries { get; }
+
+    /// <summary>
+    /// Indicates whether multiple sub-series are allowed.
+    /// </summary>
+    public bool AllowMultipleSubSeries { get; init; }
+
+    /// <summary>
+    /// Indicates whether duplicate data points are allowed.
+    /// </summary>
+    public bool AllowDuplicateDataPoints { get; init; }
+
+    /// <inheritdoc/>
+    public string SeriesName { get; set; } = string.Empty;
+
+    /// <inheritdoc/>
+    public TTransformation Transformation { get; set; }
+
+    /// <summary>
+    /// Returns the data points in the series.
+    /// </summary>
+    /// <returns></returns>
+    public abstract ICollection<TCollectionDataType> GetSeriesData();
+
+    /// <summary>
+    /// Returns the transformed data points in the series.
+    /// </summary>
+    /// <returns></returns>
+    public abstract ICollection<TCollectionDataType> GetTransformedSeriesData();
+
+    /// <inheritdoc/>
+    public abstract int GetSubSeriesCount();
+
+    /// <inheritdoc/>
+    public abstract void Clear();
+
+}

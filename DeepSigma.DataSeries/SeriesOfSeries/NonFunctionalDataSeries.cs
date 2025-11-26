@@ -14,7 +14,7 @@ namespace DeepSigma.DataSeries.Series;
 /// <typeparam name="XDataType"></typeparam>
 /// <typeparam name="YDataType"></typeparam>
 public class NonFunctionalDataSeries<XDataType, YDataType> : 
-    AbstractSeries<
+    AbstractSeriesOfSeries<
         Tuple<XDataType, YDataType>, 
         SeriesTransformation,
         NonFunctionalSeriesCollection<XDataType, YDataType>> 

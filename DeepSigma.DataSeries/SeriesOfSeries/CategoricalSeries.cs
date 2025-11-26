@@ -9,7 +9,7 @@ namespace DeepSigma.DataSeries.Series;
 /// Represents a generic categorial data series.
 /// </summary>
 public class CategoricalSeries<TValueDataType> : 
-    AbstractSeries<
+    AbstractSeriesOfSeries<
         KeyValuePair<string, TValueDataType>, 
         SeriesTransformation, 
         FunctionalSeriesCollection<string, TValueDataType, SeriesTransformation>> 

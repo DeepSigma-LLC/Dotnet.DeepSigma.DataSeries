@@ -17,7 +17,7 @@ namespace DeepSigma.DataSeries.Series;
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
 public class TimeSeriesDateOnly<TValueDataType> : 
-    AbstractSeries<
+    AbstractSeriesOfSeries<
         KeyValuePair<DateOnly, TValueDataType>, 
         TimeSeriesTransformation, 
         FunctionalSeriesCollection<DateOnly, TValueDataType, TimeSeriesTransformation>> 
