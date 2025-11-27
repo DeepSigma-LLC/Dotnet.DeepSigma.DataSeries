@@ -1,6 +1,7 @@
 ﻿using Xunit;
 using DeepSigma.DataSeries.Series;
 using DeepSigma.DataSeries.DataModels;
+using DeepSigma.DataSeries.Models.BaseSeries;
 
 namespace DeepSigma.DataSeries.Tests.Tests.Series;
 
@@ -57,6 +58,11 @@ public class TimeSeries_Test
         BarObservation bar1 = new(12, 23, 44, 32);
         BarObservation bar2 = bar1.Scale(1.2m);
 
+        TimeSeriesBase<BarObservation> seriesBase = new();
+        seriesBase.SeriesName = "Test Series";
+        seriesBase.Transformation.Scalar = 1;
+        seriesBase.Transformation.DataTransformation = Enums.TimeSeriesDataTransformation.Drawdown;
+        
 
         time_Series.Add()
     }

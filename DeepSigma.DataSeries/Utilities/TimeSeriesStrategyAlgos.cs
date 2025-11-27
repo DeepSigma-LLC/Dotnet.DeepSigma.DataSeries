@@ -60,7 +60,8 @@ namespace DeepSigma.DataSeries.Strategies
         /// <param name="signal_value"></param>
         /// <param name="trigger_value"></param>
         /// <returns></returns>
-        public static bool SignalGreaterThanOrEqualToTrigger<T>(T signal_value, T trigger_value) where T : INumber<T>
+        public static bool SignalGreaterThanOrEqualToTrigger<T>(T signal_value, T trigger_value) 
+            where T : INumber<T>
         {
             if (signal_value >= trigger_value) return true;
             return false;
@@ -72,7 +73,8 @@ namespace DeepSigma.DataSeries.Strategies
         /// <param name="signal_value"></param>
         /// <param name="trigger_value"></param>
         /// <returns></returns>
-        public static bool SignalLessThanOrEqualToTrigger<T>(T signal_value, T trigger_value) where T : INumber<T>
+        public static bool SignalLessThanOrEqualToTrigger<T>(T signal_value, T trigger_value) 
+            where T : INumber<T>
         {
             if (signal_value <= trigger_value) return true;
             return false;
@@ -84,7 +86,8 @@ namespace DeepSigma.DataSeries.Strategies
         /// <param name="signal_value"></param>
         /// <param name="trigger_value"></param>
         /// <returns></returns>
-        public static bool SignalEqualToTrigger<T>(T signal_value, T trigger_value) where T : INumber<T>
+        public static bool SignalEqualToTrigger<T>(T signal_value, T trigger_value) 
+            where T : INumber<T>
         {
             return (signal_value == trigger_value);
         }

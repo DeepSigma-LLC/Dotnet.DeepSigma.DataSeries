@@ -2,7 +2,7 @@
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General.Enums;
 
-namespace DeepSigma.DataSeries.Models;
+namespace DeepSigma.DataSeries.Models.Series;
 
 /// <summary>
 /// 

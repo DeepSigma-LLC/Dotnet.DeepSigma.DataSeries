@@ -1,5 +1,5 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
-using DeepSigma.DataSeries.Models;
+using DeepSigma.DataSeries.Models.Series;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General.Enums;
 

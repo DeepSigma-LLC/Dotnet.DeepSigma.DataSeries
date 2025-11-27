@@ -1,4 +1,5 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Models.Series;
 using DeepSigma.DataSeries.Transformations;
 
 namespace DeepSigma.DataSeries.Models.BaseSeries;
