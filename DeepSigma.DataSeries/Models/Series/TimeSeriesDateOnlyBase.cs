@@ -7,18 +7,12 @@ namespace DeepSigma.DataSeries.Models.BaseSeries;
 /// Represents a base time series data structure that holds data points indexed by DateTime.
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
-public class TimeSeriesDateOnlyBase<TValueDataType> : 
-    AbstractSeriesBase<KeyValuePair<DateOnly, TValueDataType>, TimeSeriesTransformation>
+public class TimeSeriesDateOnlyBase<TValueDataType> :
+    FunctionalSeriesBase<DateOnly, TValueDataType>
     where TValueDataType : class, IDataModel<TValueDataType>
 {
-    /// <inheritdoc cref="TimeSeriesBase{TValueDataType}"/>
-    public TimeSeriesDateOnlyBase() : base() { }
-
-    /// <inheritdoc/>
-    public sealed override ICollection<KeyValuePair<DateOnly, TValueDataType>> GetSeriesData()
-    {
-        return Data;
-    }
+    /// <inheritdoc cref="TimeSeriesDateOnlyBase{TValueDataType}"/>
+    public TimeSeriesDateOnlyBase(SortedDictionary<DateOnly, TValueDataType> data) : base(data) { }
 
     /// <inheritdoc/>
     public sealed override ICollection<KeyValuePair<DateOnly, TValueDataType>> GetTransformedSeriesData()

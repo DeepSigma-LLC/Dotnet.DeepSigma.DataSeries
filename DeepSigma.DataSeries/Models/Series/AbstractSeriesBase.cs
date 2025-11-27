@@ -26,6 +26,12 @@ public abstract class AbstractSeriesBase<TCollectionDataType, TTransformation> :
         this.AllowDuplicateDataPoints = false;
     }
 
+    /// <inheritdoc cref="AbstractSeriesBase{TCollectionDataType, TTransformation}"/>
+    protected AbstractSeriesBase(ICollection<TCollectionDataType> data) : this()
+    {
+        Data = data;
+    }
+
     /// <inheritdoc/>
     public sealed override void Clear()
     {

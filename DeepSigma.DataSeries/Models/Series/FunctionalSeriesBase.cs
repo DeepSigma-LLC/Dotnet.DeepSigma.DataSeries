@@ -16,6 +16,11 @@ public abstract class FunctionalSeriesBase<TKeyDataType, TValueDataType> :
     /// <inheritdoc cref="FunctionalSeriesBase{TKeyDataType, TValueDataType}"/>
     internal FunctionalSeriesBase() : base() { }
 
+    /// <inheritdoc cref="FunctionalSeriesBase{TKeyDataType, TValueDataType}"/>
+    internal FunctionalSeriesBase(SortedDictionary<TKeyDataType, TValueDataType> data) : base(data)
+    {
+    }
+
     /// <inheritdoc/>
     public sealed override ICollection<KeyValuePair<TKeyDataType, TValueDataType>> GetSeriesData()
     {

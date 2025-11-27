@@ -1,5 +1,4 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
-using DeepSigma.DataSeries.Transformations;
 
 namespace DeepSigma.DataSeries.Models.BaseSeries;
 
@@ -11,6 +10,9 @@ public class TimeSeriesBase<TValueDataType> :
     FunctionalSeriesBase<DateTime, TValueDataType>
     where TValueDataType : class, IDataModel<TValueDataType>
 {
+    /// <inheritdoc cref="TimeSeriesBase{TValueDataType}"/>
+    public TimeSeriesBase(SortedDictionary<DateTime, TValueDataType> data) : base(data){}
+
     /// <inheritdoc/>
     public sealed override ICollection<KeyValuePair<DateTime, TValueDataType>> GetTransformedSeriesData()
     {

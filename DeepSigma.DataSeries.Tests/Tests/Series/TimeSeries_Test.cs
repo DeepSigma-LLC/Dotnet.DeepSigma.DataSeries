@@ -12,14 +12,14 @@ public class TimeSeries_Test
     public void Test_TimeSeries_Initialization()
     {
         // Arrange
-        var data = new SortedDictionary<DateTime, decimal>
+        var data = new SortedDictionary<DateTime, Observation>
         {
-            { new DateTime(2024, 1, 1), 100m },
-            { new DateTime(2024, 1, 2), 105m },
-            { new DateTime(2024, 1, 3), 110m }
+            { new DateTime(2024, 1, 1), new(100) },
+            { new DateTime(2024, 1, 2), new(105) },
+            { new DateTime(2024, 1, 3), new(110) }
         };
         // Act
-        TimeSeries<decimal> timeSeries = new(data);
+        TimeSeriesBase<Observation> timeSeries = new(data);
 
         // Assert
         Assert.False(timeSeries.IsEmpty);
