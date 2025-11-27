@@ -1,4 +1,5 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Transformations;
 
 namespace DeepSigma.DataSeries.Models.BaseSeries;
 
@@ -7,7 +8,7 @@ namespace DeepSigma.DataSeries.Models.BaseSeries;
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
 public class DataSeriesBase<TValueDataType> 
-    : FunctionalSeriesBase<decimal, TValueDataType>
+    : FunctionalSeriesBase<decimal, TValueDataType, SeriesTransformation>
     where TValueDataType : class, IDataModel<TValueDataType>
 {
     /// <inheritdoc cref="DataSeriesBase{TValueDataType}"/>

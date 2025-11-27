@@ -8,7 +8,7 @@ namespace DeepSigma.DataSeries.Models.BaseSeries;
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
 public class TimeSeriesDateOnlyBase<TValueDataType> :
-    FunctionalSeriesBase<DateOnly, TValueDataType>
+    FunctionalSeriesBase<DateOnly, TValueDataType, TimeSeriesTransformation>
     where TValueDataType : class, IDataModel<TValueDataType>
 {
     /// <inheritdoc cref="TimeSeriesDateOnlyBase{TValueDataType}"/>
