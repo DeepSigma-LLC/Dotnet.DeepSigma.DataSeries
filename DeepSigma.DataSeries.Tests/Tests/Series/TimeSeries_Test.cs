@@ -7,7 +7,6 @@ namespace DeepSigma.DataSeries.Tests.Tests.Series;
 
 public class TimeSeries_Test
 {
-
     [Fact]
     public void Test_TimeSeries_Initialization()
     {
@@ -31,26 +30,39 @@ public class TimeSeries_Test
     public void Test_MultipleSubSeries_Initialization()
     {
         // Arrange
-        var data1 = new SortedDictionary<DateTime, decimal>
+        var data = new SortedDictionary<DateTime, Observation>
         {
-            { new DateTime(2024, 1, 1), 1m },
-            { new DateTime(2024, 1, 2), 2m },
-            { new DateTime(2024, 1, 3), 3m }
+            { new DateTime(2024, 1, 1), new(1) },
+            { new DateTime(2024, 1, 2), new(2) },
+            { new DateTime(2024, 1, 3), new(3) }
         };
 
         // Arrange
-        var data2 = new SortedDictionary<DateTime, decimal>
+        var data1 = new SortedDictionary<DateTime, Observation>
         {
-            { new DateTime(2024, 1, 1), 2m },
-            { new DateTime(2024, 1, 2), 3m },
-            { new DateTime(2024, 1, 3), 4m }
+            { new DateTime(2024, 1, 1), new(3) },
+            { new DateTime(2024, 1, 2), new(4) },
+            { new DateTime(2024, 1, 3), new(5) }
         };
 
+        TimeSeriesBase<Observation> timeSeriesdata = new(data);
+        TimeSeriesBase<Observation> timeSeriesdata1 = new(data1);
+
         // Act
-        TimeSeries<decimal> timeSeries = new();
-        timeSeries.SeriesName = "SPX Index";
+        TimeSeries<Observation> timeSeries = new()
+        {
+            SeriesName = "SPX Index"
+        };
+
+        timeSeries.Add(timeSeriesdata);
+        timeSeries.Add(timeSeriesdata1);
+
+        Assert.True(!timeSeries.IsEmpty);
+        Assert.True(!timeSeriesdata1.IsEmpty);
+        Assert.Equal(2, timeSeries.GetSubSeriesCount());
     }
 
+    [Fact]
     public void Test_TimeSeries_WithDataModel()
     {
         TimeSeriesDateOnly<BarObservation> time_Series = new();
@@ -58,12 +70,14 @@ public class TimeSeries_Test
         BarObservation bar1 = new(12, 23, 44, 32);
         BarObservation bar2 = bar1.Scale(1.2m);
 
-        TimeSeriesBase<BarObservation> seriesBase = new();
-        seriesBase.SeriesName = "Test Series";
+        TimeSeries<BarObservation> seriesBase = new()
+        {
+            SeriesName = "Test Series"
+        };
         seriesBase.Transformation.Scalar = 1;
         seriesBase.Transformation.DataTransformation = Enums.TimeSeriesDataTransformation.Drawdown;
-        
 
-        time_Series.Add()
+
+        time_Series.Add();
     }
 }
