@@ -9,56 +9,26 @@ namespace DeepSigma.DataSeries.DataModels;
 /// <param name="Quantity">The quantity of the asset that was traded.</param>
 /// <param name="IsRolled">Indicates whether data has been rolled.</param>
 /// <param name="IsSyntheticData">Indicates whether the data is synthetic or real.</param>
-public record class TradeObservation(decimal Price, decimal Quantity, bool IsRolled = false, bool IsSyntheticData = false) : IDataModel<TradeObservation>
+public record class TradeObservation(decimal Price, decimal Quantity, bool IsRolled = false, bool IsSyntheticData = false) 
+    : DataModelAbstract<TradeObservation>, IDataModel<TradeObservation>
 {
     /// <inheritdoc/>
-    public TradeObservation Scale(decimal scalar)
+    public sealed override bool IsAboutToDivideByZero(TradeObservation Item)
+    {
+        return Item.Price == 0m || Item.Quantity == 0m;
+    }
+
+    /// <inheritdoc/>
+    public sealed override TradeObservation Scale(decimal scalar)
     {
         return new TradeObservation(Price * scalar, Quantity * scalar, IsRolled, IsSyntheticData);
     }
 
     /// <inheritdoc/>
-    public (TradeObservation? result, Exception? error) Add(TradeObservation Item)
+    private protected sealed override TradeObservation ApplyFunction(TradeObservation Item, Func<decimal, decimal, decimal> operation)
     {
-        return ComputeWithError(Item, (a, b) => a + b);
-    }
-
-    /// <inheritdoc/>
-    public (TradeObservation? result, Exception? error) Subtract(TradeObservation Item)
-    {
-        return ComputeWithError(Item, (a, b) => a - b);
-    }
-
-    /// <inheritdoc/>
-    public (TradeObservation? result, Exception? error) Multiply(TradeObservation Item)
-    {
-        return ComputeWithError(Item, (a, b) => a * b);
-    }
-
-    /// <inheritdoc/>
-    public (TradeObservation? result, Exception? error) Divide(TradeObservation Item)
-    {
-        if (Item.Price == 0 || Item.Quantity == 0) return (null, new Exception("Cannot divide by zero"));
-        return ComputeWithError(Item, (a, b) => a / b);
-    }
-
-    private (TradeObservation? result, Exception? error) ComputeWithError(TradeObservation item, Func<decimal, decimal, decimal> operation)
-    {
-        try
-        {
-            TradeObservation result = ComputeNew(item, operation);
-            return (result, null);
-        }
-        catch (Exception ex)
-        {
-            return (null, ex);
-        }
-    }
-
-    private TradeObservation ComputeNew(TradeObservation Item2, Func<decimal, decimal, decimal> operation)
-    {
-        decimal priceResult = operation(Price, Item2.Price);
-        decimal quantityResult = operation(Quantity, Item2.Quantity);
-        return new TradeObservation(priceResult, quantityResult, IsRolled || Item2.IsRolled, IsSyntheticData || Item2.IsSyntheticData);
+        decimal priceResult = operation(Price, Item.Price);
+        decimal quantityResult = operation(Quantity, Item.Quantity);
+        return new TradeObservation(priceResult, quantityResult, IsRolled || Item.IsRolled, IsSyntheticData || Item.IsSyntheticData);
     }
 }

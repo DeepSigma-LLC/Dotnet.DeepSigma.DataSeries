@@ -2,7 +2,6 @@
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General.Enums;
-using OneOf.Types;
 using System.Numerics;
 
 namespace DeepSigma.DataSeries.Utilities;
@@ -49,7 +48,8 @@ public static class SeriesUtilities
     /// <param name="data"></param>
     /// <param name="scalar"></param>
     /// <returns></returns>
-    public static ICollection<KeyValuePair<TKeyDataType, decimal>> GetScaledSeries<TKeyDataType>(ICollection<KeyValuePair<TKeyDataType, decimal>> data, decimal scalar) where TKeyDataType : IComparable<TKeyDataType>
+    public static ICollection<KeyValuePair<TKeyDataType, decimal>> GetScaledSeries<TKeyDataType>(ICollection<KeyValuePair<TKeyDataType, decimal>> data, decimal scalar) 
+        where TKeyDataType : IComparable<TKeyDataType>
     {
         if (scalar == 1) return data;
 

@@ -1,7 +1,4 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
-
 
 namespace DeepSigma.DataSeries.DataModels;
 
@@ -14,7 +11,8 @@ namespace DeepSigma.DataSeries.DataModels;
 /// <param name="Close">The closing price of the bar at the end of the time period.</param>
 /// <param name="IsRolled">Indicates whether data has been rolled.</param>
 /// <param name="IsSyntheticData">Indicates whether the data is synthetic or real.</param>
-public record class BarObservation(decimal Open, decimal Close, decimal High, decimal Low, bool IsRolled = false, bool IsSyntheticData = false) : IDataModel<BarObservation>
+public record class BarObservation(decimal Open, decimal Close, decimal High, decimal Low, bool IsRolled = false, bool IsSyntheticData = false) 
+    : DataModelAbstract<BarObservation>, IDataModel<BarObservation>
 {
     /// <summary>
     /// Calculates the range of the bar, which is the difference between the high and low prices.
@@ -28,57 +26,25 @@ public record class BarObservation(decimal Open, decimal Close, decimal High, de
     /// </summary>
     public decimal Body => Close - Open;
 
-
     /// <inheritdoc/>
-    public BarObservation Scale(decimal scalar)
+    public sealed override BarObservation Scale(decimal scalar)
     {
-        return new BarObservation(Open * scalar, Close * scalar, High * scalar, Low * scalar,IsRolled, IsSyntheticData);
-    }
-
-    /// <inheritdoc/>
-    public (BarObservation? result, Exception? error) Add(BarObservation Item)
-    {
-        return ComputeWithError(Item, (a, b) => a + b);
+        return new BarObservation(Open * scalar, Close * scalar, High * scalar, Low * scalar, IsRolled, IsSyntheticData);
     }
 
     /// <inheritdoc/>
-    public (BarObservation? result, Exception? error) Subtract(BarObservation Item)
-    {
-        return ComputeWithError(Item, (a, b) => a - b);
-    }
-
-    /// <inheritdoc/>
-    public (BarObservation? result, Exception? error) Multiply(BarObservation Item)
-    {
-        return ComputeWithError(Item, (a, b) => a * b);
-    }
-
-    /// <inheritdoc/>
-    public (BarObservation? result, Exception? error) Divide(BarObservation Item)
-    {
-        if (Item.Open == 0 || Item.Close == 0 || Item.High == 0 || Item.Low == 0) return (null, new Exception("Cannot divide by zero"));
-        return ComputeWithError(Item, (a, b) => a / b);
-    }
-
-    private (BarObservation? result, Exception? error) ComputeWithError(BarObservation item, Func<decimal, decimal, decimal> operation)
-    {
-        try
-        {
-            BarObservation result = ComputeNew(item, operation);
-            return (result, null);
-        }
-        catch (Exception ex)
-        {
-            return (null, ex);
-        }
-    }
-
-    private BarObservation ComputeNew(BarObservation Item2, Func<decimal, decimal, decimal> operation)
+    private protected sealed override BarObservation ApplyFunction(BarObservation Item2, Func<decimal, decimal, decimal> operation)
     {
         decimal openResult = operation(Open, Item2.Open);
         decimal closeResult = operation(Close, Item2.Close);
         decimal highResult = operation(High, Item2.High);
         decimal lowResult = operation(Low, Item2.Low);
         return new BarObservation(openResult, closeResult, highResult, lowResult, IsRolled || Item2.IsRolled, IsSyntheticData || Item2.IsSyntheticData);
+    }
+
+    /// <inheritdoc/>
+    public sealed override bool IsAboutToDivideByZero(BarObservation Item)
+    {
+        return Item.Open == 0 || Item.Close == 0 || Item.High == 0 || Item.Low == 0;
     }
 }
