@@ -9,7 +9,7 @@ namespace DeepSigma.DataSeries.DataSets;
 /// <typeparam name="TValueDataType"></typeparam>
 public class NonFunctionalDataSet<TKeyDataType, TValueDataType> 
     where TKeyDataType : IComparable<TKeyDataType> 
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueDataType : class, IImmutableDataModel<TValueDataType>
 {
     /// <summary>
     /// A list to hold the data, where keys are of type TKey and values are of type TValue.

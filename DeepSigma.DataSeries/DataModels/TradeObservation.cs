@@ -1,4 +1,5 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
+using System.Numerics;
 
 namespace DeepSigma.DataSeries.DataModels;
 
@@ -10,7 +11,7 @@ namespace DeepSigma.DataSeries.DataModels;
 /// <param name="IsRolled">Indicates whether data has been rolled.</param>
 /// <param name="IsSyntheticData">Indicates whether the data is synthetic or real.</param>
 public record class TradeObservation(decimal Price, decimal Quantity, bool IsRolled = false, bool IsSyntheticData = false) 
-    : DataModelAbstract<TradeObservation>, IDataModel<TradeObservation>
+    : ImmutableDataModelAbstract<TradeObservation>, IImmutableDataModel<TradeObservation>
 {
     /// <inheritdoc/>
     public sealed override bool IsAboutToDivideByZero(TradeObservation Item)
@@ -25,7 +26,7 @@ public record class TradeObservation(decimal Price, decimal Quantity, bool IsRol
     }
 
     /// <inheritdoc/>
-    private protected sealed override TradeObservation ApplyFunction(TradeObservation Item, Func<decimal, decimal, decimal> operation)
+    protected sealed override TradeObservation ApplyFunction(TradeObservation Item, Func<decimal, decimal, decimal> operation)
     {
         decimal priceResult = operation(Price, Item.Price);
         decimal quantityResult = operation(Quantity, Item.Quantity);

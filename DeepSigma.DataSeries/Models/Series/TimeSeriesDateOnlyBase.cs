@@ -9,7 +9,7 @@ namespace DeepSigma.DataSeries.Models.BaseSeries;
 /// <typeparam name="TValueDataType"></typeparam>
 public class TimeSeriesDateOnlyBase<TValueDataType> :
     FunctionalSeriesBase<DateOnly, TValueDataType, TimeSeriesTransformation>
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueDataType : class, IImmutableDataModel<TValueDataType>
 {
     /// <inheritdoc cref="TimeSeriesDateOnlyBase{TValueDataType}"/>
     public TimeSeriesDateOnlyBase(SortedDictionary<DateOnly, TValueDataType> data) : base(data) { }

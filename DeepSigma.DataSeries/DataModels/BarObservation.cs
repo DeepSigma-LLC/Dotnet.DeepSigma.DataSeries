@@ -12,7 +12,7 @@ namespace DeepSigma.DataSeries.DataModels;
 /// <param name="IsRolled">Indicates whether data has been rolled.</param>
 /// <param name="IsSyntheticData">Indicates whether the data is synthetic or real.</param>
 public record class BarObservation(decimal Open, decimal Close, decimal High, decimal Low, bool IsRolled = false, bool IsSyntheticData = false) 
-    : DataModelAbstract<BarObservation>, IDataModel<BarObservation>
+    : ImmutableDataModelAbstract<BarObservation>, IImmutableDataModel<BarObservation>
 {
     /// <summary>
     /// Calculates the range of the bar, which is the difference between the high and low prices.
@@ -33,7 +33,7 @@ public record class BarObservation(decimal Open, decimal Close, decimal High, de
     }
 
     /// <inheritdoc/>
-    private protected sealed override BarObservation ApplyFunction(BarObservation Item2, Func<decimal, decimal, decimal> operation)
+    protected sealed override BarObservation ApplyFunction(BarObservation Item2, Func<decimal, decimal, decimal> operation)
     {
         decimal openResult = operation(Open, Item2.Open);
         decimal closeResult = operation(Close, Item2.Close);

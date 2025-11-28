@@ -13,7 +13,7 @@ public class CategoricalSeries<TValueDataType> :
         KeyValuePair<string, TValueDataType>, 
         SeriesTransformation, 
         FunctionalSeriesCollection<string, TValueDataType, SeriesTransformation>> 
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueDataType : class, IImmutableDataModel<TValueDataType>
 {
 
     /// <inheritdoc cref="CategoricalSeries{TValueDataType}"/>
@@ -25,7 +25,6 @@ public class CategoricalSeries<TValueDataType> :
     public override ICollection<KeyValuePair<string, TValueDataType>> GetTransformedSeriesData()
     {
         throw new NotImplementedException("Transformation logic is not implemented for DataSeries.");
-        return Data;
     }
 
 }

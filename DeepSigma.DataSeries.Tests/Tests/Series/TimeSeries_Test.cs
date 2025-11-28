@@ -75,9 +75,8 @@ public class TimeSeries_Test
             SeriesName = "Test Series"
         };
         seriesBase.Transformation.Scalar = 1;
+        seriesBase.Transformation.DaySelectionTypeForLag = General.Enums.DaySelectionType.AnyDay;   
         seriesBase.Transformation.DataTransformation = Enums.TimeSeriesDataTransformation.Drawdown;
 
-
-        time_Series.Add();
     }
 }

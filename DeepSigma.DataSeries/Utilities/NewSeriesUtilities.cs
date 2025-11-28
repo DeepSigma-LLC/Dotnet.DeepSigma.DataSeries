@@ -19,7 +19,7 @@ internal class NewSeriesUtilities
     /// <returns></returns>
     internal static ICollection<(T, V)> GetTransformedSeriesData<T, V>(ICollection<(T, V)> Data, SeriesTransformation transformation)
         where T : IComparable<T>
-        where V : class, IDataModel<V>
+        where V : class, IImmutableDataModel<V>
     {
         return GetScaledSeries(Data, transformation.Scalar);
     }
@@ -33,7 +33,7 @@ internal class NewSeriesUtilities
     /// <returns></returns>
     internal static ICollection<(T, V)> GetScaledSeries<T, V>(ICollection<(T, V)> data, decimal scalar)
         where T : IComparable<T>
-        where V : class, IDataModel<V>
+        where V : class, IImmutableDataModel<V>
     {
         if (scalar == 1) return data;
 
@@ -53,7 +53,7 @@ internal class NewSeriesUtilities
     /// <returns></returns>
     internal static ICollection<KeyValuePair<TKeyDataType, TValueDataType>> GetScaledSeries<TKeyDataType, TValueDataType>(ICollection<KeyValuePair<TKeyDataType, TValueDataType>> data, decimal scalar)
         where TKeyDataType : IComparable<TKeyDataType>
-        where TValueDataType : class, IDataModel<TValueDataType>
+        where TValueDataType : class, IImmutableDataModel<TValueDataType>
     {
         if (scalar == 1) return data;
 

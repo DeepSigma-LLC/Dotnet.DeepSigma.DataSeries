@@ -9,7 +9,7 @@ namespace DeepSigma.DataSeries.Models.BaseSeries;
 /// <typeparam name="TValueDataType"></typeparam>
 public class CategoricalSeriesBase<TValueDataType> 
     : FunctionalSeriesBase<string, TValueDataType, SeriesTransformation>
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueDataType : class, IImmutableDataModel<TValueDataType>
 {
 
     /// <inheritdoc cref="CategoricalSeriesBase{TValueDataType}"/>

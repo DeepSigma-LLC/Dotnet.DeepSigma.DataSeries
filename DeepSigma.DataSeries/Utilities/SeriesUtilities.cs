@@ -71,12 +71,12 @@ public static class SeriesUtilities
     /// <param name="mathematicalOperation"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public static ICollection<KeyValuePair<K, T>> GetCombinedSeries<K, T>(SortedDictionary<K, T> Data, SortedDictionary<K, T> Data2, MathematicalOperation mathematicalOperation) 
-        where K : IComparable<K> 
-        where T : class, IDataModel<T>
-    {
-        return GetCombinedSeriesFrom2SeriesWithMethodApplied<K, T>(Data, Data2, mathematicalOperation);
-    }
+    //public static ICollection<KeyValuePair<K, T>> GetCombinedSeries<K, T>(SortedDictionary<K, T> Data, SortedDictionary<K, T> Data2, MathematicalOperation mathematicalOperation) 
+    //    where K : IComparable<K> 
+    //    where T : class, IImmutableDataModel<T>
+    //{
+    //    return GetCombinedSeriesFrom2SeriesWithMethodApplied<K, T>(Data, Data2, mathematicalOperation);
+    //}
 
     /// <summary>
     /// Get one series by mathmatically combining two series.
@@ -191,7 +191,7 @@ public static class SeriesUtilities
     /// <returns></returns>
     private static ICollection<(K, T)> GetCombinedSeriesFrom2SeriesWithMethodApplied<K, T>(ICollection<(K, T)> Data, ICollection<(K, T)> Data2, MathematicalOperation mathematicalOperation) 
         where K : notnull
-        where T : class, IDataModel<T>
+        where T : class, IImmutableDataModel<T>
     {
         ICollection<(K, T)> results = new List<(K, T)>(Data.Count);
         int index = 0;

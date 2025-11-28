@@ -1,4 +1,6 @@
 ﻿using Xunit;
+using DeepSigma.DataSeries.Tests.Model;
+using DeepSigma.DataSeries.Models.BaseSeries;
 using DeepSigma.DataSeries.Series;
 
 namespace DeepSigma.DataSeries.Tests.Tests.Series;
@@ -9,14 +11,13 @@ public class CategoricalSeries_Test
     public void CategoricalSeries_Initialization_Test()
     {
         // Arrange & Act
-        CategoricalSeries<int> categoricalSeries = new();
+        SortedDictionary<string, Assets> Categories = [];
+        Categories.Add("Assets", new(0, "Test", 1));
+        Categories.Add("Liabilities", new(0, "Test", 1));
+        CategoricalSeriesBase<Assets> data = new(Categories);
 
-        SortedDictionary<string, int> Categories = [];
-        Categories.Add("Assets", 10);
-        Categories.Add("Liabilities", 20);
-
-        categoricalSeries.Add(, General.Enums.MathematicalOperation.Add);
-
+        CategoricalSeries<Assets> categoricalSeries = new();
+        categoricalSeries.Add(data,General.Enums.MathematicalOperation.Add);
 
         // Assert
         Assert.NotNull(categoricalSeries);

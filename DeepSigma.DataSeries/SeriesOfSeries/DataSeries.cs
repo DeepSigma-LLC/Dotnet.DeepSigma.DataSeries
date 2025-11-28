@@ -20,7 +20,7 @@ public class DataSeries<TKeyDataType, TValueDataType> :
         SeriesTransformation, 
         FunctionalSeriesCollection<TKeyDataType, TValueDataType, SeriesTransformation>> 
     where TKeyDataType : INumber<TKeyDataType>
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueDataType : class, IImmutableDataModel<TValueDataType>
 {
     /// <inheritdoc cref="DataSeries{TKeyDataType, TValueDataType}"/>
     public DataSeries() : base(){}
@@ -30,7 +30,6 @@ public class DataSeries<TKeyDataType, TValueDataType> :
     public override ICollection<KeyValuePair<TKeyDataType, TValueDataType>> GetTransformedSeriesData()
     {
         throw new NotImplementedException("Transformation logic is not implemented for DataSeries.");
-        return Data;
     }
 
     /// <summary>
@@ -39,9 +38,8 @@ public class DataSeries<TKeyDataType, TValueDataType> :
     /// <typeparam name="IModel"></typeparam>
     /// <param name="data">Data set containing original data.</param>
     /// <param name="selected_property">Seleted property from data model.</param>
-    public void LoadFromDataModel<IModel>(FunctionalDataSet<TKeyDataType, IModel> data, Expression<Func<IModel, TValueDataType>> selected_property) where IModel : IDataModel
+    public void LoadFromDataModel<IModel>(FunctionalDataSet<TKeyDataType, IModel> data, Expression<Func<IModel, TValueDataType>> selected_property) where IModel : class, IImmutableDataModel<IModel>
     {
         throw new NotImplementedException();
-        Data = DataSetUtilities.GetSingleSeries<TKeyDataType, TValueDataType, IModel>(data.GetAllData(), selected_property);
     }
 }

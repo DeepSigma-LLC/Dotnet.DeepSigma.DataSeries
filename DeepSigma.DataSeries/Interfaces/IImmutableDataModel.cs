@@ -7,12 +7,12 @@ namespace DeepSigma.DataSeries.Interfaces;
 /// <summary>
 /// Represents a base interface for data models in the data series.
 /// </summary>
-public interface IDataModel<T> where T : class
+public interface IImmutableDataModel<T> where T : class
 {
     /// <summary>
     /// Signifies if the data point has been rolled.
     /// </summary>
-    public bool IsRolled {  get; init; }
+    public bool IsRolled { get; init; }
 
     /// <summary>
     /// Signifies if the data point is sythetic (i.e., data imputation / interpolation)
@@ -20,7 +20,7 @@ public interface IDataModel<T> where T : class
     public bool IsSyntheticData { get; init; }
 
     /// <summary>
-    /// Scales the data model by a given scalar value.
+    /// Scales the data model by a given scalar value and returns a new, scaled instance.
     /// </summary>
     /// <param name="scalar"></param>
     /// <returns></returns>

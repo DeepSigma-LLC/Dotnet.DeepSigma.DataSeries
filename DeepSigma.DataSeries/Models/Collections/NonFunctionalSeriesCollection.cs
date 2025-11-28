@@ -14,7 +14,7 @@ public class NonFunctionalSeriesCollection<K, V> : AbstractSeriesCollection<Tupl
     SeriesTransformation>, 
     ISeriesCollection<Tuple<K,V>, SeriesTransformation>
     where K : IComparable<K>
-    where V : class, IDataModel<V>
+    where V : class, IImmutableDataModel<V>
 {
     /// <inheritdoc/>
     public override ICollection<Tuple<K, V>> GetSeriesData()

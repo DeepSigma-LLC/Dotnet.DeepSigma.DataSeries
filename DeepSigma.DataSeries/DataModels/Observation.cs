@@ -1,4 +1,5 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.MutableDataModels;
 
 namespace DeepSigma.DataSeries.DataModels;
 
@@ -9,12 +10,17 @@ namespace DeepSigma.DataSeries.DataModels;
 /// <param name="IsRolled">Signifies if the data point has been rolled.</param>
 /// <param name="IsSyntheticData">Signifies if the data point is sythetic (i.e., data imputation / interpolation)</param>
 public record class Observation(decimal Value, bool IsRolled = false, bool IsSyntheticData = false) 
-    : DataModelAbstract<Observation>, IDataModel<Observation>
+    : ImmutableDataModelAbstract<Observation>, IImmutableDataModel<Observation>
 {
     /// <inheritdoc/>
     public sealed override bool IsAboutToDivideByZero(Observation Item)
     {
         return Item.Value == 0m;
+    }
+
+    public MutableObservation GetMutableObservation()
+    {
+        return new MutableObservation(this); 
     }
 
     /// <inheritdoc/>
@@ -23,7 +29,8 @@ public record class Observation(decimal Value, bool IsRolled = false, bool IsSyn
         return new Observation(Value * scalar, IsRolled, IsSyntheticData);
     }
 
-    private protected override Observation ApplyFunction(Observation Item, Func<decimal, decimal, decimal> operation)
+    /// <inheritdoc/>
+    protected override Observation ApplyFunction(Observation Item, Func<decimal, decimal, decimal> operation)
     {
         decimal valueResult = operation(Value, Item.Value);
         return new Observation(valueResult, IsRolled || Item.IsRolled, IsSyntheticData || Item.IsSyntheticData);

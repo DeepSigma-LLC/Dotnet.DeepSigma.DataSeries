@@ -16,7 +16,7 @@ public class FunctionalSeriesCollection<K, V, TTransformation> : AbstractSeriesC
     ISeriesCollection<KeyValuePair<K, V>, TTransformation>
     where TTransformation : SeriesTransformation, new()
     where K : IComparable<K>
-    where V : class, IDataModel<V>
+    where V : class, IImmutableDataModel<V>
 {
     /// <inheritdoc/>
     public override ICollection<KeyValuePair<K, V>> GetSeriesData()

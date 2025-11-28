@@ -17,7 +17,7 @@ public class TimeSeries<TValueDataType> :
         KeyValuePair<DateTime, TValueDataType>, 
         TimeSeriesTransformation, 
         FunctionalSeriesCollection<DateTime, TValueDataType, TimeSeriesTransformation>> 
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueDataType : class, IImmutableDataModel<TValueDataType>
 {
     /// <summary>
     /// Purpose of the time series.
@@ -32,7 +32,6 @@ public class TimeSeries<TValueDataType> :
     public override ICollection<KeyValuePair<DateTime, TValueDataType>> GetTransformedSeriesData()
     {
         throw new NotImplementedException("Transformation logic is not implemented for TimeSeries.");
-        return Data;
     }
 
     /// <summary>
@@ -41,10 +40,10 @@ public class TimeSeries<TValueDataType> :
     /// <typeparam name="IModel"></typeparam>
     /// <param name="data">Data set containing original data.</param>
     /// <param name="selected_property">Seleted property from data model.</param>
-    public void LoadFromDataModel<IModel>(FunctionalDataSet<DateTime, IModel> data, Expression<Func<IModel, TValueDataType>> selected_property) where IModel : IDataModel
+    public void LoadFromDataModel<IModel>(FunctionalDataSet<DateTime, IModel> data, Expression<Func<IModel, TValueDataType>> selected_property) where IModel : class, IImmutableDataModel<IModel>
     {
         throw new NotImplementedException();
-        Data = DataSetUtilities.GetSingleSeries<DateTime, TValueDataType, IModel>(data.GetAllData(), selected_property);
+        //Data = DataSetUtilities.GetSingleSeries<DateTime, TValueDataType, IModel>(data.GetAllData(), selected_property);
     }
 
 }

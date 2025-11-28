@@ -12,7 +12,7 @@ namespace DeepSigma.DataSeries.Models.BaseSeries;
 public abstract class FunctionalSeriesBase<TKeyDataType, TValueDataType, TTransformation> : 
     AbstractSeriesBase<KeyValuePair<TKeyDataType, TValueDataType>, TTransformation>
     where TKeyDataType : notnull, IComparable<TKeyDataType>
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueDataType : class, IImmutableDataModel<TValueDataType>
     where TTransformation : SeriesTransformation, new()
 {
     /// <inheritdoc cref="FunctionalSeriesBase{TKeyDataType, TValueDataType, TTransformation}"/>

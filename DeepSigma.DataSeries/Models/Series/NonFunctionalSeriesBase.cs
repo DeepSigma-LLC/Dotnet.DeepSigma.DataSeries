@@ -15,7 +15,7 @@ namespace DeepSigma.DataSeries.Models.BaseSeries;
 public class NonFunctionalSeriesBase<TKeyDataType, TValueDataType> :
     AbstractSeriesBase<Tuple<TKeyDataType, TValueDataType>, SeriesTransformation>
     where TKeyDataType : notnull, IComparable<TKeyDataType>
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueDataType : class, IImmutableDataModel<TValueDataType>
 {
     public override ICollection<Tuple<TKeyDataType, TValueDataType>> GetSeriesData()
     {

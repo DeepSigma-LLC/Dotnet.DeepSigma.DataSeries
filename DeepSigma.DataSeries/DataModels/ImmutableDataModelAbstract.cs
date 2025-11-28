@@ -7,9 +7,9 @@ namespace DeepSigma.DataSeries.DataModels;
 /// Abstract base class for data models implementing IDataModel interface.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public abstract record class DataModelAbstract<T> 
-    : IDataModel<T>
-    where T : class, IDataModel<T>
+public abstract record class ImmutableDataModelAbstract<T> 
+    : IImmutableDataModel<T>
+    where T : class, IImmutableDataModel<T>
 {
     /// <inheritdoc/>
     public abstract bool IsRolled { get; init; }
@@ -56,7 +56,7 @@ public abstract record class DataModelAbstract<T>
     /// <param name="Item"></param>
     /// <param name="operation"></param>
     /// <returns></returns>
-    private protected abstract T ApplyFunction(T Item, Func<decimal, decimal, decimal> operation);
+    protected abstract T ApplyFunction(T Item, Func<decimal, decimal, decimal> operation);
 
     /// <inheritdoc/>
     public (T? result, Exception? error) Add(T Item)
