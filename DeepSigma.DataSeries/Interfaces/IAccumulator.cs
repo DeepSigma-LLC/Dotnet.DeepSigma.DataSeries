@@ -6,6 +6,10 @@ namespace DeepSigma.DataSeries.Interfaces;
 /// <summary>
 /// Interface for accumulators that perform in-place mathematical operations on data models of type T.
 /// </summary>
+/// /// <remarks>
+/// Accumulators ensure that operations are efficient and do not require creating new instances for each operation which is crucial for high-performance data processing while handling large datasets or real-time data streams.
+/// This is especially important when working with record types that ensure immutability.
+/// </remarks>
 /// <typeparam name="T"></typeparam>
 public interface IAccumulator<T>
     where T : class

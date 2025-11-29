@@ -6,6 +6,10 @@ namespace DeepSigma.DataSeries.Accumulators;
 /// <summary>
 /// Accumulator for the BidAskSpreadObservation data model that performs in-place mathematical operations.
 /// </summary>
+/// <remarks>
+/// Accumulators are mutable objects to optimize performance during aggregation operations over large datasets.
+/// This is especially important when working with record types that ensure immutability.
+/// </remarks>
 /// <param name="BidAskSpreadObservation"></param>
 public class BidAskSpreadObservationAccumulator(BidAskSpreadObservation BidAskSpreadObservation)
     : AbstractAccumulator<BidAskSpreadObservation>(BidAskSpreadObservation), IAccumulator<BidAskSpreadObservation>

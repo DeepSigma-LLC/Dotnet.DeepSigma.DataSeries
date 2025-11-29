@@ -7,6 +7,10 @@ namespace DeepSigma.DataSeries.Accumulators;
 /// Accumulator for the TradeObservation data model that performs in-place mathematical operations.
 /// </summary>
 /// <param name="TradeObservation"></param>
+/// <remarks>
+/// Accumulators are mutable objects to optimize performance during aggregation operations over large datasets.
+/// This is especially important when working with record types that ensure immutability.
+/// </remarks>
 public class TradeObservationAccumulator(TradeObservation TradeObservation) 
     : AbstractAccumulator<TradeObservation>(TradeObservation), IAccumulator<TradeObservation>
 {

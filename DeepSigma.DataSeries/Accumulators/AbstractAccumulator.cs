@@ -4,12 +4,16 @@ using DeepSigma.DataSeries.Interfaces;
 namespace DeepSigma.DataSeries.Accumulators;
 
 /// <summary>
-/// Abstract base class for accumulators that perform in-place mathematical operations on Observation data models.
+/// Abstract base class for accumulators that perform in-place mathematical operations on data models.
+/// Accumulators allow in-place addition, subtraction, multiplication, division, and scaling of records of type T.
 /// </summary>
+/// <remarks>
+/// Accumulators ensure that operations are efficient and do not require creating new instances for each operation which is crucial for high-performance data processing while handling large datasets or real-time data streams.
+/// This is especially important when working with record types that ensure immutability.
+/// </remarks>
 public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     where T : class
 {
-
     /// <summary>
     /// The original record object.
     /// </summary>
