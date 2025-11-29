@@ -1,12 +1,12 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 
-namespace DeepSigma.DataSeries.DataModels.Mutable;
+namespace DeepSigma.DataSeries.DataModels;
 
 /// <summary>
 /// Represents a mutable trade observation with price and quantity.
 /// </summary>
-public record class MutableTradeObservation
-    : MutableDataModelAbstract<MutableTradeObservation>, IMutableDataModel<MutableTradeObservation>
+public record class TradeObservation
+    : DataModelAbstract<TradeObservation>, IDataModel<TradeObservation>
 {
     /// <summary>
     /// Gets or sets the price of the trade observation.
@@ -18,14 +18,14 @@ public record class MutableTradeObservation
     /// </summary>
     public decimal Quantity { get; set; }
 
-    /// <inheritdoc cref="MutableTradeObservation"/>
-    public MutableTradeObservation()
+    /// <inheritdoc cref="TradeObservation"/>
+    public TradeObservation()
     {
         
     }
 
-    /// <inheritdoc cref="MutableTradeObservation"/>
-    public MutableTradeObservation(decimal Price, decimal Quantity, bool IsRolled = false, bool IsSyntheticData = false)
+    /// <inheritdoc cref="TradeObservation"/>
+    public TradeObservation(decimal Price, decimal Quantity, bool IsRolled = false, bool IsSyntheticData = false)
     {
         this.Price = Price;
         this.Quantity = Quantity;
@@ -34,7 +34,7 @@ public record class MutableTradeObservation
     }
 
     /// <inheritdoc/>
-    public override bool IsAboutToDivideByZero(MutableTradeObservation Item)
+    public override bool IsAboutToDivideByZero(TradeObservation Item)
     {
         return Item.Price == 0m || Item.Quantity == 0m;
     }
@@ -47,7 +47,7 @@ public record class MutableTradeObservation
     }
 
     /// <inheritdoc/>
-    protected override void ApplyFunction(MutableTradeObservation Item, Func<decimal, decimal, decimal> operation)
+    protected override void ApplyFunction(TradeObservation Item, Func<decimal, decimal, decimal> operation)
     {
         throw new NotImplementedException();
     }

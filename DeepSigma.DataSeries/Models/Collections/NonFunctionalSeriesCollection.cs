@@ -13,7 +13,7 @@ public class NonFunctionalSeriesCollection<K, V> : AbstractSeriesCollection<Tupl
     SeriesTransformation>, 
     ISeriesCollection<Tuple<K,V>, SeriesTransformation>
     where K : IComparable<K>
-    where V : class, IMutableDataModel<V>
+    where V : class, IDataModel<V>
 {
     /// <inheritdoc cref="NonFunctionalSeriesCollection{K, V}"/>
     public NonFunctionalSeriesCollection()

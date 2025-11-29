@@ -22,7 +22,7 @@ public class TimeSeriesDateOnly<TValueDataType> :
         KeyValuePair<DateOnly, TValueDataType>, 
         TimeSeriesTransformation, 
         FunctionalSeriesCollection<DateOnly, TValueDataType, TimeSeriesTransformation>> 
-    where TValueDataType : class, IMutableDataModel<TValueDataType>
+    where TValueDataType : class, IDataModel<TValueDataType>
 {
     /// <summary>
     /// Purpose of the time series.
@@ -35,7 +35,7 @@ public class TimeSeriesDateOnly<TValueDataType> :
     }
 
     /// <inheritdoc/>
-    public override ICollection<KeyValuePair<DateOnly, TValueDataType>> GetTransformedSeriesData()
+    public sealed override ICollection<KeyValuePair<DateOnly, TValueDataType>> GetSeriesDataTransformed()
     {
         throw new NotImplementedException("Transformation logic is not implemented for TimeSeries.");
     }
@@ -46,7 +46,7 @@ public class TimeSeriesDateOnly<TValueDataType> :
     /// <typeparam name="IModel"></typeparam>
     /// <param name="data">Data set containing original data.</param>
     /// <param name="selected_property">Seleted property from data model.</param>
-    public void LoadFromDataModel<IModel>(FunctionalDataSet<DateOnly, IModel> data, Expression<Func<IModel, TValueDataType>> selected_property) where IModel : class, IImmutableDataModel<IModel>
+    public void LoadFromDataModel<IModel>(FunctionalDataSet<DateOnly, IModel> data, Expression<Func<IModel, TValueDataType>> selected_property) where IModel : class, IDataModel<IModel>
     {
         throw new NotImplementedException();
         //Data = DataSetUtilities.GetSingleSeries<DateOnly, TValueDataType, IModel>(data.GetAllData(), selected_property);

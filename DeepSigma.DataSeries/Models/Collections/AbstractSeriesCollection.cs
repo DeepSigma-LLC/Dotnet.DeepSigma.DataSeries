@@ -118,9 +118,8 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation>
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public ICollection<TDataType> GetTransformedSeriesData()
+    public ICollection<TDataType> GetSeriesDataTransformed()
     {
         throw new NotImplementedException("Transformation logic is not implemented for SeriesCollection.");
-        return GetSeriesData();
     }
 }

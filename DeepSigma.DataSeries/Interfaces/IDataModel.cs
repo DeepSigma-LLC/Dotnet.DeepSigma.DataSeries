@@ -7,7 +7,7 @@ namespace DeepSigma.DataSeries.Interfaces;
 /// Interface for mutable data models that support various mathematical operations.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IMutableDataModel<T>
+public interface IDataModel<T>
     where T : class
 {
     /// <summary>

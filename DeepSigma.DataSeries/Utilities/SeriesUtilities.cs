@@ -219,7 +219,7 @@ public static class SeriesUtilities
     /// <returns></returns>
     public static void ScaleSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> Data, decimal Scalar)
         where TKey : notnull, IComparable<TKey>
-        where TDataModel : class, IMutableDataModel<TDataModel>
+        where TDataModel : class, IDataModel<TDataModel>
     {
         if (Scalar == 1) return;
         Data.ForEach(x => x.Value.Scale(Scalar));
@@ -231,7 +231,7 @@ public static class SeriesUtilities
     /// <returns></returns>
     public static void CombinedSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> TargetSeries, SortedDictionary<TKey, TDataModel> OtherSeries, MathematicalOperation mathematicalOperation)
         where TKey : notnull, IComparable<TKey>
-        where TDataModel : class, IMutableDataModel<TDataModel>
+        where TDataModel : class, IDataModel<TDataModel>
     {
         if (TargetSeries == null) return;
 

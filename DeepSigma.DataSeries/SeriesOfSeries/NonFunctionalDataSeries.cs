@@ -20,7 +20,7 @@ public class NonFunctionalDataSeries<XDataType, YDataType> :
         SeriesTransformation,
         NonFunctionalSeriesCollection<XDataType, YDataType>> 
     where XDataType : IComparable<XDataType> 
-    where YDataType : class, IMutableDataModel<YDataType>
+    where YDataType : class, IDataModel<YDataType>
 {
     /// <inheritdoc cref="NonFunctionalDataSeries{XDataType, YDataType}"/>
     public NonFunctionalDataSeries() : base()
@@ -29,7 +29,7 @@ public class NonFunctionalDataSeries<XDataType, YDataType> :
     }
 
     /// <inheritdoc/>
-    public override ICollection<Tuple<XDataType, YDataType>> GetTransformedSeriesData()
+    public override ICollection<Tuple<XDataType, YDataType>> GetSeriesDataTransformed()
     {
         throw new NotImplementedException("Transformation logic is not implemented for NonFunctionalSeries.");
     }

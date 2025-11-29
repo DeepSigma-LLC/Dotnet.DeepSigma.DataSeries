@@ -1,12 +1,12 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 
-namespace DeepSigma.DataSeries.DataModels.Mutable;
+namespace DeepSigma.DataSeries.DataModels;
 
 /// <summary>
 /// Represents a mutable bar observation in a financial market with volume information.
 /// </summary>
-public record class MutableBarObservationWithVolume
-       : MutableDataModelAbstract<MutableBarObservationWithVolume>, IMutableDataModel<MutableBarObservationWithVolume>
+public record class BarObservationWithVolume
+       : DataModelAbstract<BarObservationWithVolume>, IDataModel<BarObservationWithVolume>
 {
     /// <summary>
     /// The opening price of the bar.
@@ -34,7 +34,7 @@ public record class MutableBarObservationWithVolume
     public decimal Volume { get; set; }
 
     /// <inheritdoc/>
-    public override bool IsAboutToDivideByZero(MutableBarObservationWithVolume Item)
+    public override bool IsAboutToDivideByZero(BarObservationWithVolume Item)
     {
         return Item.Open == 0 || Item.Close == 0 || Item.High == 0 || Item.Low == 0;
     }
@@ -49,7 +49,7 @@ public record class MutableBarObservationWithVolume
     }
 
     /// <inheritdoc/>
-    protected override void ApplyFunction(MutableBarObservationWithVolume Item, Func<decimal, decimal, decimal> operation)
+    protected override void ApplyFunction(BarObservationWithVolume Item, Func<decimal, decimal, decimal> operation)
     {
         this.Open = operation(this.Open, Item.Open);
         this.Close = operation(this.Close, Item.Close);

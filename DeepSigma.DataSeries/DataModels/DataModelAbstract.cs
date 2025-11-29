@@ -1,15 +1,15 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.General.Enums;
 
-namespace DeepSigma.DataSeries.DataModels.Mutable;
+namespace DeepSigma.DataSeries.DataModels;
 
 /// <summary>
 /// Abstract base class for data models implementing IDataModel interface.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public abstract record class MutableDataModelAbstract<T> 
-    : IMutableDataModel<T>
-    where T : class, IMutableDataModel<T>
+public abstract record class DataModelAbstract<T> 
+    : IDataModel<T>
+    where T : class, IDataModel<T>
 {
     /// <inheritdoc/>
     public bool IsRolled { get; set; }

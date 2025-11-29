@@ -1,12 +1,12 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 
-namespace DeepSigma.DataSeries.DataModels.Mutable;
+namespace DeepSigma.DataSeries.DataModels;
 
 /// <summary>
 /// Represents a mutable bid-ask spread observation for a financial instrument.
 /// </summary>
-public record class MutableBidAskSpreadObservation
-    : MutableDataModelAbstract<MutableBidAskSpreadObservation>, IMutableDataModel<MutableBidAskSpreadObservation>
+public record class BidAskSpreadObservation
+    : DataModelAbstract<BidAskSpreadObservation>, IDataModel<BidAskSpreadObservation>
 {
     /// <summary>
     /// The bid price.
@@ -29,7 +29,7 @@ public record class MutableBidAskSpreadObservation
     public decimal Mid => (Bid + Ask) / 2;
 
     /// <inheritdoc/>
-    public override bool IsAboutToDivideByZero(MutableBidAskSpreadObservation Item)
+    public override bool IsAboutToDivideByZero(BidAskSpreadObservation Item)
     {
         return Item.Bid == 0 || Item.Ask == 0;
     }
@@ -42,7 +42,7 @@ public record class MutableBidAskSpreadObservation
     }
 
     /// <inheritdoc/>
-    protected override void ApplyFunction(MutableBidAskSpreadObservation Item, Func<decimal, decimal, decimal> operation)
+    protected override void ApplyFunction(BidAskSpreadObservation Item, Func<decimal, decimal, decimal> operation)
     {
         this.Bid = operation(this.Bid, Item.Bid);
         this.Ask = operation(this.Ask, Item.Ask);

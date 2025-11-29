@@ -9,7 +9,8 @@ namespace DeepSigma.DataSeries.Models.BaseSeries;
 /// </summary>
 /// <typeparam name="TCollectionDataType"></typeparam>
 /// <typeparam name="TTransformation"></typeparam>
-public abstract class AbstractSeriesBase<TCollectionDataType, TTransformation> : AbstractSeries<TCollectionDataType, TTransformation>, 
+public abstract class AbstractSeriesBase<TCollectionDataType, TTransformation> 
+    : AbstractSeries<TCollectionDataType, TTransformation>, 
     ISeries<TCollectionDataType, TTransformation>
     where TCollectionDataType : notnull
     where TTransformation : SeriesTransformation, new()
@@ -44,11 +45,13 @@ public abstract class AbstractSeriesBase<TCollectionDataType, TTransformation> :
         return 1;
     }
 
+    /// <inheritdoc/>
     public void Add(TCollectionDataType point)
     {
         Data.Add(point);
     }
 
+    /// <inheritdoc/>
     public void Add(IEnumerable<TCollectionDataType> points)
     {
         foreach (var point in points)

@@ -8,13 +8,14 @@ namespace DeepSigma.DataSeries.Models.BaseSeries;
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
 public class DataSeriesBase<TValueDataType> 
-    : FunctionalSeriesBase<decimal, TValueDataType, SeriesTransformation>
-    where TValueDataType : class, IImmutableDataModel<TValueDataType>
+    : AbstractFunctionalSeriesBase<decimal, TValueDataType, SeriesTransformation>, ISeries<KeyValuePair<decimal, TValueDataType>, SeriesTransformation>
+    where TValueDataType : class, IDataModel<TValueDataType>
 {
     /// <inheritdoc cref="DataSeriesBase{TValueDataType}"/>
     public DataSeriesBase(SortedDictionary<decimal, TValueDataType> data) : base(data) { }
 
-    public override ICollection<KeyValuePair<decimal, TValueDataType>> GetTransformedSeriesData()
+    /// <inheritdoc/>
+    public sealed override ICollection<KeyValuePair<decimal, TValueDataType>> GetSeriesDataTransformed()
     {
         throw new NotImplementedException();
     }

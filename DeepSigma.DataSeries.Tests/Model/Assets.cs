@@ -1,23 +1,36 @@
-﻿using DeepSigma.DataSeries.DataModels.Immutable;
-using DeepSigma.DataSeries.Interfaces;
+﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.DataModels;
 
 namespace DeepSigma.DataSeries.Tests.Model;
 
 
-public record class Assets(int Id, string Name, decimal Value, bool IsRolled = false, bool IsSyntheticData = false) : ImmutableDataModelAbstract<Assets>, IImmutableDataModel<Assets>
+public record class Assets : DataModelAbstract<Assets>, IDataModel<Assets>
 {
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public decimal Value { get; set; }
+
+    public Assets(int Id, string Name, decimal Value, bool IsRolled = false, bool IsSyntheticData = false)
+    {
+        this.Id = Id;
+        this.Name = Name;
+        this.Value = Value;
+        this.IsRolled = IsRolled;
+        this.IsSyntheticData = IsSyntheticData;
+    }
+
     public override bool IsAboutToDivideByZero(Assets Item)
     {
         return Item.Value == 0;
     }
 
-    public override Assets Scale(decimal scalar)
+    public sealed override void Scale(decimal scalar)
     {
-        return new Assets(Id, Name, Value * scalar, IsRolled, IsSyntheticData);
+        Value = Value * scalar;
     }
 
-    protected override Assets ApplyFunction(Assets Item, Func<decimal, decimal, decimal> operation)
+    protected sealed override void ApplyFunction(Assets Item, Func<decimal, decimal, decimal> operation)
     {
-        return new Assets(Id, Name, operation(Value, Item.Value), IsRolled || Item.IsRolled, IsSyntheticData || Item.IsSyntheticData);
+        Value = operation(Value, Item.Value);
     }
 }

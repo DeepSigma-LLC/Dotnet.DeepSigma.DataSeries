@@ -83,7 +83,7 @@ internal static class TimeSeriesTransformUtilities
     /// <returns></returns>
     private static SortedDictionary<DateTime, decimal> GetObservationReturns(SortedDictionary<DateTime, decimal> Data)
     {
-        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        SortedDictionary<DateTime, decimal> results = [];
         decimal priorValue = 0;
         foreach (KeyValuePair<DateTime, decimal> kvp in Data)
         {
@@ -103,7 +103,7 @@ internal static class TimeSeriesTransformUtilities
     /// <returns></returns>
     private static SortedDictionary<DateTime, decimal> GetCumulativeReturns(SortedDictionary<DateTime, decimal> Data)
     {
-        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        SortedDictionary<DateTime, decimal> results = [];
         DateTime minDate = Data.Keys.Min();
         decimal startingValue = Data[minDate];
         foreach (KeyValuePair<DateTime, decimal> kvp in Data)
@@ -124,7 +124,7 @@ internal static class TimeSeriesTransformUtilities
     /// <returns></returns>
     private static SortedDictionary<DateTime, decimal> GetWealth(SortedDictionary<DateTime, decimal> Data)
     {
-        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        SortedDictionary<DateTime, decimal> results = [];
         DateTime minDate = Data.Keys.Min();
         decimal startingValue = Data[minDate];
         decimal wealthValue = 1000;
@@ -146,7 +146,7 @@ internal static class TimeSeriesTransformUtilities
     /// <returns></returns>
     private static SortedDictionary<DateTime, decimal> GetWealthReverse(SortedDictionary<DateTime, decimal> Data)
     {
-        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        SortedDictionary<DateTime, decimal> results = [];
         DateTime maxDate = Data.Keys.Max();
         decimal endingValue = Data[maxDate];
         decimal wealthValue = 1000;
@@ -168,7 +168,7 @@ internal static class TimeSeriesTransformUtilities
     /// <returns></returns>
     private static SortedDictionary<DateTime, decimal> GetDrawdown(SortedDictionary<DateTime, decimal> Data)
     {
-        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        SortedDictionary<DateTime, decimal> results = [];
         decimal maxValue = 0;
         foreach (KeyValuePair<DateTime, decimal> kvp in Data)
         {
@@ -184,7 +184,7 @@ internal static class TimeSeriesTransformUtilities
 
     private static SortedDictionary<DateTime, decimal> GetMovingAverageWindowed(SortedDictionary<DateTime, decimal> Data, int ObservationWindowCount = 20)
     {
-        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        SortedDictionary<DateTime, decimal> results = [];
         DateTime windowStartDateTime = Data.Keys.Min();
 
         int observationIndex = 0;
@@ -213,7 +213,7 @@ internal static class TimeSeriesTransformUtilities
     /// <returns></returns>
     private static SortedDictionary<DateTime, decimal> GetStandardDeviationExpandingWindow(SortedDictionary<DateTime, decimal> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
     {
-        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        SortedDictionary<DateTime, decimal> results = [];
         foreach (KeyValuePair<DateTime, decimal> kvp in Data)
         {
             decimal windowCount = Data.Where(x => x.Key <= kvp.Key).Count();
@@ -239,7 +239,7 @@ internal static class TimeSeriesTransformUtilities
     /// <returns></returns>
     private static SortedDictionary<DateTime, decimal> GetStandardDeviationWindowed(SortedDictionary<DateTime, decimal> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample, int ObservationWindowCount = 20)
     {
-        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        SortedDictionary<DateTime, decimal> results = [];
         DateTime windowStartDateTime = Data.Keys.Min();
 
         int windowCount = ObservationWindowCount;

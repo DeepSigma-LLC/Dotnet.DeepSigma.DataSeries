@@ -9,17 +9,17 @@ namespace DeepSigma.DataSeries.Models.BaseSeries;
 /// <typeparam name="TKeyDataType"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
 /// <typeparam name="TTransformation"></typeparam>
-public abstract class FunctionalSeriesBase<TKeyDataType, TValueDataType, TTransformation> : 
+public abstract class AbstractFunctionalSeriesBase<TKeyDataType, TValueDataType, TTransformation> : 
     AbstractSeriesBase<KeyValuePair<TKeyDataType, TValueDataType>, TTransformation>
     where TKeyDataType : notnull, IComparable<TKeyDataType>
-    where TValueDataType : class, IImmutableDataModel<TValueDataType>
+    where TValueDataType : class, IDataModel<TValueDataType>
     where TTransformation : SeriesTransformation, new()
 {
-    /// <inheritdoc cref="FunctionalSeriesBase{TKeyDataType, TValueDataType, TTransformation}"/>
-    internal FunctionalSeriesBase() : base() { }
+    /// <inheritdoc cref="AbstractFunctionalSeriesBase{TKeyDataType, TValueDataType, TTransformation}"/>
+    internal AbstractFunctionalSeriesBase() : base() { }
 
-    /// <inheritdoc cref="FunctionalSeriesBase{TKeyDataType, TValueDataType, TTransformation}"/>
-    internal FunctionalSeriesBase(SortedDictionary<TKeyDataType, TValueDataType> data) : base(data)
+    /// <inheritdoc cref="AbstractFunctionalSeriesBase{TKeyDataType, TValueDataType, TTransformation}"/>
+    internal AbstractFunctionalSeriesBase(SortedDictionary<TKeyDataType, TValueDataType> data) : base(data)
     {
     }
 

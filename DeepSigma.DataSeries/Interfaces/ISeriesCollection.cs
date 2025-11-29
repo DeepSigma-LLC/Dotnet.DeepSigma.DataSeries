@@ -15,7 +15,7 @@ public interface ISeriesCollection<TDataType, TTransformation>
     IEnumerable<SeriesCollectionPair<TDataType, TTransformation>> GetAllData();
     ICollection<TDataType> GetSeriesData();
     int GetSubSeriesCount();
-    ICollection<TDataType> GetTransformedSeriesData();
+    ICollection<TDataType> GetSeriesDataTransformed();
     void RemoveBySeriesName(string series_name);
     IEnumerable<Z> Select<Z>(Func<SeriesCollectionPair<TDataType, TTransformation>, Z> expression);
     IEnumerable<SeriesCollectionPair<TDataType, TTransformation>> Where(Func<SeriesCollectionPair<TDataType, TTransformation>, bool> expression);

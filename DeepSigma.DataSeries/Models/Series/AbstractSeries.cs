@@ -56,7 +56,7 @@ public abstract class AbstractSeries<TCollectionDataType, TTransformation> : ISe
     /// Returns the transformed data points in the series.
     /// </summary>
     /// <returns></returns>
-    public abstract ICollection<TCollectionDataType> GetTransformedSeriesData();
+    public abstract ICollection<TCollectionDataType> GetSeriesDataTransformed();
 
     /// <inheritdoc/>
     public abstract int GetSubSeriesCount();

@@ -34,7 +34,7 @@ public interface ISeries<TCollectionDataType, TTransformation>
     /// Gets the transformed data of the series.
     /// </summary>
     /// <returns></returns>
-    ICollection<TCollectionDataType> GetTransformedSeriesData();
+    ICollection<TCollectionDataType> GetSeriesDataTransformed();
 
     /// <summary>
     /// Gets the count of sub-series within the series.
