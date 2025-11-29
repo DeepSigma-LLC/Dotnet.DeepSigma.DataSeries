@@ -7,12 +7,14 @@ namespace DeepSigma.DataSeries.Models.BaseSeries;
 /// Represents a base class for categorical data series.
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
-public class CategoricalSeriesBase<TValueDataType> 
-    : AbstractFunctionalSeriesBase<string, TValueDataType, SeriesTransformation>
-    where TValueDataType : class, IDataModel<TValueDataType>
+/// <typeparam name="TValueAccumulatorDataType"></typeparam>
+public class CategoricalSeriesBase<TValueDataType, TValueAccumulatorDataType> 
+    : AbstractFunctionalSeriesBase<string, TValueDataType, TValueAccumulatorDataType, SeriesTransformation>
+    where TValueAccumulatorDataType : class, IAccumulator<TValueDataType>
+    where TValueDataType : class, IDataModel<TValueDataType, TValueAccumulatorDataType>
 {
 
-    /// <inheritdoc cref="CategoricalSeriesBase{TValueDataType}"/>
+    /// <inheritdoc cref="CategoricalSeriesBase{TValueDataType, TValueAccumulatorDataType}"/>
     public CategoricalSeriesBase(SortedDictionary<string, TValueDataType> data) : base(data) { }
 
     /// <inheritdoc/>

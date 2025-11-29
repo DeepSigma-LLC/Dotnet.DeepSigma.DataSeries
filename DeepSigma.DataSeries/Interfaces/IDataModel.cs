@@ -7,60 +7,24 @@ namespace DeepSigma.DataSeries.Interfaces;
 /// Interface for mutable data models that support various mathematical operations.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IDataModel<T>
+/// <typeparam name="TAccumulator"></typeparam>
+public interface IDataModel<T, TAccumulator>
     where T : class
+    where TAccumulator : IAccumulator<T>
 {
     /// <summary>
     /// Signifies if the data point has been rolled.
     /// </summary>
-    public bool IsRolled { get; set; }
+    public bool IsRolled { get; init; }
 
     /// <summary>
     /// Signifies if the data point is sythetic (i.e., data imputation / interpolation)
     /// </summary>
-    public bool IsSyntheticData { get; set; }
+    public bool IsSyntheticData { get; init; }
 
     /// <summary>
-    /// Scales the data model by a given scalar value.
+    /// Returns the current state of the data model as an accumulator.
     /// </summary>
-    /// <param name="scalar"></param>
     /// <returns></returns>
-    public void Scale(decimal scalar);
-
-    /// <summary>
-    /// Combines two data models using the specified mathematical operation.
-    /// </summary>
-    /// <param name="Item"></param>
-    /// <param name="mathematicalOperation"></param>
-    /// <returns></returns>
-    public Exception? Combine(T Item, MathematicalOperation mathematicalOperation);
-
-    /// <summary>
-    /// Adds two data models together.
-    /// </summary>
-    ///     /// <param name="Item"></param>
-    /// <returns></returns>
-    public Exception? Add(T Item);
-
-    /// <summary>
-    /// Subtracts a data model from another.
-    /// </summary>
-    /// <param name="Item"></param>
-    /// <returns></returns>
-
-    public Exception? Subtract(T Item);
-
-    /// <summary>
-    /// Multiplies two data models together.
-    /// </summary>
-    /// <param name="Item"></param>
-    /// <returns></returns>
-    public Exception? Multiply(T Item);
-
-    /// <summary>
-    /// Divides the data model by another.
-    /// </summary>
-    /// <param name="Item"></param>
-    /// <returns></returns>
-    public Exception? Divide(T Item);
+    public TAccumulator GetAccumulator();
 }

@@ -9,20 +9,22 @@ namespace DeepSigma.DataSeries.Models.Collections;
 /// </summary>
 /// <typeparam name="K"></typeparam>
 /// <typeparam name="V"></typeparam>
-public class NonFunctionalSeriesCollection<K, V> : AbstractSeriesCollection<Tuple<K,V>, 
+/// <typeparam name="VAccumulator"></typeparam>
+public class NonFunctionalSeriesCollection<K, V, VAccumulator> : AbstractSeriesCollection<Tuple<K,V>, 
     SeriesTransformation>, 
     ISeriesCollection<Tuple<K,V>, SeriesTransformation>
     where K : IComparable<K>
-    where V : class, IDataModel<V>
+    where VAccumulator : class, IAccumulator<V>
+    where V : class, IDataModel<V, VAccumulator>
 {
-    /// <inheritdoc cref="NonFunctionalSeriesCollection{K, V}"/>
+    /// <inheritdoc cref="NonFunctionalSeriesCollection{K, V, VAccumulator}"/>
     public NonFunctionalSeriesCollection()
     {
         this.MaxCapacity = 1;
     }
 
     /// <inheritdoc/>
-    public override ICollection<Tuple<K, V>> GetSeriesData()
+    public override ICollection<Tuple<K, V>>? GetSeriesData()
     {
         if (GetSubSeriesCount() == 1) return SubSeriesCollection.First().Series.GetSeriesData();
         throw new InvalidOperationException("NonFunctionalSeriesCollection can only contain one sub-series since non-functional data cannot be logically combined.");

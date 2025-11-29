@@ -1,59 +1,36 @@
-﻿using DeepSigma.DataSeries.Interfaces;
+﻿using DeepSigma.DataSeries.Accumulators;
+using DeepSigma.DataSeries.Interfaces;
 
 namespace DeepSigma.DataSeries.DataModels;
 
 /// <summary>
-/// Represents a mutable bar observation in a financial market with volume information.
+/// Represents a bar observation in a financial market with volume information.
 /// </summary>
-public record class BarObservationWithVolume
-       : DataModelAbstract<BarObservationWithVolume>, IDataModel<BarObservationWithVolume>
+/// <param name="Open">The opening price of the bar.</param>
+/// <param name="Close">The closing price of the bar.</param>
+/// <param name="High">The highest price of the bar.</param>
+/// <param name="Low">The lowest price of the bar.</param>
+/// <param name="Volume">The trading volume during the bar period.</param>
+/// <param name="IsRolled">Indicates if the data is rolled.</param>
+/// <param name="IsSyntheticData">Indicates if the data is synthetic.</param>
+public record class BarObservationWithVolume(decimal Open, decimal Close, decimal High, decimal Low, decimal Volume, bool IsRolled = false, bool IsSyntheticData = false)
+       : DataModelAbstract<BarObservationWithVolume>, IDataModel<BarObservationWithVolume, BarObservationWithVolumeAccumulator>
 {
     /// <summary>
-    /// The opening price of the bar.
+    /// Calculates the range of the bar, which is the difference between the high and low prices.
     /// </summary>
-    public decimal Open { get; set; }
+    public decimal Range => High - Low;
 
     /// <summary>
-    /// The closing price of the bar.
+    /// Calculates the price movement of the bar, which is the difference between the closing and opening prices.
+    /// Also, known as Session, Intraday, or Net Change.
+    /// Body comes from the idea of candlestick charts where the "body" represents the area between the open and close prices.
     /// </summary>
-    public decimal Close { get; set; }
-
-    /// <summary>
-    /// The highest price of the bar during the time period.
-    /// </summary>
-    public decimal High { get; set; }
-
-    /// <summary>
-    /// The lowest price of the bar during the time period.
-    /// </summary>
-    public decimal Low { get; set; }
-
-    /// <summary>
-    /// The trading volume during the time period.
-    /// </summary>
-    public decimal Volume { get; set; }
+    public decimal Body => Close - Open;
 
     /// <inheritdoc/>
-    public override bool IsAboutToDivideByZero(BarObservationWithVolume Item)
+    public sealed override BarObservationWithVolumeAccumulator GetAccumulator()
     {
-        return Item.Open == 0 || Item.Close == 0 || Item.High == 0 || Item.Low == 0;
-    }
-
-    /// <inheritdoc/>
-    public override void Scale(decimal scalar)
-    {
-        this.Open *= scalar;
-        this.Close *= scalar;
-        this.Low *= scalar;
-        this.High *= scalar;
-    }
-
-    /// <inheritdoc/>
-    protected override void ApplyFunction(BarObservationWithVolume Item, Func<decimal, decimal, decimal> operation)
-    {
-        this.Open = operation(this.Open, Item.Open);
-        this.Close = operation(this.Close, Item.Close);
-        this.High = operation(this.High, Item.High);
-        this.Low = operation(this.Low, Item.Low);
+        return new BarObservationWithVolumeAccumulator(this);
     }
 }

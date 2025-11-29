@@ -111,14 +111,14 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation>
     /// Returns combined series data from all sub series.
     /// </summary>
     /// <returns></returns>
-    public abstract ICollection<TDataType> GetSeriesData();
+    public abstract ICollection<TDataType>? GetSeriesData();
 
     /// <summary>
     /// Returns the transformed data series.
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public ICollection<TDataType> GetSeriesDataTransformed()
+    public ICollection<TDataType>? GetSeriesDataTransformed()
     {
         throw new NotImplementedException("Transformation logic is not implemented for SeriesCollection.");
     }

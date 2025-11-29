@@ -1,9 +1,11 @@
 ﻿
 using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Models.Collections;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General.Enums;
-using System.Numerics;
 using DeepSigma.General.Extensions;
+using System.ComponentModel.DataAnnotations;
+using System.Numerics;
 
 namespace DeepSigma.DataSeries.Utilities;
 
@@ -12,204 +14,19 @@ namespace DeepSigma.DataSeries.Utilities;
 /// </summary>
 public static class SeriesUtilities
 {
-
-
-    ///// <summary>
-    ///// Gets series data multiplied by a specified scalar.
-    ///// </summary>
-    ///// <param name="data"></param>
-    ///// <param name="scalar"></param>
-    ///// <returns></returns>
-    //public static ICollection<KeyValuePair<TKeyDataType, decimal>> GetScaledSeries<TKeyDataType>(ICollection<KeyValuePair<TKeyDataType, decimal>> data, decimal scalar) 
-    //    where TKeyDataType : IComparable<TKeyDataType>
-    //{
-    //    if (scalar == 1) return data;
-
-    //    List<KeyValuePair<TKeyDataType, decimal>> result = new(data.Count);
-    //    foreach (var item in data)
-    //    {
-    //        result.Add(new KeyValuePair<TKeyDataType, decimal>(item.Key, item.Value * scalar));
-    //    }
-    //    return result;
-    //}
-
-    ///// <summary>
-    ///// Get one series by mathmatically combining two series.
-    ///// </summary>
-    ///// <typeparam name="K"></typeparam>
-    ///// <typeparam name="T"></typeparam>
-    ///// <param name="Data"></param>
-    ///// <param name="Data2"></param>
-    ///// <param name="mathematicalOperation"></param>
-    ///// <returns></returns>
-    ///// <exception cref="NotImplementedException"></exception>
-    ////public static ICollection<KeyValuePair<K, T>> GetCombinedSeries<K, T>(SortedDictionary<K, T> Data, SortedDictionary<K, T> Data2, MathematicalOperation mathematicalOperation) 
-    ////    where K : IComparable<K> 
-    ////    where T : class, IImmutableDataModel<T>
-    ////{
-    ////    return GetCombinedSeriesFrom2SeriesWithMethodApplied<K, T>(Data, Data2, mathematicalOperation);
-    ////}
-
-    ///// <summary>
-    ///// Get one series by mathmatically combining two series.
-    ///// </summary>
-    ///// <typeparam name="K"></typeparam>
-    ///// <typeparam name="T"></typeparam>
-    ///// <param name="Data"></param>
-    ///// <param name="Data2"></param>
-    ///// <param name="mathematicalOperation"></param>
-    ///// <returns></returns>
-    ///// <exception cref="NotImplementedException"></exception>
-    //public static ICollection<KeyValuePair<K, T>> GetCombinedSeries2<K, T>(SortedDictionary<K, T> Data, SortedDictionary<K, T> Data2, MathematicalOperation mathematicalOperation) 
-    //    where K : IComparable<K> 
-    //    where T : INumber<T>
-    //{
-    //    Func<T, T, (T? Value, Exception? Error)> function = mathematicalOperation switch
-    //    {
-    //        MathematicalOperation.Add => Add,
-    //        MathematicalOperation.Subtract => Subtract,
-    //        MathematicalOperation.Multiply => Multiply,
-    //        MathematicalOperation.Divide => Divide,
-    //        _ => throw new NotImplementedException(),
-    //    };
-    //    return GetCombinedSeriesFrom2SeriesWithMethodApplied<K, T>(Data, Data2, function);
-    //}
-
-    ///// <summary>
-    ///// Get one series by mathmatically combining two series.
-    ///// </summary>
-    ///// <typeparam name="K"></typeparam>
-    ///// <typeparam name="V"></typeparam>
-    ///// <param name="Data"></param>
-    ///// <param name="Data2"></param>
-    ///// <param name="mathematicalOperation"></param>
-    ///// <returns></returns>
-    ///// <exception cref="NotImplementedException"></exception>
-    //public static ICollection<KeyValuePair<K, V>> GetCombinedSeries<K, V>(ICollection<KeyValuePair<K, V>> Data, ICollection<KeyValuePair<K, V>> Data2, MathematicalOperation mathematicalOperation) 
-    //    where K : IComparable<K> 
-    //    where V : INumber<V>
-    //{
-    //    Func<KeyValuePair<K, V>, KeyValuePair<K, V>, (KeyValuePair<K, V>? Value, Exception? Error)> function = mathematicalOperation switch
-    //    {
-    //        MathematicalOperation.Add => Add,
-    //        MathematicalOperation.Subtract => Subtract,
-    //        MathematicalOperation.Multiply => Multiply,
-    //        MathematicalOperation.Divide => Divide,
-    //        _ => throw new NotImplementedException(),
-    //    };
-    //    return GetCombinedSeriesFrom2SeriesWithMethodApplied<K, V>(Data, Data2, function);
-    //}
-
-
-    ///// <summary>
-    ///// Get one series by mathmatically combining two series.
-    ///// </summary>
-    ///// <typeparam name="X"></typeparam>
-    ///// <typeparam name="Y"></typeparam>
-    ///// <param name="Data"></param>
-    ///// <param name="Data2"></param>
-    ///// <param name="mathematicalOperation"></param>
-    ///// <returns></returns>
-    ///// <exception cref="NotImplementedException"></exception>
-    //public static ICollection<(X, Y)> GetCombinedSeries<X, Y>(ICollection<(X, Y)> Data, ICollection<(X, Y)> Data2, MathematicalOperation mathematicalOperation) 
-    //    where X : notnull 
-    //    where Y : INumber<Y>
-    //{
-    //    Func<Y, Y, (Y?, Exception?)> function = mathematicalOperation switch
-    //    {
-    //        MathematicalOperation.Add => Add,
-    //        MathematicalOperation.Subtract => Subtract,
-    //        MathematicalOperation.Multiply => Multiply,
-    //        MathematicalOperation.Divide => Divide,
-    //        _ => throw new NotImplementedException(),
-    //    };
-    //    return GetCombinedSeriesFrom2SeriesWithMethodApplied(Data, Data2, function);
-    //}
-
-    ///// <summary>
-    ///// Get one series by mathmatically combining two series.
-    ///// </summary>
-    ///// <typeparam name="K"></typeparam>
-    ///// <typeparam name="T"></typeparam>
-    ///// <param name="Data"></param>
-    ///// <param name="Data2"></param>
-    ///// <param name="CalculationMethod"></param>
-    ///// <returns></returns>
-    //private static ICollection<(K, T)> GetCombinedSeriesFrom2SeriesWithMethodApplied<K, T>(ICollection<(K, T)> Data, ICollection<(K, T)> Data2, Func<T, T, (T? Value, Exception? Error)> CalculationMethod) 
-    //    where K : notnull 
-    //    where T : INumber<T>
-    //{
-    //    ICollection<(K, T)> results = new List<(K, T)>(Data.Count);
-    //    int index = 0;
-    //    foreach ((K x, T y) point in Data)
-    //    {
-    //        (T? Value, Exception? Error) = CalculationMethod(point.y, Data2.ElementAt(index).Item2);
-    //        if (Error is not null || Value is null) continue;
-
-    //        results.Add((point.x, Value));
-    //        index++;
-    //    }
-    //    return results;
-    //}
-
-
-    ///// <summary>
-    ///// Get one series by mathmatically combining two series.
-    ///// </summary>
-    ///// <typeparam name="K"></typeparam>
-    ///// <typeparam name="T"></typeparam>
-    ///// <param name="Data"></param>
-    ///// <param name="Data2"></param>
-    ///// <returns></returns>
-    //private static ICollection<(K, T)> GetCombinedSeriesFrom2SeriesWithMethodApplied<K, T>(ICollection<(K, T)> Data, ICollection<(K, T)> Data2, MathematicalOperation mathematicalOperation) 
-    //    where K : notnull
-    //    where T : class, IImmutableDataModel<T>
-    //{
-    //    ICollection<(K, T)> results = new List<(K, T)>(Data.Count);
-    //    int index = 0;
-    //    foreach ((K key, T value) in Data)
-    //    {
-    //        if (!key.Equals(Data2.ElementAt(index).Item1)) continue;
-
-    //        (T? Value, Exception? Error) = value.Combine(Data2.ElementAt(index).Item2, mathematicalOperation);
-    //        if (Error is not null || Value is null) continue;
-
-    //        results.Add((key, Value));
-    //        index++;
-    //    }
-    //    return results;
-    //}
-
-
-    ///// <summary>
-    ///// Get one series by mathmatically combining two series.
-    ///// </summary>
-    ///// <typeparam name="K"></typeparam>
-    ///// <typeparam name="T"></typeparam>
-    ///// <param name="Data"></param>
-    ///// <param name="Data2"></param>
-    ///// <param name="CalculationMethod"></param>
-    ///// <returns></returns>
-    //private static ICollection<KeyValuePair<K, T>> GetCombinedSeriesFrom2SeriesWithMethodApplied<K, T>(ICollection<KeyValuePair<K, T>> Data, ICollection<KeyValuePair<K, T>> Data2, Func<KeyValuePair<K,T>, KeyValuePair<K, T>, (KeyValuePair<K, T>? Value, Exception? Error)> CalculationMethod) 
-    //    where K : IComparable<K> 
-    //    where T : INumber<T>
-    //{
-    //    ICollection<KeyValuePair<K, T>> results = new List<KeyValuePair<K, T>>(Data.Count);
-    //    int index = 0;
-    //    foreach (KeyValuePair<K, T> point in Data)
-    //    {
-    //        (KeyValuePair<K,T>? Value, Exception? Error) = CalculationMethod(point, Data2.ElementAt(index));
-    //        if (Error is not null || Value is null) continue;
-
-    //        results.Add(new KeyValuePair<K,T>(point.Key, Value.Value.Value));
-    //        index++;
-    //    }
-    //    return results;
-    //}
-
-
-
-
+    /// <summary>
+    /// Applies transformation to series data.
+    /// </summary>
+    /// <param name="Data"></param>
+    /// <param name="Transformation"></param>
+    /// <returns></returns>
+    public static (SortedDictionary<TKey, TDataModel>? Data, Exception? Error) GetTransformedSeries<TKey, TDataModel, TValueAccumulatorDataType>(SortedDictionary<TKey, TDataModel> Data, SeriesTransformation Transformation)
+        where TKey : notnull, IComparable<TKey>
+        where TDataModel : class, IDataModel<TDataModel, TValueAccumulatorDataType>
+        where TValueAccumulatorDataType : class, IAccumulator<TDataModel>
+    {
+        return ScaleSeries<TKey, TDataModel, TValueAccumulatorDataType>(Data, Transformation.Scalar);
+    }
 
     /// <summary>
     /// Gets series data multiplied by a specified scalar.
@@ -217,43 +34,97 @@ public static class SeriesUtilities
     /// <param name="Data"></param>
     /// <param name="Scalar"></param>
     /// <returns></returns>
-    public static void ScaleSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> Data, decimal Scalar)
+    public static (SortedDictionary<TKey, TDataModel>? Data, Exception? Error) ScaleSeries<TKey, TDataModel, TValueAccumulatorDataType>(SortedDictionary<TKey, TDataModel> Data, decimal Scalar)
         where TKey : notnull, IComparable<TKey>
-        where TDataModel : class, IDataModel<TDataModel>
+        where TDataModel : class, IDataModel<TDataModel, TValueAccumulatorDataType>
+        where TValueAccumulatorDataType : class, IAccumulator<TDataModel>
     {
-        if (Scalar == 1) return;
-        Data.ForEach(x => x.Value.Scale(Scalar));
+        if (Scalar == 1) return (Data.CloneDeep(), null);
+
+        SortedDictionary<TKey, TDataModel> NewData = [];
+        foreach (var x in Data)
+        {
+            TValueAccumulatorDataType mutable_record = x.Value.GetAccumulator();
+            Exception? error = mutable_record.Scale(Scalar);
+            if (error != null) return (null, error);
+
+            NewData.Add(x.Key, mutable_record.ToRecord()); 
+        }
+        return (NewData, null);
     }
 
     /// <summary>
     /// Gets series data multiplied by a specified scalar.
     /// </summary>
     /// <returns></returns>
-    public static void CombinedSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> TargetSeries, SortedDictionary<TKey, TDataModel> OtherSeries, MathematicalOperation mathematicalOperation)
+    public static (SortedDictionary<TKey, TDataModel>? Data, Exception? Error) GetCombinedSeries<TKey, TDataModel, TValueAccumulatorDataType>(SortedDictionary<TKey, TDataModel> TargetSeries, SortedDictionary<TKey, TDataModel> OtherSeries, MathematicalOperation mathematicalOperation)
         where TKey : notnull, IComparable<TKey>
-        where TDataModel : class, IDataModel<TDataModel>
+        where TDataModel : class, IDataModel<TDataModel, TValueAccumulatorDataType>
+        where TValueAccumulatorDataType : class, IAccumulator<TDataModel>
     {
-        if (TargetSeries == null) return;
+        SortedDictionary<TKey, TDataModel> NewSeries = [];
+        HashSet<TKey> Keys = TargetSeries.Keys.ToHashSet();
+        Keys.UnionWith(OtherSeries.Keys);
 
-        foreach (TKey key in TargetSeries.Keys)
+        foreach (TKey key in Keys.Order())
         {
-            if (!OtherSeries.ContainsKey(key)) continue;
+            if (!OtherSeries.ContainsKey(key) || !TargetSeries.ContainsKey(key)) continue;
+            TValueAccumulatorDataType mutable_record = TargetSeries[key].GetAccumulator();
 
             Exception? error = mathematicalOperation switch
             {
-                MathematicalOperation.Add => TargetSeries[key].Add(OtherSeries[key]),
-                MathematicalOperation.Subtract => TargetSeries[key].Subtract(OtherSeries[key]),
-                MathematicalOperation.Multiply => TargetSeries[key].Multiply(OtherSeries[key]),
-                MathematicalOperation.Divide => TargetSeries[key].Divide(OtherSeries[key]),
+                MathematicalOperation.Add => mutable_record.Add(OtherSeries[key]),
+                MathematicalOperation.Subtract => mutable_record.Subtract(OtherSeries[key]),
+                MathematicalOperation.Multiply => mutable_record.Multiply(OtherSeries[key]),
+                MathematicalOperation.Divide => mutable_record.Divide(OtherSeries[key]),
                 _ => new NotImplementedException("The specified mathematical operation is not implemented."),
             };
+            if (error is not null) return (null, error);
 
-            if (error is not null) continue;
+            NewSeries.Add(key, mutable_record.ToRecord());
         }
+        return (NewSeries, null);
     }
 
+    /// <summary>
+    /// Gets series data multiplied by a specified scalar.
+    /// </summary>
+    /// <returns></returns>
+    public static (SortedDictionary<TKey, TDataModel>? Data, Exception? Error) GetCombinedSeries<TKey, TDataModel, TValueAccumulatorDataType>(List<(SortedDictionary<TKey, TDataModel> Data, MathematicalOperation Operation)> Series)
+        where TKey : notnull, IComparable<TKey>
+        where TDataModel : class, IDataModel<TDataModel, TValueAccumulatorDataType>
+        where TValueAccumulatorDataType : class, IAccumulator<TDataModel>
+    {
+        if (Series == null || Series.Count == 0) return (null, new ArgumentNullException("No series were provided."));
+        if (Series.Count == 1) { return (Series[0].Data.CloneDeep(), null); }
 
-    
+        SortedDictionary<TKey, TDataModel> NewSeries = [];
+        HashSet<TKey> Keys = [];
+        Series.ForEach(x => Keys.UnionWith(x.Data.Keys));
+
+        foreach (var key in Keys)
+        {
+            if(!Series.All(x => x.Data.ContainsKey(key))) continue;
+
+            TValueAccumulatorDataType mutable_record = Series[0].Data[key].GetAccumulator();
+
+            for (int i = 1; i < Series.Count; i++)
+            {
+                Exception? error = Series[i].Operation switch
+                {
+                    MathematicalOperation.Add => mutable_record.Add(Series[i].Data[key]),
+                    MathematicalOperation.Subtract => mutable_record.Subtract(Series[i].Data[key]),
+                    MathematicalOperation.Multiply => mutable_record.Multiply(Series[i].Data[key]),
+                    MathematicalOperation.Divide => mutable_record.Divide(Series[i].Data[key]),
+                    _ => new NotImplementedException("The specified mathematical operation is not implemented."),
+                };
+                if (error is not null) return (null, error);
+            }
+
+            NewSeries.Add(key, mutable_record.ToRecord());
+        }
+        return (NewSeries, null);
+    }
 
 
 
@@ -273,7 +144,7 @@ public static class SeriesUtilities
     public static SortedDictionary<TKey, decimal> GetScaledSeries<TKey>(SortedDictionary<TKey, decimal> Data, decimal Scalar)
         where TKey : notnull, IComparable<TKey>
     {
-        if (Scalar == 1) return Data;
+        if (Scalar == 1) return Data.CloneDeep();
         return Data.ToDictionary(x => x.Key, x => x.Value * Scalar).ToSortedDictionary();
     }
 
@@ -299,7 +170,7 @@ public static class SeriesUtilities
         };
         if (function is null) return (null, new NotImplementedException("The specified mathematical operation is not implemented."));
 
-        return (GetCombinedSeriesFromTwoSeriesWithMethodApplied(Data, Data2, function), null);
+        return GetCombinedSeriesFromTwoSeriesWithMethodApplied(Data, Data2, function);
     }
 
     /// <summary>
@@ -310,23 +181,24 @@ public static class SeriesUtilities
     /// <param name="DataSet2"></param>
     /// <param name="CalculationMethod"></param>
     /// <returns></returns>
-    private static SortedDictionary<T, decimal> GetCombinedSeriesFromTwoSeriesWithMethodApplied<T>(SortedDictionary<T, decimal> DataSet, SortedDictionary<T, decimal> DataSet2, Func<decimal, decimal, (decimal? Result, Exception? Error)> CalculationMethod) 
+    private static (SortedDictionary<T, decimal>? Data, Exception? Error) GetCombinedSeriesFromTwoSeriesWithMethodApplied<T>(SortedDictionary<T, decimal> DataSet, SortedDictionary<T, decimal> DataSet2, Func<decimal, decimal, (decimal? Result, Exception? Error)> CalculationMethod) 
         where T : notnull, IComparable<T>
     {
-        SortedDictionary<T, decimal> results = [];
         HashSet<T> keys = DataSet.Keys.ToHashSet();
         keys.UnionWith(DataSet2.Keys);
+
+        SortedDictionary<T, decimal> results = [];
         foreach (T key in keys.Order())
         {
             if (DataSet.ContainsKey(key) && DataSet2.ContainsKey(key))
             {
                 (decimal? result, Exception? error) = CalculationMethod(DataSet[key], DataSet2[key]);
-                if(result is null || error is not null) continue;
+                if(result is null || error is not null) return (null, error);
 
                 results.Add(key, result.Value);
             }
         }
-        return results;
+        return (results, null);
     }
 
 

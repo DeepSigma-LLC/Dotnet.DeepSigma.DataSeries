@@ -7,9 +7,11 @@ namespace DeepSigma.DataSeries.DataSets;
 /// </summary>
 /// <typeparam name="TKeyDataType"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
-public class NonFunctionalDataSet<TKeyDataType, TValueDataType> 
+/// <typeparam name="TValueAccumulatorDataType"></typeparam>
+public class NonFunctionalDataSet<TKeyDataType, TValueDataType, TValueAccumulatorDataType> 
     where TKeyDataType : IComparable<TKeyDataType> 
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueAccumulatorDataType : class, IAccumulator<TValueDataType>
+    where TValueDataType : class, IDataModel<TValueDataType, TValueAccumulatorDataType>
 {
     /// <summary>
     /// A list to hold the data, where keys are of type TKey and values are of type TValue.
@@ -50,9 +52,9 @@ public class NonFunctionalDataSet<TKeyDataType, TValueDataType>
     /// </summary>
     /// <param name="expression"></param>
     /// <returns></returns>
-    public NonFunctionalDataSet<TKeyDataType, TValueDataType> Where(Func<(TKeyDataType Key, TValueDataType Data), bool> expression)
+    public NonFunctionalDataSet<TKeyDataType, TValueDataType, TValueAccumulatorDataType> Where(Func<(TKeyDataType Key, TValueDataType Data), bool> expression)
     {
-        NonFunctionalDataSet<TKeyDataType, TValueDataType> new_data_set = new();
+        NonFunctionalDataSet<TKeyDataType, TValueDataType, TValueAccumulatorDataType> new_data_set = new();
         new_data_set.Add(Data.Where(expression).ToList());
         return new_data_set;
     }

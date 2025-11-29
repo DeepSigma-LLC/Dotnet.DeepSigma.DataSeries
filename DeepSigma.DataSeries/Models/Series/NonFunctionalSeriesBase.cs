@@ -12,10 +12,12 @@ namespace DeepSigma.DataSeries.Models.BaseSeries;
 /// </summary>
 /// <typeparam name="TKeyDataType"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
-public class NonFunctionalSeriesBase<TKeyDataType, TValueDataType> :
+/// <typeparam name="TValueAccumulatorDataType"></typeparam>
+public class NonFunctionalSeriesBase<TKeyDataType, TValueDataType, TValueAccumulatorDataType> :
     AbstractSeriesBase<Tuple<TKeyDataType, TValueDataType>, SeriesTransformation>
     where TKeyDataType : notnull, IComparable<TKeyDataType>
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueDataType : class, IDataModel<TValueDataType, TValueAccumulatorDataType>
+    where TValueAccumulatorDataType : class, IAccumulator<TValueDataType>
 {
     /// <inheritdoc/>
     public sealed override ICollection<Tuple<TKeyDataType, TValueDataType>> GetSeriesData()

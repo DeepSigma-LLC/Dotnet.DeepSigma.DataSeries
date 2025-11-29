@@ -9,31 +9,24 @@ namespace DeepSigma.DataSeries.Models.Collections;
 /// </summary>
 /// <typeparam name="K"></typeparam>
 /// <typeparam name="V"></typeparam>
+/// <typeparam name="VAccumulator"></typeparam>
 /// <typeparam name="TTransformation"></typeparam>
-public class FunctionalSeriesCollection<K, V, TTransformation> : AbstractSeriesCollection<KeyValuePair<K, V>, TTransformation>, 
+public class FunctionalSeriesCollection<K, V, VAccumulator, TTransformation> : AbstractSeriesCollection<KeyValuePair<K, V>, TTransformation>, 
     ISeriesCollection<KeyValuePair<K, V>, TTransformation>
     where TTransformation : SeriesTransformation, new()
     where K : IComparable<K>
-    where V : class, IDataModel<V>
+    where VAccumulator : class, IAccumulator<V>
+    where V : class, IDataModel<V, VAccumulator>
 {
     /// <inheritdoc/>
-    public override ICollection<KeyValuePair<K, V>> GetSeriesData()
+    public sealed override ICollection<KeyValuePair<K, V>>? GetSeriesData()
     {
         if (GetSubSeriesCount() == 1) return SubSeriesCollection.First().Series.GetSeriesData();
+        (SortedDictionary<K, V>? Data, Exception? Error) = SeriesUtilities.GetCombinedSeries<K, V, VAccumulator>(
+            SubSeriesCollection.Select(x => ((SortedDictionary<K, V>)x.Series, x.MathematicalOperation)).ToList()
+        );
 
-        bool is_first_element = true;
-        SortedDictionary<K, V> CombinedSeries = [];
-        foreach (var series in SubSeriesCollection)
-        {
-            if (is_first_element == true)
-            {
-                is_first_element = false;
-                CombinedSeries = (SortedDictionary<K, V>)series.Series.GetSeriesData();
-                continue;
-            }
-            SortedDictionary<K, V> seriesData = (SortedDictionary<K, V>)series.Series.GetSeriesData();
-            SeriesUtilities.CombinedSeries(CombinedSeries, seriesData, series.MathematicalOperation);
-        }
-        return CombinedSeries;
+        if (Error != null || Data == null) return [];
+        return Data;
     }
 }

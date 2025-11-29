@@ -11,9 +11,11 @@ namespace DeepSigma.DataSeries.DataSets;
 /// </summary>
 /// <typeparam name="TKeyDataType"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
-public class FunctionalDataSet<TKeyDataType, TValueDataType> 
-    where TKeyDataType : IComparable<TKeyDataType> 
-    where TValueDataType : class, IDataModel<TValueDataType>
+/// <typeparam name="TValueAccumulatorDataType"></typeparam>
+public class FunctionalDataSet<TKeyDataType, TValueDataType, TValueAccumulatorDataType> 
+    where TKeyDataType : IComparable<TKeyDataType>
+    where TValueAccumulatorDataType : class, IAccumulator<TValueDataType>
+    where TValueDataType : class, IDataModel<TValueDataType, TValueAccumulatorDataType>
 {
     /// <summary>
     /// A sorted dictionary to hold the data, where keys are of type TKey and values are of type TValue.
@@ -57,9 +59,9 @@ public class FunctionalDataSet<TKeyDataType, TValueDataType>
     /// </summary>
     /// <param name="expression"></param>
     /// <returns></returns>
-    public FunctionalDataSet<TKeyDataType, TValueDataType> Where(Func<KeyValuePair<TKeyDataType, TValueDataType>, bool> expression)
+    public FunctionalDataSet<TKeyDataType, TValueDataType, TValueAccumulatorDataType> Where(Func<KeyValuePair<TKeyDataType, TValueDataType>, bool> expression)
     {
-        FunctionalDataSet<TKeyDataType, TValueDataType> new_data_set = new();
+        FunctionalDataSet<TKeyDataType, TValueDataType, TValueAccumulatorDataType> new_data_set = new();
         new_data_set.Add(Data.Where(expression).ToSortedDictionary());
         return new_data_set;
     }

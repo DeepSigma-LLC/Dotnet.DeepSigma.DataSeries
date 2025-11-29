@@ -1,6 +1,7 @@
 ﻿using Xunit;
 using DeepSigma.DataSeries.DataSets;
 using DeepSigma.DataSeries.DataModels;
+using DeepSigma.DataSeries.Accumulators;
 
 namespace DeepSigma.DataSeries.Tests.Tests.DataSets;
 
@@ -9,7 +10,7 @@ public class NonFunctionalDataSet_Tests
     [Fact]
     public void NonFunctionalDataSet_Add_AcceptsDuplicates()
     {
-        var dataSet = new NonFunctionalDataSet<int, Observation>();
+        var dataSet = new NonFunctionalDataSet<int, Observation, ObservationAccumulator>();
         dataSet.Add(1, new Observation(11m));
         dataSet.Add(1, new Observation(12m));
         Assert.Equal(2, dataSet.Get(1)?.Length);
@@ -19,7 +20,7 @@ public class NonFunctionalDataSet_Tests
     [Fact]
     public void NonFunctionalDataSet_Where_FiltersDataCorrectly()
     {
-        var dataSet = new NonFunctionalDataSet<int, Observation>();
+        var dataSet = new NonFunctionalDataSet<int, Observation, ObservationAccumulator>();
         dataSet.Add(1, new Observation(11m));
         dataSet.Add(2, new Observation(12m));
         dataSet.Add(3, new Observation(13m));

@@ -1,33 +1,20 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Accumulators;
 
 namespace DeepSigma.DataSeries.DataModels;
 
 /// <summary>
-/// Represents a mutable bar observation in a financial market.
+/// Represents a bar observation in a financial market.
 /// </summary>
-public record class BarObservation
-        : DataModelAbstract<BarObservation>, IDataModel<BarObservation>
+/// <param name="Open">The opening price of the bar.</param>
+/// <param name="Close">The closing price of the bar.</param>
+/// <param name="High">The highest price of the bar.</param>
+/// <param name="Low">The lowest price of the bar.</param>
+/// <param name="IsRolled">Indicates if the data is rolled.</param>
+/// <param name="IsSyntheticData">Indicates if the data is synthetic.</param>
+public record class BarObservation(decimal Open, decimal Close, decimal High, decimal Low, bool IsRolled = false, bool IsSyntheticData = false)
+        : DataModelAbstract<BarObservation>, IDataModel<BarObservation, BarObservationAccumulator>
 {
-    /// <summary>
-    /// The opening price of the bar.
-    /// </summary>
-    public decimal Open { get; set; }
-
-    /// <summary>
-    /// The closing price of the bar.
-    /// </summary>
-    public decimal Close { get; set; }
-
-    /// <summary>
-    /// The highest price of the bar during the time period.
-    /// </summary>
-    public decimal High { get; set; }
-
-    /// <summary>
-    /// The lowest price of the bar during the time period.
-    /// </summary>
-    public decimal Low { get; set; }
-
     /// <summary>
     /// Calculates the range of the bar, which is the difference between the high and low prices.
     /// </summary>
@@ -40,38 +27,9 @@ public record class BarObservation
     /// </summary>
     public decimal Body => Close - Open;
 
-    /// <inheritdoc cref="BarObservation"/>
-    public BarObservation(decimal open, decimal close, decimal high, decimal low, bool IsRolled = false, bool IsSyntheticData = false)
-    {
-        this.Open = open;
-        this.Close = close;
-        this.High = high;
-        this.Low = low;
-        this.IsRolled = IsRolled;
-        this.IsSyntheticData = IsSyntheticData;
-    }
-
     /// <inheritdoc/>
-    public override bool IsAboutToDivideByZero(BarObservation Item)
+    public sealed override BarObservationAccumulator GetAccumulator()
     {
-        return Item.Open == 0 || Item.Close == 0 || Item.High == 0 || Item.Low == 0;
-    }
-
-    /// <inheritdoc/>
-    public override void Scale(decimal scalar)
-    {
-        this.Open *= scalar;
-        this.Close *= scalar;
-        this.High *= scalar;
-        this.Low *= scalar;
-    }
-
-    /// <inheritdoc/>
-    protected override void ApplyFunction(BarObservation Item, Func<decimal, decimal, decimal> operation)
-    {
-        this.Open = operation(this.Open, Item.Open);
-        this.Close = operation(this.Close, Item.Close);
-        this.High = operation(this.High, Item.High);
-        this.Low = operation(this.Low, Item.Low);
+        return new BarObservationAccumulator(this);
     }
 }

@@ -1,23 +1,18 @@
-﻿using DeepSigma.DataSeries.Interfaces;
+﻿using DeepSigma.DataSeries.Accumulators;
+using DeepSigma.DataSeries.Interfaces;
 
 namespace DeepSigma.DataSeries.DataModels;
 
 /// <summary>
-/// Represents a mutable bid-ask spread observation for a financial instrument.
+/// Represents a bid-ask spread observation for a financial instrument.
 /// </summary>
-public record class BidAskSpreadObservation
-    : DataModelAbstract<BidAskSpreadObservation>, IDataModel<BidAskSpreadObservation>
+/// <param name="Bid">The bid price.</param>
+/// <param name="Ask">The ask price.</param>
+/// <param name="IsRolled">Indicates if the data is rolled.</param>
+/// <param name="IsSyntheticData">Indicates if the data is synthetic.</param>
+public record class BidAskSpreadObservation(decimal Bid, decimal Ask, bool IsRolled = false, bool IsSyntheticData = false)
+    : DataModelAbstract<BidAskSpreadObservation>, IDataModel<BidAskSpreadObservation, BidAskSpreadObservationAccumulator>
 {
-    /// <summary>
-    /// The bid price.
-    /// </summary>
-    public decimal Bid { get; set; }
-
-    /// <summary>
-    /// The ask price.
-    /// </summary>
-    public decimal Ask { get; set; }
-
     /// <summary>
     /// Calculates the spread, which is the difference between the ask and bid prices.
     /// </summary>
@@ -29,22 +24,8 @@ public record class BidAskSpreadObservation
     public decimal Mid => (Bid + Ask) / 2;
 
     /// <inheritdoc/>
-    public override bool IsAboutToDivideByZero(BidAskSpreadObservation Item)
+    public sealed override BidAskSpreadObservationAccumulator GetAccumulator()
     {
-        return Item.Bid == 0 || Item.Ask == 0;
-    }
-
-    /// <inheritdoc/>
-    public override void Scale(decimal scalar)
-    {
-        this.Bid = this.Bid * scalar;
-        this.Ask = this.Ask * scalar;
-    }
-
-    /// <inheritdoc/>
-    protected override void ApplyFunction(BidAskSpreadObservation Item, Func<decimal, decimal, decimal> operation)
-    {
-        this.Bid = operation(this.Bid, Item.Bid);
-        this.Ask = operation(this.Ask, Item.Ask);
+        return new BidAskSpreadObservationAccumulator(this);
     }
 }

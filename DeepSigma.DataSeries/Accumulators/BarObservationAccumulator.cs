@@ -1,0 +1,48 @@
+﻿using DeepSigma.DataSeries.DataModels;
+using DeepSigma.DataSeries.Interfaces;
+
+namespace DeepSigma.DataSeries.Accumulators;
+
+/// <summary>
+/// Accumulator for the BarObservation data model that performs in-place mathematical operations.
+/// </summary>
+public class BarObservationAccumulator(BarObservation observation) 
+    : AbstractAccumulator<BarObservation>(observation), IAccumulator<BarObservation>
+{
+    private decimal Open { get; set; } = observation.Open;
+    private decimal Close { get; set; } = observation.Close;
+    private decimal High { get; set; } = observation.High;
+    private decimal Low { get; set; } = observation.Low;
+
+    /// <inheritdoc/>
+    public override Exception? Scale(decimal scalar)
+    {
+        this.Close = Close * scalar;
+        this.High = High * scalar;
+        this.Low = Low * scalar;
+        this.Open = Open * scalar;
+        return null;
+    }
+
+    /// <inheritdoc/>
+    public override BarObservation ToRecord()
+    {
+        return new BarObservation(this.Open, this.Close, this.High, this.Low, OriginalObject.IsRolled, OriginalObject.IsSyntheticData);
+        
+    }
+
+    /// <inheritdoc/>
+    protected override void ApplyFunction(BarObservation other, Func<decimal, decimal, decimal> operation)
+    {
+        this.Open = operation(this.Open, other.Open);
+        this.Close = operation(this.Close, other.Close);
+        this.High = operation(this.High, other.High);
+        this.Low = operation(this.Low, other.Low);
+    }
+
+    /// <inheritdoc/>
+    protected override bool IsAboutToDivideByZero(BarObservation other)
+    {
+        return other.Open == 0m || other.Close == 0m || other.High == 0m || other.Low == 0m;
+    }
+}

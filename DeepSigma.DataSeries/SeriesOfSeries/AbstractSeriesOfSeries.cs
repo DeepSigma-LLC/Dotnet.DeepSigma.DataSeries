@@ -43,7 +43,7 @@ public abstract class AbstractSeriesOfSeries<TCollectionDataType, TTransformatio
     /// Returns the data points in the series.
     /// </summary>
     /// <returns></returns>
-    public sealed override ICollection<TCollectionDataType> GetSeriesData()
+    public sealed override ICollection<TCollectionDataType>? GetSeriesData()
     {
         return SubSeriesCollection.GetSeriesData();
     }

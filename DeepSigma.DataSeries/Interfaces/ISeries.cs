@@ -28,13 +28,13 @@ public interface ISeries<TCollectionDataType, TTransformation>
     /// Gets the data of the series.
     /// </summary>
     /// <returns></returns>
-    ICollection<TCollectionDataType> GetSeriesData();
+    ICollection<TCollectionDataType>? GetSeriesData();
 
     /// <summary>
     /// Gets the transformed data of the series.
     /// </summary>
     /// <returns></returns>
-    ICollection<TCollectionDataType> GetSeriesDataTransformed();
+    ICollection<TCollectionDataType>? GetSeriesDataTransformed();
 
     /// <summary>
     /// Gets the count of sub-series within the series.

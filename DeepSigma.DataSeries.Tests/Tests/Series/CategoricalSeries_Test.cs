@@ -14,9 +14,9 @@ public class CategoricalSeries_Test
         SortedDictionary<string, Assets> Categories = [];
         Categories.Add("Assets", new(0, "Test", 1));
         Categories.Add("Liabilities", new(0, "Test", 1));
-        CategoricalSeriesBase<Assets> data = new(Categories);
+        CategoricalSeriesBase<Assets, AssetAccumulator> data = new(Categories);
 
-        CategoricalSeries<Assets> categoricalSeries = new();
+        CategoricalSeries<Assets, AssetAccumulator> categoricalSeries = new();
         categoricalSeries.Add(data,General.Enums.MathematicalOperation.Add);
 
         // Assert

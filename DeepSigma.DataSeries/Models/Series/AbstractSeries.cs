@@ -1,6 +1,5 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
-using DeepSigma.General.Enums;
 
 namespace DeepSigma.DataSeries.Models.Series;
 
@@ -50,13 +49,13 @@ public abstract class AbstractSeries<TCollectionDataType, TTransformation> : ISe
     /// Returns the data points in the series.
     /// </summary>
     /// <returns></returns>
-    public abstract ICollection<TCollectionDataType> GetSeriesData();
+    public abstract ICollection<TCollectionDataType>? GetSeriesData();
 
     /// <summary>
     /// Returns the transformed data points in the series.
     /// </summary>
     /// <returns></returns>
-    public abstract ICollection<TCollectionDataType> GetSeriesDataTransformed();
+    public abstract ICollection<TCollectionDataType>? GetSeriesDataTransformed();
 
     /// <inheritdoc/>
     public abstract int GetSubSeriesCount();

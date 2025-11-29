@@ -14,22 +14,24 @@ namespace DeepSigma.DataSeries.Series;
 /// </summary>
 /// <typeparam name="XDataType"></typeparam>
 /// <typeparam name="YDataType"></typeparam>
-public class NonFunctionalDataSeries<XDataType, YDataType> : 
+/// <typeparam name="TValueAccumulatorDataType"></typeparam>
+public class NonFunctionalDataSeries<XDataType, YDataType, TValueAccumulatorDataType> : 
     AbstractSeriesOfSeries<
         Tuple<XDataType, YDataType>, 
         SeriesTransformation,
-        NonFunctionalSeriesCollection<XDataType, YDataType>> 
+        NonFunctionalSeriesCollection<XDataType, YDataType, TValueAccumulatorDataType>> 
     where XDataType : IComparable<XDataType> 
-    where YDataType : class, IDataModel<YDataType>
+    where YDataType : class, IDataModel<YDataType, TValueAccumulatorDataType>
+    where TValueAccumulatorDataType : class, IAccumulator<YDataType>
 {
-    /// <inheritdoc cref="NonFunctionalDataSeries{XDataType, YDataType}"/>
+    /// <inheritdoc cref="NonFunctionalDataSeries{XDataType, YDataType, TValueAccumulatorDataType}"/>
     public NonFunctionalDataSeries() : base()
     {
         AllowDuplicateDataPoints = true;
     }
 
     /// <inheritdoc/>
-    public override ICollection<Tuple<XDataType, YDataType>> GetSeriesDataTransformed()
+    public override ICollection<Tuple<XDataType, YDataType>>? GetSeriesDataTransformed()
     {
         throw new NotImplementedException("Transformation logic is not implemented for NonFunctionalSeries.");
     }

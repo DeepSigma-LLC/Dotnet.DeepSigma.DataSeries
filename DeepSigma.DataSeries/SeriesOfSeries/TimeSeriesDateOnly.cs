@@ -17,36 +17,41 @@ namespace DeepSigma.DataSeries.Series;
 /// It would have reduced code duplication and improved maintainability, but I due not want to introduce unnecessary complexity with additional abstractions (or a wrapper class) just for this purpose.
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
-public class TimeSeriesDateOnly<TValueDataType> : 
-    AbstractSeriesOfSeries<
+/// <typeparam name="TValueAccumulatorDataType"></typeparam>
+public class TimeSeriesDateOnly<TValueDataType, TValueAccumulatorDataType> 
+    : AbstractSeriesOfSeries<
         KeyValuePair<DateOnly, TValueDataType>, 
         TimeSeriesTransformation, 
-        FunctionalSeriesCollection<DateOnly, TValueDataType, TimeSeriesTransformation>> 
-    where TValueDataType : class, IDataModel<TValueDataType>
+        FunctionalSeriesCollection<DateOnly, TValueDataType, TValueAccumulatorDataType, TimeSeriesTransformation>> 
+    where TValueDataType : class, IDataModel<TValueDataType, TValueAccumulatorDataType>
+    where TValueAccumulatorDataType : class, IAccumulator<TValueDataType>
 {
     /// <summary>
     /// Purpose of the time series.
     /// </summary>
     public TimeSeriesPurpose TimeSeriesPurpose { get; set; } = TimeSeriesPurpose.Other;
 
-    /// <inheritdoc cref="TimeSeries{TValueDataType}"/>
+    /// <inheritdoc cref="TimeSeries{TValueDataType, TValueAccumulatorDataType}"/>
     public TimeSeriesDateOnly() : base()
     {
     }
 
     /// <inheritdoc/>
-    public sealed override ICollection<KeyValuePair<DateOnly, TValueDataType>> GetSeriesDataTransformed()
+    public sealed override ICollection<KeyValuePair<DateOnly, TValueDataType>>? GetSeriesDataTransformed()
     {
         throw new NotImplementedException("Transformation logic is not implemented for TimeSeries.");
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DataSeries{TKeyDataType, TValueDataType}"/> class with the provided data.
+    /// Initializes a new instance of the <see cref="DataSeries{TKeyDataType, TValueDataType, TValueAccumulatorDataType}"/> class with the provided data.
     /// </summary>
     /// <typeparam name="IModel"></typeparam>
+    /// <typeparam name="TAccumulator"></typeparam>
     /// <param name="data">Data set containing original data.</param>
     /// <param name="selected_property">Seleted property from data model.</param>
-    public void LoadFromDataModel<IModel>(FunctionalDataSet<DateOnly, IModel> data, Expression<Func<IModel, TValueDataType>> selected_property) where IModel : class, IDataModel<IModel>
+    public void LoadFromDataModel<IModel, TAccumulator>(FunctionalDataSet<DateOnly, IModel, TAccumulator> data, Expression<Func<IModel, TValueDataType>> selected_property) 
+        where IModel : class, IDataModel<IModel, TAccumulator>
+        where TAccumulator : class, IAccumulator<IModel>
     {
         throw new NotImplementedException();
         //Data = DataSetUtilities.GetSingleSeries<DateOnly, TValueDataType, IModel>(data.GetAllData(), selected_property);
