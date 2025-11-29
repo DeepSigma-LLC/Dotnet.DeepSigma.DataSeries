@@ -1,5 +1,7 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
+using DeepSigma.DataSeries.Utilities;
+using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Models.BaseSeries;
 
@@ -26,9 +28,20 @@ public abstract class AbstractFunctionalSeriesBase<TKeyDataType, TValueDataType,
     }
 
     /// <inheritdoc/>
-    public sealed override ICollection<KeyValuePair<TKeyDataType, TValueDataType>> GetSeriesData()
+    public sealed override ICollection<KeyValuePair<TKeyDataType, TValueDataType>>? GetSeriesData()
     {
         return Data;
+    }
+
+    /// <inheritdoc/>
+    public sealed override ICollection<KeyValuePair<TKeyDataType, TValueDataType>>? GetSeriesDataTransformed()
+    {
+        SortedDictionary<TKeyDataType, TValueDataType>? Data = GetSeriesData()?.ToSortedDictionary();
+        if (Data is null) return null;
+
+        (var TransformedData, var Error) = SeriesUtilities.GetTransformedSeries<TKeyDataType, TValueDataType, TValueAccumulatorDataType>(Data, Transformation);
+        if (Error is not null || TransformedData is null) return null;
+        return TransformedData;
     }
 
 }

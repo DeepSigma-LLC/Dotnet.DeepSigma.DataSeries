@@ -1,5 +1,7 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
+using DeepSigma.DataSeries.Utilities;
+using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Models.BaseSeries;
 
@@ -16,9 +18,4 @@ public class DataSeriesBase<TValueDataType, TValueAccumulatorDataType>
     /// <inheritdoc cref="DataSeriesBase{TValueDataType, TValueAccumulatorDataType}"/>
     public DataSeriesBase(SortedDictionary<decimal, TValueDataType> data) : base(data) { }
 
-    /// <inheritdoc/>
-    public sealed override ICollection<KeyValuePair<decimal, TValueDataType>> GetSeriesDataTransformed()
-    {
-        throw new NotImplementedException();
-    }
 }

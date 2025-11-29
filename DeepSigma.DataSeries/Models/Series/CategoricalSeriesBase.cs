@@ -17,9 +17,4 @@ public class CategoricalSeriesBase<TValueDataType, TValueAccumulatorDataType>
     /// <inheritdoc cref="CategoricalSeriesBase{TValueDataType, TValueAccumulatorDataType}"/>
     public CategoricalSeriesBase(SortedDictionary<string, TValueDataType> data) : base(data) { }
 
-    /// <inheritdoc/>
-    public sealed override ICollection<KeyValuePair<string, TValueDataType>> GetSeriesDataTransformed()
-    {
-        throw new NotImplementedException();
-    }
 }

@@ -3,6 +3,7 @@ using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Models;
 using DeepSigma.DataSeries.Models.Collections;
+using DeepSigma.DataSeries.SeriesOfSeries;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using System.Linq.Expressions;
@@ -19,10 +20,7 @@ namespace DeepSigma.DataSeries.Series;
 /// <typeparam name="TValueDataType"></typeparam>
 /// <typeparam name="TValueAccumulatorDataType"></typeparam>
 public class TimeSeriesDateOnly<TValueDataType, TValueAccumulatorDataType> 
-    : AbstractSeriesOfSeries<
-        KeyValuePair<DateOnly, TValueDataType>, 
-        TimeSeriesTransformation, 
-        FunctionalSeriesCollection<DateOnly, TValueDataType, TValueAccumulatorDataType, TimeSeriesTransformation>> 
+    : AbstractFunctionalSeriesOfSeries<DateOnly, TValueDataType, TValueAccumulatorDataType, TimeSeriesTransformation>
     where TValueDataType : class, IDataModel<TValueDataType, TValueAccumulatorDataType>
     where TValueAccumulatorDataType : class, IAccumulator<TValueDataType>
 {

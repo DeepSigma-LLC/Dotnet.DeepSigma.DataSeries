@@ -1,11 +1,17 @@
 ﻿using DeepSigma.DataSeries.Enums;
 using DeepSigma.General;
 using DeepSigma.General.Enums;
+using DeepSigma.DataSeries.Transformations;
 
 namespace DeepSigma.DataSeries.Utilities;
 
 internal static class TimeSeriesTransformUtilities
 {
+    internal static (SortedDictionary<DateTime, decimal>? Results, Exception? Error) TransformedTimeSeriesData(SortedDictionary<DateTime, decimal> Data, TimeSeriesTransformation Transformation)
+    {
+        return TransformedTimeSeriesData(Data, Transformation.DataTransformation, Transformation.ObservationWindowCount);
+    }
+
     internal static (SortedDictionary<DateTime, decimal>? Results, Exception? Error) TransformedTimeSeriesData(SortedDictionary<DateTime, decimal> Data, TimeSeriesDataTransformation Selection, int ObservationWindowCount = 20)
     {
         SortedDictionary<DateTime, decimal> TempData;
@@ -73,7 +79,6 @@ internal static class TimeSeriesTransformUtilities
                 return (null, new NotImplementedException());
         }
     }
-
 
     
     /// <summary>
@@ -240,7 +245,7 @@ internal static class TimeSeriesTransformUtilities
     private static SortedDictionary<DateTime, decimal> GetStandardDeviationWindowed(SortedDictionary<DateTime, decimal> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample, int ObservationWindowCount = 20)
     {
         SortedDictionary<DateTime, decimal> results = [];
-        DateTime windowStartDateTime = Data.Keys.Min();
+        DateTime? windowStartDateTime = Data.Keys.Min();
 
         int windowCount = ObservationWindowCount;
         if (SetClassification == StatisticsDataSetClassification.Sample) windowCount = windowCount - 1;

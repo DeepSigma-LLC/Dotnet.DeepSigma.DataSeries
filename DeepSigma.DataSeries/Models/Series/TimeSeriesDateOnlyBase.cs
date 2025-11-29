@@ -16,9 +16,4 @@ public class TimeSeriesDateOnlyBase<TValueDataType, TValueAccumulatorDataType> :
     /// <inheritdoc cref="TimeSeriesDateOnlyBase{TValueDataType, TValueAccumulatorDataType}"/>
     public TimeSeriesDateOnlyBase(SortedDictionary<DateOnly, TValueDataType> data) : base(data) { }
 
-    /// <inheritdoc/>
-    public sealed override ICollection<KeyValuePair<DateOnly, TValueDataType>> GetSeriesDataTransformed()
-    {
-        throw new NotImplementedException();
-    }
 }

@@ -15,7 +15,7 @@ namespace DeepSigma.DataSeries.Series;
 /// <typeparam name="XDataType"></typeparam>
 /// <typeparam name="YDataType"></typeparam>
 /// <typeparam name="TValueAccumulatorDataType"></typeparam>
-public class NonFunctionalDataSeries<XDataType, YDataType, TValueAccumulatorDataType> : 
+public class NonFunctionalSeries<XDataType, YDataType, TValueAccumulatorDataType> : 
     AbstractSeriesOfSeries<
         Tuple<XDataType, YDataType>, 
         SeriesTransformation,
@@ -24,8 +24,8 @@ public class NonFunctionalDataSeries<XDataType, YDataType, TValueAccumulatorData
     where YDataType : class, IDataModel<YDataType, TValueAccumulatorDataType>
     where TValueAccumulatorDataType : class, IAccumulator<YDataType>
 {
-    /// <inheritdoc cref="NonFunctionalDataSeries{XDataType, YDataType, TValueAccumulatorDataType}"/>
-    public NonFunctionalDataSeries() : base()
+    /// <inheritdoc cref="NonFunctionalSeries{XDataType, YDataType, TValueAccumulatorDataType}"/>
+    public NonFunctionalSeries() : base()
     {
         AllowDuplicateDataPoints = true;
     }

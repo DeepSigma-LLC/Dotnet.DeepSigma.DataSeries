@@ -2,6 +2,7 @@
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Models;
 using DeepSigma.DataSeries.Models.Collections;
+using DeepSigma.DataSeries.SeriesOfSeries;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using System.Linq.Expressions;
@@ -15,11 +16,8 @@ namespace DeepSigma.DataSeries.Series;
 /// <typeparam name="TKeyDataType"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
 /// <typeparam name="TValueAccumulatorDataType"></typeparam>
-public class DataSeries<TKeyDataType, TValueDataType, TValueAccumulatorDataType> : 
-    AbstractSeriesOfSeries<
-        KeyValuePair<TKeyDataType, TValueDataType>, 
-        SeriesTransformation, 
-        FunctionalSeriesCollection<TKeyDataType, TValueDataType, TValueAccumulatorDataType, SeriesTransformation>> 
+public class DataSeries<TKeyDataType, TValueDataType, TValueAccumulatorDataType> :
+    AbstractFunctionalSeriesOfSeries<TKeyDataType, TValueDataType, TValueAccumulatorDataType, SeriesTransformation>
     where TKeyDataType : INumber<TKeyDataType>
     where TValueDataType : class, IDataModel<TValueDataType, TValueAccumulatorDataType>
     where TValueAccumulatorDataType : class, IAccumulator<TValueDataType>

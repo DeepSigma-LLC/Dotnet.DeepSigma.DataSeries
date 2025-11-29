@@ -23,7 +23,7 @@ public class TimeSeries_Test
 
         // Assert
         Assert.False(timeSeries.IsEmpty);
-        Assert.Equal(3, timeSeries.GetSeriesData().Count);
+        Assert.Equal(3, timeSeries.GetSeriesData()?.Count);
         Assert.Equal(1, timeSeries.GetSubSeriesCount());
     }
 

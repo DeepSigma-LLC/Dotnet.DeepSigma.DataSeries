@@ -2,6 +2,8 @@
 
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
+using DeepSigma.DataSeries.Utilities;
+using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Models.BaseSeries;
 
@@ -20,14 +22,14 @@ public class NonFunctionalSeriesBase<TKeyDataType, TValueDataType, TValueAccumul
     where TValueAccumulatorDataType : class, IAccumulator<TValueDataType>
 {
     /// <inheritdoc/>
-    public sealed override ICollection<Tuple<TKeyDataType, TValueDataType>> GetSeriesData()
+    public sealed override ICollection<Tuple<TKeyDataType, TValueDataType>>? GetSeriesData()
     {
-        throw new NotImplementedException();
+        return Data;
     }
 
     /// <inheritdoc/>
-    public sealed override ICollection<Tuple<TKeyDataType, TValueDataType>> GetSeriesDataTransformed()
+    public sealed override ICollection<Tuple<TKeyDataType, TValueDataType>>? GetSeriesDataTransformed()
     {
-        throw new NotImplementedException();
+        SeriesUtilities.GetTransformedSeries<TKeyDataType, TValueDataType, TValueAccumulatorDataType>(GetSeriesData(), Transformation);
     }
 }
