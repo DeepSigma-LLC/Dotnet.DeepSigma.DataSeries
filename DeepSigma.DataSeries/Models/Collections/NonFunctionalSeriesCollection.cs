@@ -1,7 +1,6 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
-using System.Numerics;
 
 namespace DeepSigma.DataSeries.Models.Collections;
 
@@ -14,28 +13,18 @@ public class NonFunctionalSeriesCollection<K, V> : AbstractSeriesCollection<Tupl
     SeriesTransformation>, 
     ISeriesCollection<Tuple<K,V>, SeriesTransformation>
     where K : IComparable<K>
-    where V : class, IImmutableDataModel<V>
+    where V : class, IMutableDataModel<V>
 {
+    /// <inheritdoc cref="NonFunctionalSeriesCollection{K, V}"/>
+    public NonFunctionalSeriesCollection()
+    {
+        this.MaxCapacity = 1;
+    }
+
     /// <inheritdoc/>
     public override ICollection<Tuple<K, V>> GetSeriesData()
     {
         if (GetSubSeriesCount() == 1) return SubSeriesCollection.First().Series.GetSeriesData();
-
-        bool is_first_element = true;
-        ICollection<(K, V)> CombinedSeries = new List<(K, V)>(SubSeriesCollection.First().Series.GetSeriesData().Count);
-        foreach (var series in SubSeriesCollection)
-        {
-            if (is_first_element == true)
-            {
-                is_first_element = false;
-                CombinedSeries = (List<(K, V)>)series.Series.GetSeriesData();
-                continue;
-            }
-            List<(K, V)> seriesData = (List<(K, V)>)series.Series.GetSeriesData();
-            CombinedSeries = SeriesUtilities.GetCombinedSeries(CombinedSeries, seriesData, series.MathematicalOperation);
-        }
-        return CombinedSeries;
+        throw new InvalidOperationException("NonFunctionalSeriesCollection can only contain one sub-series since non-functional data cannot be logically combined.");
     }
-
-
 }

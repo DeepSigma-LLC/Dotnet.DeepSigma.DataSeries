@@ -1,7 +1,7 @@
-﻿using DeepSigma.DataSeries.DataModels;
+﻿using DeepSigma.DataSeries.DataModels.Immutable;
 using DeepSigma.DataSeries.Interfaces;
 
-namespace DeepSigma.DataSeries.MutableDataModels;
+namespace DeepSigma.DataSeries.DataModels.Mutable;
 
 /// <summary>
 /// Represents a mutable observation containing a numeric value and associated metadata indicating whether the value is

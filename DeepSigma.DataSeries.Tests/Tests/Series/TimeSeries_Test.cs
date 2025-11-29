@@ -1,7 +1,9 @@
 ﻿using Xunit;
 using DeepSigma.DataSeries.Series;
-using DeepSigma.DataSeries.DataModels;
 using DeepSigma.DataSeries.Models.BaseSeries;
+using DeepSigma.DataSeries.DataModels.Immutable;
+using DeepSigma.DataSeries.DataModels.Mutable;
+using DeepSigma.DataSeries.DataModels.Mutable;
 
 namespace DeepSigma.DataSeries.Tests.Tests.Series;
 
@@ -49,7 +51,7 @@ public class TimeSeries_Test
         TimeSeriesBase<Observation> timeSeriesdata1 = new(data1);
 
         // Act
-        TimeSeries<Observation> timeSeries = new()
+        TimeSeries<MutableObservation> timeSeries = new()
         {
             SeriesName = "SPX Index"
         };
@@ -65,12 +67,11 @@ public class TimeSeries_Test
     [Fact]
     public void Test_TimeSeries_WithDataModel()
     {
-        TimeSeriesDateOnly<BarObservation> time_Series = new();
+        TimeSeriesDateOnly<MutableBarObservation> time_Series = new();
         BarObservation bar = new(12, 23, 44, 32);
         BarObservation bar1 = new(12, 23, 44, 32);
-        BarObservation bar2 = bar1.Scale(1.2m);
 
-        TimeSeries<BarObservation> seriesBase = new()
+        TimeSeries<MutableBarObservation> seriesBase = new()
         {
             SeriesName = "Test Series"
         };

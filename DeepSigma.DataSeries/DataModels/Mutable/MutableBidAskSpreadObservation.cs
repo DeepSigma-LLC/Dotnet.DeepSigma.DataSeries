@@ -1,7 +1,6 @@
-﻿using DeepSigma.DataSeries.DataModels;
-using DeepSigma.DataSeries.Interfaces;
+﻿using DeepSigma.DataSeries.Interfaces;
 
-namespace DeepSigma.DataSeries.MutableDataModels;
+namespace DeepSigma.DataSeries.DataModels.Mutable;
 
 /// <summary>
 /// Represents a mutable bid-ask spread observation for a financial instrument.

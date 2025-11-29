@@ -20,7 +20,7 @@ public class DataSeries<TKeyDataType, TValueDataType> :
         SeriesTransformation, 
         FunctionalSeriesCollection<TKeyDataType, TValueDataType, SeriesTransformation>> 
     where TKeyDataType : INumber<TKeyDataType>
-    where TValueDataType : class, IImmutableDataModel<TValueDataType>
+    where TValueDataType : class, IMutableDataModel<TValueDataType>
 {
     /// <inheritdoc cref="DataSeries{TKeyDataType, TValueDataType}"/>
     public DataSeries() : base(){}

@@ -1,4 +1,4 @@
-﻿using DeepSigma.DataSeries.DataModels;
+﻿using DeepSigma.DataSeries.DataModels.Immutable;
 using DeepSigma.DataSeries.Interfaces;
 
 namespace DeepSigma.DataSeries.Tests.Model;

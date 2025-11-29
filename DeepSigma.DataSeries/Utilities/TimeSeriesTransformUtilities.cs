@@ -1,0 +1,269 @@
+﻿using DeepSigma.DataSeries.Enums;
+using DeepSigma.General;
+using DeepSigma.General.Enums;
+
+namespace DeepSigma.DataSeries.Utilities;
+
+internal static class TimeSeriesTransformUtilities
+{
+    internal static (SortedDictionary<DateTime, decimal>? Results, Exception? Error) TransformedTimeSeriesData(SortedDictionary<DateTime, decimal> Data, TimeSeriesDataTransformation Selection, int ObservationWindowCount = 20)
+    {
+        SortedDictionary<DateTime, decimal> TempData;
+        SortedDictionary<DateTime, decimal> ReturnData;
+        SortedDictionary<DateTime, decimal> SDData;
+        SortedDictionary<DateTime, decimal> CumulativeReturnData;
+
+        switch (Selection)
+        {
+            case (TimeSeriesDataTransformation.None):
+                return (Data, null);
+            case (TimeSeriesDataTransformation.MovingAverageWindow):
+                return (GetMovingAverageWindowed(Data, ObservationWindowCount), null);
+            case (TimeSeriesDataTransformation.CumulativeReturn):
+                return (GetCumulativeReturns(Data), null);
+            case (TimeSeriesDataTransformation.Wealth):
+                return (GetWealth(Data), null);
+            case (TimeSeriesDataTransformation.WealthReverse):
+                return (GetWealthReverse(Data), null);
+            case (TimeSeriesDataTransformation.Return):
+                return (GetObservationReturns(Data), null);
+            case (TimeSeriesDataTransformation.AnnualizedVolatilityExpandingWindow):
+                TempData = TimeSeriesUtilities.GetTimeSeriesWithTargetedDates(Data, new SelfAligningTimeStep(Periodicity.Daily, TimeInterval.Min_15));
+                TempData = GetObservationReturns(TempData);
+                decimal AnnualizationMultiplier = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.ToArray());
+                return (SeriesUtilities.GetScaledSeries(GetStandardDeviationExpandingWindow(TempData), AnnualizationMultiplier), null);
+            case (TimeSeriesDataTransformation.AnnualizedVolatilityWindow):
+                TempData = TimeSeriesUtilities.GetTimeSeriesWithTargetedDates(Data, new SelfAligningTimeStep(Periodicity.Daily, TimeInterval.Min_15));
+                TempData = GetObservationReturns(TempData);
+                decimal AnnualizationMultiplier2 = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.ToArray());
+                return (SeriesUtilities.GetScaledSeries(GetStandardDeviationWindowed(TempData, ObservationWindowCount: ObservationWindowCount), AnnualizationMultiplier2), null);
+            case (TimeSeriesDataTransformation.Drawdown):
+                return (GetDrawdown(Data), null);
+            case (TimeSeriesDataTransformation.SD_1_Positive):
+                ReturnData = GetObservationReturns(Data);
+                CumulativeReturnData = GetMovingAverageWindowed(GetCumulativeReturns(Data), ObservationWindowCount);
+                SDData = GetStandardDeviationWindowed(ReturnData, ObservationWindowCount: ObservationWindowCount);
+                return SeriesUtilities.GetCombinedSeries(CumulativeReturnData, SDData, MathematicalOperation.Add);
+            case (TimeSeriesDataTransformation.SD_1_Negative):
+                ReturnData = GetObservationReturns(Data);
+                CumulativeReturnData = GetMovingAverageWindowed(GetCumulativeReturns(Data), ObservationWindowCount);
+                SDData = GetStandardDeviationWindowed(ReturnData, ObservationWindowCount: ObservationWindowCount);
+                return SeriesUtilities.GetCombinedSeries(ReturnData, SDData, MathematicalOperation.Subtract);
+            case (TimeSeriesDataTransformation.SD_2_Positive):
+                ReturnData = GetObservationReturns(Data);
+                CumulativeReturnData = GetMovingAverageWindowed(GetCumulativeReturns(Data), ObservationWindowCount);
+                SDData = SeriesUtilities.GetScaledSeries(GetStandardDeviationWindowed(ReturnData, ObservationWindowCount: ObservationWindowCount), 2);
+                return SeriesUtilities.GetCombinedSeries(CumulativeReturnData, SDData, MathematicalOperation.Add);
+            case (TimeSeriesDataTransformation.SD_2_Negative):
+                ReturnData = GetObservationReturns(Data);
+                CumulativeReturnData = GetMovingAverageWindowed(GetCumulativeReturns(Data), ObservationWindowCount);
+                SDData = SeriesUtilities.GetScaledSeries(GetStandardDeviationWindowed(ReturnData, ObservationWindowCount: ObservationWindowCount), -2);
+                return SeriesUtilities.GetCombinedSeries(CumulativeReturnData, SDData, MathematicalOperation.Add);
+            case (TimeSeriesDataTransformation.SD_3_Positive):
+                ReturnData = GetObservationReturns(Data);
+                CumulativeReturnData = GetMovingAverageWindowed(GetCumulativeReturns(Data), ObservationWindowCount);
+                SDData = SeriesUtilities.GetScaledSeries(GetStandardDeviationWindowed(ReturnData, ObservationWindowCount: ObservationWindowCount), 3);
+                return SeriesUtilities.GetCombinedSeries(CumulativeReturnData, SDData, MathematicalOperation.Add);
+            case (TimeSeriesDataTransformation.SD_3_Negative):
+                ReturnData = GetObservationReturns(Data);
+                CumulativeReturnData = GetMovingAverageWindowed(GetCumulativeReturns(Data), ObservationWindowCount);
+                SDData = SeriesUtilities.GetScaledSeries(GetStandardDeviationWindowed(ReturnData, ObservationWindowCount: ObservationWindowCount), -3);
+                return SeriesUtilities.GetCombinedSeries(CumulativeReturnData, SDData, MathematicalOperation.Add);
+            default:
+                return (null, new NotImplementedException());
+        }
+    }
+
+
+    
+    /// <summary>
+    /// Gets observation return time series.
+    /// </summary>
+    /// <param name="Data"></param>
+    /// <returns></returns>
+    private static SortedDictionary<DateTime, decimal> GetObservationReturns(SortedDictionary<DateTime, decimal> Data)
+    {
+        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        decimal priorValue = 0;
+        foreach (KeyValuePair<DateTime, decimal> kvp in Data)
+        {
+            if(priorValue == 0) continue;
+
+            decimal returnValue = kvp.Value / priorValue - 1;
+            results.Add(kvp.Key, returnValue);
+            priorValue = kvp.Value;
+        }
+        return results;
+    }
+
+    /// <summary>
+    /// Gets cumulative return converted time series.
+    /// </summary>
+    /// <param name="Data"></param>
+    /// <returns></returns>
+    private static SortedDictionary<DateTime, decimal> GetCumulativeReturns(SortedDictionary<DateTime, decimal> Data)
+    {
+        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        DateTime minDate = Data.Keys.Min();
+        decimal startingValue = Data[minDate];
+        foreach (KeyValuePair<DateTime, decimal> kvp in Data)
+        {
+            if (startingValue == 0) continue;
+
+            decimal returnValue = kvp.Value / startingValue - 1;
+            results.Add(kvp.Key, returnValue);
+        }
+        return results;
+    }
+
+
+    /// <summary>
+    /// Gets wealth converted time series.
+    /// </summary>
+    /// <param name="Data"></param>
+    /// <returns></returns>
+    private static SortedDictionary<DateTime, decimal> GetWealth(SortedDictionary<DateTime, decimal> Data)
+    {
+        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        DateTime minDate = Data.Keys.Min();
+        decimal startingValue = Data[minDate];
+        decimal wealthValue = 1000;
+        foreach (KeyValuePair<DateTime, decimal> kvp in Data)
+        {
+            if (startingValue == 0) continue;
+
+            decimal returnValue = (kvp.Value / startingValue) * wealthValue;
+            results.Add(kvp.Key, returnValue);
+        }
+        return results;
+    }
+
+
+    /// <summary>
+    /// Gets reverse wealth converted time series.
+    /// </summary>
+    /// <param name="Data"></param>
+    /// <returns></returns>
+    private static SortedDictionary<DateTime, decimal> GetWealthReverse(SortedDictionary<DateTime, decimal> Data)
+    {
+        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        DateTime maxDate = Data.Keys.Max();
+        decimal endingValue = Data[maxDate];
+        decimal wealthValue = 1000;
+        foreach (KeyValuePair<DateTime, decimal> kvp in Data)
+        {
+            if (endingValue == 0) continue;
+
+            decimal returnValue = (kvp.Value / endingValue) * wealthValue;
+            results.Add(kvp.Key, returnValue);
+        }
+        return results;
+    }
+
+
+    /// <summary>
+    /// Gets drawdown converted time series.
+    /// </summary>
+    /// <param name="Data"></param>
+    /// <returns></returns>
+    private static SortedDictionary<DateTime, decimal> GetDrawdown(SortedDictionary<DateTime, decimal> Data)
+    {
+        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        decimal maxValue = 0;
+        foreach (KeyValuePair<DateTime, decimal> kvp in Data)
+        {
+            if (kvp.Value > maxValue) maxValue = kvp.Value;
+            if(maxValue == 0) continue;
+
+            decimal returnValue = (kvp.Value / maxValue) - 1;
+            results.Add(kvp.Key, returnValue);
+        }
+        return results;
+    }
+
+
+    private static SortedDictionary<DateTime, decimal> GetMovingAverageWindowed(SortedDictionary<DateTime, decimal> Data, int ObservationWindowCount = 20)
+    {
+        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        DateTime windowStartDateTime = Data.Keys.Min();
+
+        int observationIndex = 0;
+        foreach (KeyValuePair<DateTime, decimal> kvp in Data)
+        {
+            if (observationIndex + 1 >= ObservationWindowCount)
+            {
+                int observationWindowStartIndex = observationIndex + 1 - ObservationWindowCount;
+                windowStartDateTime = Data.ElementAt(observationWindowStartIndex).Key;
+
+                decimal windowAverage = Data.Where(x => x.Key >= windowStartDateTime && x.Key <= kvp.Key).Average(x => x.Value);
+                results.Add(kvp.Key, windowAverage);
+            }
+            observationIndex++;
+        }
+        return results;
+    }
+
+
+
+    /// <summary>
+    /// Gets a standard deviation time series calculated using an expanding window.
+    /// </summary>
+    /// <param name="Data"></param>
+    /// <param name="SetClassification"></param>
+    /// <returns></returns>
+    private static SortedDictionary<DateTime, decimal> GetStandardDeviationExpandingWindow(SortedDictionary<DateTime, decimal> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
+    {
+        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        foreach (KeyValuePair<DateTime, decimal> kvp in Data)
+        {
+            decimal windowCount = Data.Where(x => x.Key <= kvp.Key).Count();
+            if (SetClassification == StatisticsDataSetClassification.Sample) windowCount = windowCount - 1;
+
+            decimal windowAverage = Data.Where(x => x.Key <= kvp.Key).Average(x => x.Value);
+            decimal sum = (decimal)Data.Where(x => x.Key <= kvp.Key).Sum(x => Math.Pow((double)(x.Value - windowAverage), 2));
+
+            if (windowCount == 0) continue;
+            
+            decimal standardDeviation = (decimal)Math.Sqrt((double)(sum / windowCount));
+            results.Add(kvp.Key, standardDeviation);
+        }
+        return results;
+    }
+
+    /// <summary>
+    /// Gets a standard deviation time series using a rolling window.
+    /// </summary>
+    /// <param name="Data"></param>
+    /// <param name="SetClassification"></param>
+    /// <param name="ObservationWindowCount"></param>
+    /// <returns></returns>
+    private static SortedDictionary<DateTime, decimal> GetStandardDeviationWindowed(SortedDictionary<DateTime, decimal> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample, int ObservationWindowCount = 20)
+    {
+        SortedDictionary<DateTime, decimal> results = new SortedDictionary<DateTime, decimal>();
+        DateTime windowStartDateTime = Data.Keys.Min();
+
+        int windowCount = ObservationWindowCount;
+        if (SetClassification == StatisticsDataSetClassification.Sample) windowCount = windowCount - 1;
+
+        int observationIndex = 0;
+        foreach (KeyValuePair<DateTime, decimal> kvp in Data)
+        {
+            if (observationIndex + 1 >= ObservationWindowCount)
+            {
+                int observationWindowStartIndex = observationIndex + 1 - ObservationWindowCount;
+                windowStartDateTime = Data.ElementAt(observationWindowStartIndex).Key;
+
+                decimal windowAverage = Data.Where(x => x.Key >= windowStartDateTime && x.Key <= kvp.Key).Average(x => x.Value);
+                decimal sum = (decimal)Data.Where(x => x.Key >= windowStartDateTime && x.Key <= kvp.Key).Sum(x => Math.Pow((double)(x.Value - windowAverage), 2));
+
+                if (windowCount == 0) continue;
+
+                decimal standardDeviation = (decimal)Math.Sqrt((double)(sum / windowCount));
+                results.Add(kvp.Key, standardDeviation);
+            }
+            observationIndex++;
+        }
+        return results;
+    }
+
+}

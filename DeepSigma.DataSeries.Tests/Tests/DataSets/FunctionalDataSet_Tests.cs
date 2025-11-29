@@ -1,6 +1,6 @@
 ﻿using Xunit;
 using DeepSigma.DataSeries.DataSets;
-using DeepSigma.DataSeries.DataModels;
+using DeepSigma.DataSeries.DataModels.Immutable;
 
 namespace DeepSigma.DataSeries.Tests.Tests.DataSets;
 

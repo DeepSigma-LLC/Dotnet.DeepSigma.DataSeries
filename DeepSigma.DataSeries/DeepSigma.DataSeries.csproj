@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DeepSigma.General" Version="1.0.2" />
+    <PackageReference Include="DeepSigma.General" Version="1.5.1" />
   </ItemGroup>
 
 </Project>

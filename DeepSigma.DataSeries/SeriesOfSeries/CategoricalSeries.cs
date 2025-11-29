@@ -13,7 +13,7 @@ public class CategoricalSeries<TValueDataType> :
         KeyValuePair<string, TValueDataType>, 
         SeriesTransformation, 
         FunctionalSeriesCollection<string, TValueDataType, SeriesTransformation>> 
-    where TValueDataType : class, IImmutableDataModel<TValueDataType>
+    where TValueDataType : class, IMutableDataModel<TValueDataType>
 {
 
     /// <inheritdoc cref="CategoricalSeries{TValueDataType}"/>

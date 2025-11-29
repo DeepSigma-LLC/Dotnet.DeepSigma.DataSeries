@@ -1,6 +1,5 @@
 ﻿using DeepSigma.General.Enums;
 using DeepSigma.DataSeries.Interfaces;
-using DeepSigma.DataSeries.Utilities;
 
 namespace DeepSigma.DataSeries.Models.Collections;
 
@@ -9,15 +8,18 @@ namespace DeepSigma.DataSeries.Models.Collections;
 /// </summary>
 /// <typeparam name="TDataType"></typeparam>
 /// <typeparam name="TTransformation"></typeparam>
-public abstract class AbstractSeriesCollection<TDataType, TTransformation> : ISeries<TDataType, TTransformation>, 
-    ISeriesCollection<TDataType, TTransformation> 
+public abstract class AbstractSeriesCollection<TDataType, TTransformation> 
+    : ISeries<TDataType, TTransformation>, ISeriesCollection<TDataType, TTransformation> 
     where TDataType : notnull
     where TTransformation : class, new()
 {
+
+    private protected int MaxCapacity { get; set; } = 1000;
+
     /// <summary>
     /// Collection of time series sub series.
     /// </summary>
-    protected List<SeriesCollectionPair<TDataType, TTransformation>> SubSeriesCollection { get; set; } = [];
+    protected List<SeriesCollectionPair<TDataType, TTransformation>> SubSeriesCollection { get; private set; } = [];
 
     /// <inheritdoc/>
     public string SeriesName { get; set; } = string.Empty;
@@ -52,6 +54,10 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation> : ISe
     /// <param name="data_series"></param>
     public void Add(MathematicalOperation mathematical_operation, ISeries<TDataType, TTransformation> data_series)
     {
+        if(SubSeriesCollection.Count >= MaxCapacity)
+        {
+            throw new InvalidOperationException($"Cannot add more than {MaxCapacity} sub-series to the collection.");
+        }
         SeriesCollectionPair<TDataType, TTransformation> pair = new(mathematical_operation, data_series);
         SubSeriesCollection.Add(pair);
     }

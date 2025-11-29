@@ -7,7 +7,9 @@ namespace DeepSigma.DataSeries.Interfaces;
 /// <summary>
 /// Represents a base interface for data models in the data series.
 /// </summary>
-public interface IImmutableDataModel<T> where T : class
+public interface IImmutableDataModel<T> 
+    where T : class
+    //where TMutable : class, IMutableDataModel<T>, new()
 {
     /// <summary>
     /// Signifies if the data point has been rolled.
@@ -19,47 +21,47 @@ public interface IImmutableDataModel<T> where T : class
     /// </summary>
     public bool IsSyntheticData { get; init; }
 
-    /// <summary>
-    /// Scales the data model by a given scalar value and returns a new, scaled instance.
-    /// </summary>
-    /// <param name="scalar"></param>
-    /// <returns></returns>
-    public T Scale(decimal scalar);
+    ///// <summary>
+    ///// Scales the data model by a given scalar value and returns a new, scaled instance.
+    ///// </summary>
+    ///// <param name="scalar"></param>
+    ///// <returns></returns>
+    //public void Scale(TMutable Item, decimal scalar);
 
-    /// <summary>
-    /// Combines two data models using the specified mathematical operation.
-    /// </summary>
-    /// <param name="Item"></param>
-    /// <param name="mathematicalOperation"></param>
-    /// <returns></returns>
-    public (T? result, Exception? error) Combine(T Item, MathematicalOperation mathematicalOperation);
+    ///// <summary>
+    ///// Combines two data models using the specified mathematical operation.
+    ///// </summary>
+    ///// <param name="Item"></param>
+    ///// <param name="mathematicalOperation"></param>
+    ///// <returns></returns>
+    //public Exception? Combine(TMutable Item, MathematicalOperation mathematicalOperation);
 
-    /// <summary>
-    /// Adds two data models together.
-    /// </summary>
-    /// <param name="Item"></param>
-    /// <returns></returns>
-    public (T? result, Exception? error) Add(T Item);
+    ///// <summary>
+    ///// Adds two data models together.
+    ///// </summary>
+    ///// <param name="Item"></param>
+    ///// <returns></returns>
+    //public Exception? Add(TMutable Item);
 
-    /// <summary>
-    /// Subtracts a data model from another.
-    /// </summary>
-    /// <param name="Item"></param>
-    /// <returns></returns>
+    ///// <summary>
+    ///// Subtracts a data model from another.
+    ///// </summary>
+    ///// <param name="Item"></param>
+    ///// <returns></returns>
 
-    public (T? result, Exception? error) Subtract(T Item);
+    //public Exception? Subtract(TMutable Item);
 
-    /// <summary>
-    /// Multiplies two data models together.
-    /// </summary>
-    /// <param name="Item"></param>
-    /// <returns></returns>
-    public (T? result, Exception? error) Multiply(T Item);
+    ///// <summary>
+    ///// Multiplies two data models together.
+    ///// </summary>
+    ///// <param name="Item"></param>
+    ///// <returns></returns>
+    //public Exception? Multiply(TMutable Item);
 
-    /// <summary>
-    /// Divides the data model by another.
-    /// </summary>
-    /// <param name="Item"></param>
-    /// <returns></returns>
-    public (T? result, Exception? error) Divide(T Item);
+    ///// <summary>
+    ///// Divides the data model by another.
+    ///// </summary>
+    ///// <param name="Item"></param>
+    ///// <returns></returns>
+    //public Exception? Divide(TMutable Item);
 }

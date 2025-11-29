@@ -1,8 +1,6 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
-using System.ComponentModel.DataAnnotations;
-using System.Numerics;
 
 namespace DeepSigma.DataSeries.Models.Collections;
 
@@ -16,7 +14,7 @@ public class FunctionalSeriesCollection<K, V, TTransformation> : AbstractSeriesC
     ISeriesCollection<KeyValuePair<K, V>, TTransformation>
     where TTransformation : SeriesTransformation, new()
     where K : IComparable<K>
-    where V : class, IImmutableDataModel<V>
+    where V : class, IMutableDataModel<V>
 {
     /// <inheritdoc/>
     public override ICollection<KeyValuePair<K, V>> GetSeriesData()
@@ -34,7 +32,7 @@ public class FunctionalSeriesCollection<K, V, TTransformation> : AbstractSeriesC
                 continue;
             }
             SortedDictionary<K, V> seriesData = (SortedDictionary<K, V>)series.Series.GetSeriesData();
-            CombinedSeries = (SortedDictionary<K, V>)SeriesUtilities.GetCombinedSeries(CombinedSeries, seriesData, series.MathematicalOperation);
+            SeriesUtilities.CombinedSeries(CombinedSeries, seriesData, series.MathematicalOperation);
         }
         return CombinedSeries;
     }

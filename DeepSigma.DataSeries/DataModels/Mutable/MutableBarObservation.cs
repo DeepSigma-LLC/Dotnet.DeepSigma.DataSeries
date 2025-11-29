@@ -1,13 +1,12 @@
-﻿using DeepSigma.DataSeries.DataModels;
-using DeepSigma.DataSeries.Interfaces;
+﻿using DeepSigma.DataSeries.Interfaces;
 
-namespace DeepSigma.DataSeries.MutableDataModels;
+namespace DeepSigma.DataSeries.DataModels.Mutable;
 
 /// <summary>
-/// Represents a mutable bar observation in a financial market with volume information.
+/// Represents a mutable bar observation in a financial market.
 /// </summary>
-public record class MutableBarObservationWithVolume
-       : MutableDataModelAbstract<MutableBarObservationWithVolume>, IMutableDataModel<MutableBarObservationWithVolume>
+public record class MutableBarObservation
+        : MutableDataModelAbstract<MutableBarObservation>, IMutableDataModel<MutableBarObservation>
 {
     /// <summary>
     /// The opening price of the bar.
@@ -30,12 +29,19 @@ public record class MutableBarObservationWithVolume
     public decimal Low { get; set; }
 
     /// <summary>
-    /// The trading volume during the time period.
+    /// Calculates the range of the bar, which is the difference between the high and low prices.
     /// </summary>
-    public decimal Volume { get; set; }
+    public decimal Range => High - Low;
+
+    /// <summary>
+    /// Calculates the price movement of the bar, which is the difference between the closing and opening prices.
+    /// Also, known as Session, Intraday, or Net Change.
+    /// Body comes from the idea of candlestick charts where the "body" represents the area between the open and close prices.
+    /// </summary>
+    public decimal Body => Close - Open;
 
     /// <inheritdoc/>
-    public override bool IsAboutToDivideByZero(MutableBarObservationWithVolume Item)
+    public override bool IsAboutToDivideByZero(MutableBarObservation Item)
     {
         return Item.Open == 0 || Item.Close == 0 || Item.High == 0 || Item.Low == 0;
     }
@@ -45,12 +51,12 @@ public record class MutableBarObservationWithVolume
     {
         this.Open *= scalar;
         this.Close *= scalar;
-        this.Low *= scalar;
         this.High *= scalar;
+        this.Low *= scalar;
     }
 
     /// <inheritdoc/>
-    protected override void ApplyFunction(MutableBarObservationWithVolume Item, Func<decimal, decimal, decimal> operation)
+    protected override void ApplyFunction(MutableBarObservation Item, Func<decimal, decimal, decimal> operation)
     {
         this.Open = operation(this.Open, Item.Open);
         this.Close = operation(this.Close, Item.Close);

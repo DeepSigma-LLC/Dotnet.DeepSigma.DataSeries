@@ -1,4 +1,5 @@
 ﻿using DeepSigma.DataSeries.DataSets;
+using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Models;
 using DeepSigma.DataSeries.Models.Collections;
@@ -21,8 +22,12 @@ public class TimeSeriesDateOnly<TValueDataType> :
         KeyValuePair<DateOnly, TValueDataType>, 
         TimeSeriesTransformation, 
         FunctionalSeriesCollection<DateOnly, TValueDataType, TimeSeriesTransformation>> 
-    where TValueDataType : class, IImmutableDataModel<TValueDataType>
+    where TValueDataType : class, IMutableDataModel<TValueDataType>
 {
+    /// <summary>
+    /// Purpose of the time series.
+    /// </summary>
+    public TimeSeriesPurpose TimeSeriesPurpose { get; set; } = TimeSeriesPurpose.Other;
 
     /// <inheritdoc cref="TimeSeries{TValueDataType}"/>
     public TimeSeriesDateOnly() : base()

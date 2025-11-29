@@ -17,7 +17,7 @@ public class TimeSeries<TValueDataType> :
         KeyValuePair<DateTime, TValueDataType>, 
         TimeSeriesTransformation, 
         FunctionalSeriesCollection<DateTime, TValueDataType, TimeSeriesTransformation>> 
-    where TValueDataType : class, IImmutableDataModel<TValueDataType>
+    where TValueDataType : class, IMutableDataModel<TValueDataType>
 {
     /// <summary>
     /// Purpose of the time series.
