@@ -3,7 +3,7 @@ using DeepSigma.DataSeries.Models.Collections;
 using DeepSigma.DataSeries.Series;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
-using DeepSigma.General.Enums;
+using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.SeriesOfSeries;
 
@@ -27,12 +27,10 @@ public abstract class AbstractFunctionalSeriesOfSeries<TKeyDataType, TValueDataT
     /// <inheritdoc/>
     public sealed override ICollection<KeyValuePair<TKeyDataType, TValueDataType>>? GetSeriesDataTransformed()
     {
+        var (Data, Error) = SeriesUtilities.GetTransformedSeries<TKeyDataType, TValueDataType, TValueAccumulatorDataType>(GetSeriesData()?.ToSortedDictionary() ?? [], Transformation);
 
+        if (Error != null || Data is null) return null;
 
-        (SortedDictionary<TKeyDataType, TValueDataType>? series, Exception? error) transformed = SeriesUtilities.GetTransformedSeries(combined.series, Transformation);
-
-        if (transformed.error != null || transformed.series is null) return null;
-
-        return transformed.series;
+        return Data;
     }
 }

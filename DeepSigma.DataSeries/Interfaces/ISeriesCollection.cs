@@ -41,12 +41,6 @@ public interface ISeriesCollection<TDataType, TTransformation>
     IEnumerable<SeriesCollectionPair<TDataType, TTransformation>> GetAllData();
 
     /// <summary>
-    /// Retrieves the data series in the collection.
-    /// </summary>
-    /// <returns></returns>
-    ICollection<TDataType>? GetSeriesData();
-
-    /// <summary>
     /// Gets the count of sub-series in the collection.
     /// </summary>
     /// <returns></returns>
@@ -56,7 +50,7 @@ public interface ISeriesCollection<TDataType, TTransformation>
     /// Retrieves the transformed data series in the collection.
     /// </summary>
     /// <returns></returns>
-    ICollection<TDataType>? GetSeriesDataTransformed();
+    ICollection<TDataType>? GetCombinedAndTransformedSeriesData();
 
     /// <summary>
     /// Removes a data series from the collection by its series name.

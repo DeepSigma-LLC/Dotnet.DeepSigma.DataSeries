@@ -34,17 +34,4 @@ public class TimeSeriesDateOnly<TValueDataType, TValueAccumulatorDataType>
     {
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DataSeries{TKeyDataType, TValueDataType, TValueAccumulatorDataType}"/> class with the provided data.
-    /// </summary>
-    /// <typeparam name="IModel"></typeparam>
-    /// <typeparam name="TAccumulator"></typeparam>
-    /// <param name="data">Data set containing original data.</param>
-    /// <param name="selected_property">Seleted property from data model.</param>
-    public void LoadFromDataModel<IModel, TAccumulator>(FunctionalDataSet<DateOnly, IModel, TAccumulator> data, Expression<Func<IModel, TValueDataType>> selected_property) 
-        where IModel : class, IDataModel<IModel, TAccumulator>
-        where TAccumulator : class, IAccumulator<IModel>
-    {
-        Data = DataSetUtilities.GetSingleSeries<DateOnly, TValueDataType, IModel>(data.GetAllData(), selected_property);
-    }
 }

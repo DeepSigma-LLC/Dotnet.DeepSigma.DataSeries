@@ -17,5 +17,4 @@ public class CategoricalSeries<TValueDataType, TValueAccumulatorDataType>
     public CategoricalSeries() : base()
     { 
     }
-
 }

@@ -30,19 +30,4 @@ public class TimeSeries<TValueDataType, TValueAccumulatorDataType> :
     /// <inheritdoc cref="TimeSeries{TValueDataType, TValueAccumulatorDataType}"/>
     public TimeSeries() : base(){}
 
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DataSeries{TKeyDataType, TValueDataType, TValueAccumulatorDataType}"/> class with the provided data.
-    /// </summary>
-    /// <typeparam name="IModel"></typeparam>
-    /// <typeparam name="TAccumulator"></typeparam>
-    /// <param name="data">Data set containing original data.</param>
-    /// <param name="selected_property">Seleted property from data model.</param>
-    public void LoadFromDataModel<IModel, TAccumulator>(FunctionalDataSet<DateTime, IModel, TAccumulator> data, Expression<Func<IModel, TValueDataType>> selected_property) 
-        where IModel : class, IDataModel<IModel, TAccumulator>
-        where TAccumulator : class, IAccumulator<IModel>
-    {
-        throw new NotImplementedException();
-    }
-
 }

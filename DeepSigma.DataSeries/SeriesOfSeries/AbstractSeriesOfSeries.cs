@@ -2,6 +2,7 @@
 using DeepSigma.DataSeries.Models.Series;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General.Enums;
+using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -45,7 +46,9 @@ public abstract class AbstractSeriesOfSeries<TCollectionDataType, TTransformatio
     /// <returns></returns>
     public sealed override ICollection<TCollectionDataType>? GetSeriesData()
     {
-        return SubSeriesCollection.GetSeriesData();
+        ICollection<TCollectionDataType>? series = SubSeriesCollection.GetCombinedAndTransformedSeriesData();
+        if (series is null) return null;
+        return series;
     }
 
     /// <inheritdoc/>

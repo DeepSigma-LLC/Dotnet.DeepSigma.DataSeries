@@ -25,7 +25,7 @@ public class NonFunctionalSeriesCollection<K, V, VAccumulator> : AbstractSeriesC
     }
 
     /// <inheritdoc/>
-    public override ICollection<Tuple<K, V>>? GetCombinedAndTransformedSeriesData()
+    public sealed override ICollection<Tuple<K, V>>? GetCombinedAndTransformedSeriesData()
     {
         if (GetSubSeriesCount() > 1) throw new InvalidOperationException("NonFunctionalSeriesCollection can only contain one sub-series since non-functional data cannot be logically combined.");
 
