@@ -9,7 +9,7 @@ namespace DeepSigma.DataSeries.Models.Collections;
 /// <typeparam name="TDataType"></typeparam>
 /// <typeparam name="TTransformation"></typeparam>
 public abstract class AbstractSeriesCollection<TDataType, TTransformation> 
-    : ISeries<TDataType, TTransformation>, ISeriesCollection<TDataType, TTransformation> 
+    : ISeriesCollection<TDataType, TTransformation> 
     where TDataType : notnull
     where TTransformation : class, new()
 {
@@ -22,12 +22,6 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation>
     /// Collection of time series sub series.
     /// </summary>
     protected List<SeriesCollectionPair<TDataType, TTransformation>> SubSeriesCollection { get; private set; } = [];
-
-    /// <inheritdoc/>
-    public string SeriesName { get; set; } = string.Empty;
-
-    /// <inheritdoc/>
-    public TTransformation Transformation { get; set; } = new();
 
     /// <summary>
     /// Selects each element.

@@ -13,28 +13,6 @@ public interface ISeriesCollection<TDataType, TTransformation>
     where TTransformation : class, new()
 {
     /// <summary>
-    /// Name of the data series collection.
-    /// </summary>
-    string SeriesName { get; set; }
-
-    /// <summary>
-    /// Transformation applied to the data series.
-    /// </summary>
-    TTransformation Transformation { get; set; }
-
-    /// <summary>
-    /// Adds a new data series with the specified mathematical operation to the collection.
-    /// </summary>
-    /// <param name="mathematical_operation"></param>
-    /// <param name="data_series"></param>
-    void Add(MathematicalOperation mathematical_operation, ISeries<TDataType, TTransformation> data_series);
-
-    /// <summary>
-    /// Clears all data from the collection.
-    /// </summary>
-    void Clear();
-
-    /// <summary>
     /// Retrieves all data series in the collection.
     /// </summary>
     /// <returns></returns>
@@ -47,10 +25,16 @@ public interface ISeriesCollection<TDataType, TTransformation>
     int GetSubSeriesCount();
 
     /// <summary>
-    /// Retrieves the transformed data series in the collection.
+    /// Adds a new data series with the specified mathematical operation to the collection.
     /// </summary>
-    /// <returns></returns>
-    ICollection<TDataType>? GetCombinedAndTransformedSeriesData();
+    /// <param name="mathematical_operation"></param>
+    /// <param name="data_series"></param>
+    void Add(MathematicalOperation mathematical_operation, ISeries<TDataType, TTransformation> data_series);
+
+    /// <summary>
+    /// Clears all data from the collection.
+    /// </summary>
+    void Clear();
 
     /// <summary>
     /// Removes a data series from the collection by its series name.
@@ -72,4 +56,10 @@ public interface ISeriesCollection<TDataType, TTransformation>
     /// <param name="expression"></param>
     /// <returns></returns>
     IEnumerable<SeriesCollectionPair<TDataType, TTransformation>> Where(Func<SeriesCollectionPair<TDataType, TTransformation>, bool> expression);
+
+    /// <summary>
+    /// Retrieves the transformed data series in the collection.
+    /// </summary>
+    /// <returns></returns>
+    ICollection<TDataType>? GetCombinedAndTransformedSeriesData();
 }

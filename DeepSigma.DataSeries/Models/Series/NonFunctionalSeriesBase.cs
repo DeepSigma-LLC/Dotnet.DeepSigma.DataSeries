@@ -21,15 +21,12 @@ public class NonFunctionalSeriesBase<TKeyDataType, TValueDataType, TValueAccumul
     where TValueDataType : class, IDataModel<TValueDataType, TValueAccumulatorDataType>
     where TValueAccumulatorDataType : class, IAccumulator<TValueDataType>
 {
-    /// <inheritdoc/>
-    public sealed override ICollection<Tuple<TKeyDataType, TValueDataType>>? GetSeriesData()
-    {
-        return Data;
-    }
 
     /// <inheritdoc/>
     public sealed override ICollection<Tuple<TKeyDataType, TValueDataType>>? GetSeriesDataTransformed()
     {
-        SeriesUtilities.GetTransformedSeries<TKeyDataType, TValueDataType, TValueAccumulatorDataType>(GetSeriesData(), Transformation);
+        var (Data,Error) = SeriesUtilities.GetTransformedSeries<TKeyDataType, TValueDataType, TValueAccumulatorDataType>(GetSeriesData() ?? [], Transformation);
+        if(Error is not null || Data is null) return null;
+        return Data;
     }
 }

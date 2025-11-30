@@ -25,10 +25,10 @@ public class FunctionalSeriesCollection<K, V, VAccumulator, TTransformation> : A
     {
         if (GetSubSeriesCount() == 1)
         {
-            SortedDictionary<K, V>  data = SubSeriesCollection.First().Series.GetSeriesData()?.ToSortedDictionary() ?? [];
-            var transformed = SeriesUtilities.GetTransformedSeries<K, V, VAccumulator>(data, Transformation);
-            if (transformed.Error != null || transformed.Data is null) return null;
-            return transformed.Data;
+            var selected_series = SubSeriesCollection.First();
+            SortedDictionary<K, V>? data = selected_series.Series.GetSeriesDataTransformed()?.ToSortedDictionary();
+            if(data is null) return null;
+            return data;
         }
 
         List<(SortedDictionary<K, V>, MathematicalOperation)> Series = [];
