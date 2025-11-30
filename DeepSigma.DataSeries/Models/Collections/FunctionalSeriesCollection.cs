@@ -1,6 +1,8 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
+using DeepSigma.General.Enums;
+using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Models.Collections;
 
@@ -19,14 +21,23 @@ public class FunctionalSeriesCollection<K, V, VAccumulator, TTransformation> : A
     where V : class, IDataModel<V, VAccumulator>
 {
     /// <inheritdoc/>
-    public sealed override ICollection<KeyValuePair<K, V>>? GetSeriesData()
+    public sealed override ICollection<KeyValuePair<K, V>>? GetCombinedAndTransformedSeriesData()
     {
-        if (GetSubSeriesCount() == 1) return SubSeriesCollection.First().Series.GetSeriesData();
-        (SortedDictionary<K, V>? Data, Exception? Error) = SeriesUtilities.GetCombinedSeries<K, V, VAccumulator>(
-            SubSeriesCollection.Select(x => ((SortedDictionary<K, V>)x.Series, x.MathematicalOperation)).ToList()
-        );
+        if (GetSubSeriesCount() == 1)
+        {
+            SortedDictionary<K, V>  data = SubSeriesCollection.First().Series.GetSeriesData()?.ToSortedDictionary() ?? [];
+            var transformed = SeriesUtilities.GetTransformedSeries<K, V, VAccumulator>(data, Transformation);
+            if (transformed.Error != null || transformed.Data is null) return null;
+            return transformed.Data;
+        }
 
-        if (Error != null || Data == null) return [];
-        return Data;
+        List<(SortedDictionary<K, V>, MathematicalOperation)> Series = [];
+        SubSeriesCollection.ForEach(x => Series.Add((x.Series.GetSeriesDataTransformed()?.ToSortedDictionary() ?? [], x.MathematicalOperation)));
+
+        (SortedDictionary<K, V>? DataSeries, Exception? Error) Combined = SeriesUtilities.GetCombinedSeries<K, V, VAccumulator>(Series);
+
+        if (Combined.Error != null || Combined.DataSeries is null) return null;
+        return Combined.DataSeries;
     }
+
 }

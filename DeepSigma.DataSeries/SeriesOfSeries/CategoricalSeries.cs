@@ -1,10 +1,6 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
-
-using DeepSigma.DataSeries.Models.Collections;
 using DeepSigma.DataSeries.SeriesOfSeries;
 using DeepSigma.DataSeries.Transformations;
-using DeepSigma.DataSeries.Utilities;
-using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -20,12 +16,6 @@ public class CategoricalSeries<TValueDataType, TValueAccumulatorDataType>
     /// <inheritdoc cref="CategoricalSeries{TValueDataType, TValueAccumulatorDataType}"/>
     public CategoricalSeries() : base()
     { 
-    }
-
-    /// <inheritdoc/>
-    public sealed override ICollection<KeyValuePair<string, TValueDataType>>? GetSeriesDataTransformed()
-    {
-        throw new NotImplementedException();
     }
 
 }

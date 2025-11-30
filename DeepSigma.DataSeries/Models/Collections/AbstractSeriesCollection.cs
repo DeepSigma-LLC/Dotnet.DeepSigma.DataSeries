@@ -13,7 +13,9 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation>
     where TDataType : notnull
     where TTransformation : class, new()
 {
-
+    /// <summary>
+    /// Max capacity used to restrict the size of the number of allowed sub series.
+    /// </summary>
     private protected int MaxCapacity { get; set; } = 1000;
 
     /// <summary>
@@ -111,15 +113,5 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation>
     /// Returns combined series data from all sub series.
     /// </summary>
     /// <returns></returns>
-    public abstract ICollection<TDataType>? GetSeriesData();
-
-    /// <summary>
-    /// Returns the transformed data series.
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public ICollection<TDataType>? GetSeriesDataTransformed()
-    {
-        throw new NotImplementedException("Transformation logic is not implemented for SeriesCollection.");
-    }
+    public abstract ICollection<TDataType>? GetCombinedAndTransformedSeriesData();
 }

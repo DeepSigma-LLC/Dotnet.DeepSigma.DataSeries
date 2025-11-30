@@ -1,6 +1,7 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
+using System.Collections.Generic;
 
 namespace DeepSigma.DataSeries.Models.Collections;
 
@@ -24,9 +25,14 @@ public class NonFunctionalSeriesCollection<K, V, VAccumulator> : AbstractSeriesC
     }
 
     /// <inheritdoc/>
-    public override ICollection<Tuple<K, V>>? GetSeriesData()
+    public override ICollection<Tuple<K, V>>? GetCombinedAndTransformedSeriesData()
     {
-        if (GetSubSeriesCount() == 1) return SubSeriesCollection.First().Series.GetSeriesData();
-        throw new InvalidOperationException("NonFunctionalSeriesCollection can only contain one sub-series since non-functional data cannot be logically combined.");
+        if (GetSubSeriesCount() > 1) throw new InvalidOperationException("NonFunctionalSeriesCollection can only contain one sub-series since non-functional data cannot be logically combined.");
+
+        ICollection<Tuple<K, V>> data = SubSeriesCollection.First().Series.GetSeriesData() ?? [];
+        var transformed = SeriesUtilities.GetTransformedSeries<K, V, VAccumulator>(data, Transformation);
+        
+        if(transformed.Error != null || transformed.Data == null) return null;
+        return transformed.Data;
     }
 }

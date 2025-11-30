@@ -5,6 +5,9 @@ using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Models.Collections;
 using DeepSigma.DataSeries.SeriesOfSeries;
 using DeepSigma.DataSeries.Transformations;
+using DeepSigma.DataSeries.Utilities;
+using DeepSigma.General.Enums;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace DeepSigma.DataSeries.Series;
@@ -28,12 +31,6 @@ public class TimeSeries<TValueDataType, TValueAccumulatorDataType> :
     public TimeSeries() : base(){}
 
 
-    /// <inheritdoc/>
-    public sealed override ICollection<KeyValuePair<DateTime, TValueDataType>>? GetSeriesDataTransformed()
-    {
-        throw new NotImplementedException("Transformation logic is not implemented for TimeSeries.");
-    }
-
     /// <summary>
     /// Initializes a new instance of the <see cref="DataSeries{TKeyDataType, TValueDataType, TValueAccumulatorDataType}"/> class with the provided data.
     /// </summary>
@@ -46,7 +43,6 @@ public class TimeSeries<TValueDataType, TValueAccumulatorDataType> :
         where TAccumulator : class, IAccumulator<IModel>
     {
         throw new NotImplementedException();
-        //Data = DataSetUtilities.GetSingleSeries<DateTime, TValueDataType, IModel>(data.GetAllData(), selected_property);
     }
 
 }

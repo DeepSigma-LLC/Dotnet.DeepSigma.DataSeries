@@ -40,6 +40,12 @@ public abstract class AbstractSeriesBase<TCollectionDataType, TTransformation>
     }
 
     /// <inheritdoc/>
+    public sealed override ICollection<TCollectionDataType>? GetSeriesData()
+    {
+        return Data;
+    }
+
+    /// <inheritdoc/>
     public sealed override int GetSubSeriesCount()
     {
         return 1;

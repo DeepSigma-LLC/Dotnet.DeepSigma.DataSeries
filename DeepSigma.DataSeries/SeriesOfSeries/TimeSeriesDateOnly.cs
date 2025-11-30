@@ -34,12 +34,6 @@ public class TimeSeriesDateOnly<TValueDataType, TValueAccumulatorDataType>
     {
     }
 
-    /// <inheritdoc/>
-    public sealed override ICollection<KeyValuePair<DateOnly, TValueDataType>>? GetSeriesDataTransformed()
-    {
-        throw new NotImplementedException("Transformation logic is not implemented for TimeSeries.");
-    }
-
     /// <summary>
     /// Initializes a new instance of the <see cref="DataSeries{TKeyDataType, TValueDataType, TValueAccumulatorDataType}"/> class with the provided data.
     /// </summary>
@@ -51,7 +45,6 @@ public class TimeSeriesDateOnly<TValueDataType, TValueAccumulatorDataType>
         where IModel : class, IDataModel<IModel, TAccumulator>
         where TAccumulator : class, IAccumulator<IModel>
     {
-        throw new NotImplementedException();
-        //Data = DataSetUtilities.GetSingleSeries<DateOnly, TValueDataType, IModel>(data.GetAllData(), selected_property);
+        Data = DataSetUtilities.GetSingleSeries<DateOnly, TValueDataType, IModel>(data.GetAllData(), selected_property);
     }
 }

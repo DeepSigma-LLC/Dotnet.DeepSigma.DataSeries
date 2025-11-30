@@ -26,11 +26,6 @@ public class DataSeries<TKeyDataType, TValueDataType, TValueAccumulatorDataType>
     public DataSeries() : base(){}
 
 
-    /// <inheritdoc/>
-    public sealed override ICollection<KeyValuePair<TKeyDataType, TValueDataType>>? GetSeriesDataTransformed()
-    {
-        throw new NotImplementedException("Transformation logic is not implemented for DataSeries.");
-    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DataSeries{TKeyDataType, TValueDataType, TValueAccumulatorDataType}"/> class with the provided data.

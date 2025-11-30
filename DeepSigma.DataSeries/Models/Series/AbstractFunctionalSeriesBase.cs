@@ -20,17 +20,8 @@ public abstract class AbstractFunctionalSeriesBase<TKeyDataType, TValueDataType,
     where TTransformation : SeriesTransformation, new()
 {
     /// <inheritdoc cref="AbstractFunctionalSeriesBase{TKeyDataType, TValueDataType, TValueAccumulatorDataType, TTransformation}"/>
-    internal AbstractFunctionalSeriesBase() : base() { }
-
-    /// <inheritdoc cref="AbstractFunctionalSeriesBase{TKeyDataType, TValueDataType, TValueAccumulatorDataType, TTransformation}"/>
     internal AbstractFunctionalSeriesBase(SortedDictionary<TKeyDataType, TValueDataType> data) : base(data)
     {
-    }
-
-    /// <inheritdoc/>
-    public sealed override ICollection<KeyValuePair<TKeyDataType, TValueDataType>>? GetSeriesData()
-    {
-        return Data;
     }
 
     /// <inheritdoc/>

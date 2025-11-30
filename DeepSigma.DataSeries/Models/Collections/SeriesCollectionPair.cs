@@ -22,4 +22,12 @@ public class SeriesCollectionPair<TDataType, TTransformation>(MathematicalOperat
     /// </summary>
     public ISeries<TDataType, TTransformation> Series { get; set; } = series;
 
+    /// <summary>
+    /// Deconstructs the SeriesCollectionPair into its components.
+    /// </summary>
+    /// <returns></returns>
+    public (ISeries<TDataType, TTransformation> Series, MathematicalOperation MathematicalOperation) Deconstruct()
+    {
+        return (Series, MathematicalOperation);
+    }
 }

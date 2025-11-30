@@ -29,6 +29,46 @@ public static class SeriesUtilities
     }
 
     /// <summary>
+    /// Applies transformation to series data.
+    /// </summary>
+    /// <param name="Data"></param>
+    /// <param name="Transformation"></param>
+    /// <returns></returns>
+    public static (List<Tuple<TKey, TDataModel>>? Data, Exception? Error) GetTransformedSeries<TKey, TDataModel, TValueAccumulatorDataType>(ICollection<Tuple<TKey, TDataModel>> Data, SeriesTransformation Transformation)
+        where TKey : notnull, IComparable<TKey>
+        where TDataModel : class, IDataModel<TDataModel, TValueAccumulatorDataType>
+        where TValueAccumulatorDataType : class, IAccumulator<TDataModel>
+    {
+        return ScaleSeries<TKey, TDataModel, TValueAccumulatorDataType>(Data.ToList(), Transformation.Scalar);
+    }
+
+    /// <summary>
+    /// Gets series data multiplied by a specified scalar.
+    /// </summary>
+    /// <param name="Data"></param>
+    /// <param name="Scalar"></param>
+    /// <returns></returns>
+    public static (List<Tuple<TKey, TDataModel>>? Data, Exception? Error) ScaleSeries<TKey, TDataModel, TValueAccumulatorDataType>(List<Tuple<TKey, TDataModel>> Data, decimal Scalar)
+        where TKey : notnull, IComparable<TKey>
+        where TDataModel : class, IDataModel<TDataModel, TValueAccumulatorDataType>
+        where TValueAccumulatorDataType : class, IAccumulator<TDataModel>
+    {
+        if (Scalar == 1) return (Data.CloneDeep(), null);
+
+        List<Tuple<TKey, TDataModel>> NewData = [];
+        foreach (var x in Data)
+        {
+            TValueAccumulatorDataType mutable_record = x.Item2.GetAccumulator();
+            Exception? error = mutable_record.Scale(Scalar);
+            if (error != null) return (null, error);
+
+            NewData.Add(new Tuple<TKey,TDataModel>(x.Item1, mutable_record.ToRecord()));
+        }
+        return (NewData, null);
+    }
+
+
+    /// <summary>
     /// Gets series data multiplied by a specified scalar.
     /// </summary>
     /// <param name="Data"></param>
