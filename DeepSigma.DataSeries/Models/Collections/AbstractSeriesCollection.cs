@@ -1,5 +1,6 @@
 ﻿using DeepSigma.General.Enums;
 using DeepSigma.DataSeries.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Models.Collections;
 
@@ -13,6 +14,7 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation>
     where TDataType : notnull
     where TTransformation : class, new()
 {
+    private protected ILogger? Logger { get; init; }
     /// <summary>
     /// Max capacity used to restrict the size of the number of allowed sub series.
     /// </summary>

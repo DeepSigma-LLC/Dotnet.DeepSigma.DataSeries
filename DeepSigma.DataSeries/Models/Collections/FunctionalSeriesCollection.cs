@@ -3,6 +3,7 @@ using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Models.Collections;
 
@@ -20,6 +21,12 @@ public class FunctionalSeriesCollection<K, V, VAccumulator, TTransformation> : A
     where VAccumulator : class, IAccumulator<V>
     where V : class, IDataModel<V, VAccumulator>
 {
+    /// <inheritdoc cref="FunctionalSeriesCollection{K, V, VAccumulator, TTransformation}"/>
+    public FunctionalSeriesCollection(ILogger<NonFunctionalSeriesCollection<K,V, VAccumulator>>? logger = null)
+    {
+        Logger = logger;
+    }
+
     /// <inheritdoc/>
     public sealed override ICollection<KeyValuePair<K, V>>? GetCombinedAndTransformedSeriesData()
     {
@@ -27,7 +34,6 @@ public class FunctionalSeriesCollection<K, V, VAccumulator, TTransformation> : A
         {
             var selected_series = SubSeriesCollection.First();
             SortedDictionary<K, V>? data = selected_series.Series.GetSeriesDataTransformed()?.ToSortedDictionary();
-            if(data is null) return null;
             return data;
         }
 
@@ -35,9 +41,12 @@ public class FunctionalSeriesCollection<K, V, VAccumulator, TTransformation> : A
         SubSeriesCollection.ForEach(x => Series.Add((x.Series.GetSeriesDataTransformed()?.ToSortedDictionary() ?? [], x.MathematicalOperation)));
 
         (SortedDictionary<K, V>? DataSeries, Exception? Error) Combined = SeriesUtilities.GetCombinedSeries<K, V, VAccumulator>(Series);
+        Logger.TryToLogErrorOnlyIfException(Combined.Error, "An error occured while combining the series");
 
         if (Combined.Error != null || Combined.DataSeries is null) return null;
         return Combined.DataSeries;
     }
 
+  
 }
+
