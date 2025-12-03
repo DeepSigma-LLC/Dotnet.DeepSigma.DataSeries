@@ -4,6 +4,7 @@ using DeepSigma.DataSeries.Series;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using DeepSigma.General.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.SeriesOfSeries;
 
@@ -23,6 +24,9 @@ public abstract class AbstractFunctionalSeriesOfSeries<TKeyDataType, TValueDataT
     where TValueDataType : class, IDataModel<TValueDataType, TValueAccumulatorDataType>
     where TTransformation : SeriesTransformation, new()
 {
+
+    /// <inheritdoc cref="AbstractFunctionalSeriesOfSeries{TKeyDataType, TValueDataType, TValueAccumulatorDataType, TTransformation}"/>
+    protected AbstractFunctionalSeriesOfSeries(ILogger? logger = null) : base(logger) { }
 
     /// <inheritdoc/>
     public sealed override ICollection<KeyValuePair<TKeyDataType, TValueDataType>>? GetSeriesDataTransformed()

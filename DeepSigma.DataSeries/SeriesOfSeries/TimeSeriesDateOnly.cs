@@ -6,6 +6,7 @@ using DeepSigma.DataSeries.Models.Collections;
 using DeepSigma.DataSeries.SeriesOfSeries;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
+using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
 
@@ -30,8 +31,5 @@ public class TimeSeriesDateOnly<TValueDataType, TValueAccumulatorDataType>
     public TimeSeriesPurpose TimeSeriesPurpose { get; set; } = TimeSeriesPurpose.Other;
 
     /// <inheritdoc cref="TimeSeries{TValueDataType, TValueAccumulatorDataType}"/>
-    public TimeSeriesDateOnly() : base()
-    {
-    }
-
+    public TimeSeriesDateOnly(ILogger? logger = null) : base(logger) {}
 }

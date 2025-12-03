@@ -24,6 +24,6 @@ public class DataSeries<TKeyDataType, TValueDataType, TValueAccumulatorDataType>
     where TValueAccumulatorDataType : class, IAccumulator<TValueDataType>
 {
     /// <inheritdoc cref="DataSeries{TKeyDataType, TValueDataType, TValueAccumulatorDataType}"/>
-    public DataSeries(ILogger? logger = null) : base(){}
+    public DataSeries(ILogger? logger = null) : base(logger){}
 
 }

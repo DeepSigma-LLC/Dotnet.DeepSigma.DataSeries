@@ -1,6 +1,7 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.SeriesOfSeries;
 using DeepSigma.DataSeries.Transformations;
+using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -14,7 +15,7 @@ public class CategoricalSeries<TValueDataType, TValueAccumulatorDataType>
 {
 
     /// <inheritdoc cref="CategoricalSeries{TValueDataType, TValueAccumulatorDataType}"/>
-    public CategoricalSeries() : base()
+    public CategoricalSeries(ILogger? logger = null) : base(logger)
     { 
     }
 }

@@ -1,9 +1,10 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Models;
-using DeepSigma.DataSeries.Transformations;
-using System.Numerics;
-using DeepSigma.DataSeries.Models.Collections;
 using DeepSigma.DataSeries.Models.BaseSeries;
+using DeepSigma.DataSeries.Models.Collections;
+using DeepSigma.DataSeries.Transformations;
+using Microsoft.Extensions.Logging;
+using System.Numerics;
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -25,7 +26,7 @@ public class NonFunctionalSeries<XDataType, YDataType, TValueAccumulatorDataType
     where TValueAccumulatorDataType : class, IAccumulator<YDataType>
 {
     /// <inheritdoc cref="NonFunctionalSeries{XDataType, YDataType, TValueAccumulatorDataType}"/>
-    public NonFunctionalSeries() : base()
+    public NonFunctionalSeries(ILogger? logger = null) : base(logger)
     {
         AllowMultipleSubSeries = false;
         AllowDuplicateDataPoints = true;
