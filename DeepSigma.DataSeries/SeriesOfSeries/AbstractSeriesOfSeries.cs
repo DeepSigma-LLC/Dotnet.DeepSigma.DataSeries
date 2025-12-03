@@ -3,6 +3,7 @@ using DeepSigma.DataSeries.Models.Series;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -19,10 +20,11 @@ public abstract class AbstractSeriesOfSeries<TCollectionDataType, TTransformatio
     where TSeriesCollection : ISeriesCollection<TCollectionDataType, TTransformation>, new()
 {
     /// <inheritdoc cref="AbstractSeriesOfSeries{TValue, TTransformation, TSeriesCollection}"/>
-    protected AbstractSeriesOfSeries() : base()
+    protected AbstractSeriesOfSeries(ILogger? logger = null) : base()
     {
         SubSeriesCollection = new();
         AllowMultipleSubSeries = true;
+        SubSeriesCollection.RegisterLogger(logger);
     }
 
     /// <summary>
@@ -47,7 +49,6 @@ public abstract class AbstractSeriesOfSeries<TCollectionDataType, TTransformatio
     public sealed override ICollection<TCollectionDataType>? GetSeriesData()
     {
         ICollection<TCollectionDataType>? series = SubSeriesCollection.GetCombinedAndTransformedSeriesData();
-        if (series is null) return null;
         return series;
     }
 

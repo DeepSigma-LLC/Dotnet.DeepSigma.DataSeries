@@ -1,5 +1,6 @@
 ﻿using DeepSigma.DataSeries.Models.Collections;
 using DeepSigma.General.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Interfaces;
 
@@ -12,6 +13,13 @@ public interface ISeriesCollection<TDataType, TTransformation>
     where TDataType : notnull
     where TTransformation : class, new()
 {
+
+    /// <summary>
+    /// Registers logger with class.
+    /// </summary>
+    /// <param name="logger"></param>
+    void RegisterLogger(ILogger? logger);
+
     /// <summary>
     /// Retrieves all data series in the collection.
     /// </summary>

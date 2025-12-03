@@ -14,7 +14,18 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation>
     where TDataType : notnull
     where TTransformation : class, new()
 {
-    private protected ILogger? Logger { get; init; }
+
+    /// <inheritdoc/>
+    public void RegisterLogger(ILogger? logger)
+    {
+        Logger = logger;
+    }
+
+    /// <summary>
+    /// Logger interface used to control logging logic injected from dependency injection.
+    /// </summary>
+    protected ILogger? Logger { get; set; }
+
     /// <summary>
     /// Max capacity used to restrict the size of the number of allowed sub series.
     /// </summary>

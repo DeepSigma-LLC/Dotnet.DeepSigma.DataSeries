@@ -5,6 +5,7 @@ using DeepSigma.DataSeries.Models.Collections;
 using DeepSigma.DataSeries.SeriesOfSeries;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
+using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 using System.Numerics;
 
@@ -23,6 +24,6 @@ public class DataSeries<TKeyDataType, TValueDataType, TValueAccumulatorDataType>
     where TValueAccumulatorDataType : class, IAccumulator<TValueDataType>
 {
     /// <inheritdoc cref="DataSeries{TKeyDataType, TValueDataType, TValueAccumulatorDataType}"/>
-    public DataSeries() : base(){}
+    public DataSeries(ILogger? logger = null) : base(){}
 
 }

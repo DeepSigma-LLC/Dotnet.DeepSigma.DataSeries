@@ -2,6 +2,7 @@
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using DeepSigma.General.Extensions;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
 namespace DeepSigma.DataSeries.Models.Collections;
@@ -20,7 +21,7 @@ public class NonFunctionalSeriesCollection<K, V, VAccumulator> : AbstractSeriesC
     where V : class, IDataModel<V, VAccumulator>
 {
     /// <inheritdoc cref="NonFunctionalSeriesCollection{K, V, VAccumulator}"/>
-    public NonFunctionalSeriesCollection()
+    public NonFunctionalSeriesCollection() : base()
     {
         this.MaxCapacity = 1;
     }

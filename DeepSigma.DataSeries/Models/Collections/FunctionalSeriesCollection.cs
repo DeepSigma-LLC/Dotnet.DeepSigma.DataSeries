@@ -21,11 +21,9 @@ public class FunctionalSeriesCollection<K, V, VAccumulator, TTransformation> : A
     where VAccumulator : class, IAccumulator<V>
     where V : class, IDataModel<V, VAccumulator>
 {
+
     /// <inheritdoc cref="FunctionalSeriesCollection{K, V, VAccumulator, TTransformation}"/>
-    public FunctionalSeriesCollection(ILogger<NonFunctionalSeriesCollection<K,V, VAccumulator>>? logger = null)
-    {
-        Logger = logger;
-    }
+    public FunctionalSeriesCollection() : base() {}
 
     /// <inheritdoc/>
     public sealed override ICollection<KeyValuePair<K, V>>? GetCombinedAndTransformedSeriesData()

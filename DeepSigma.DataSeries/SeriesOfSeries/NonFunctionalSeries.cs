@@ -27,6 +27,7 @@ public class NonFunctionalSeries<XDataType, YDataType, TValueAccumulatorDataType
     /// <inheritdoc cref="NonFunctionalSeries{XDataType, YDataType, TValueAccumulatorDataType}"/>
     public NonFunctionalSeries() : base()
     {
+        AllowMultipleSubSeries = false;
         AllowDuplicateDataPoints = true;
     }
 
