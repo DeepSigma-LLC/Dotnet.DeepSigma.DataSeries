@@ -1,5 +1,6 @@
 ﻿
 using DeepSigma.DataSeries.DataModels;
+using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Interfaces;
 
@@ -14,6 +15,12 @@ namespace DeepSigma.DataSeries.Interfaces;
 public interface IAccumulator<T>
     where T : class
 {
+    /// <summary>
+    /// Registers the specified logger for use by the application.
+    /// </summary>
+    /// <param name="logger">The logger instance to register. If null, logging will be disabled.</param>
+    public void RegisterLogger(ILogger? logger = null);
+
     /// <summary>
     /// Adds another record of type T to the accumulator.
     /// </summary>

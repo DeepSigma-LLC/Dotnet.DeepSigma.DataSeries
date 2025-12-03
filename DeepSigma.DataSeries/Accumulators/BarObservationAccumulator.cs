@@ -1,5 +1,7 @@
 ﻿using DeepSigma.DataSeries.DataModels;
 using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.General.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Accumulators;
 
@@ -32,7 +34,6 @@ public class BarObservationAccumulator(BarObservation observation)
     public override BarObservation ToRecord()
     {
         return new BarObservation(this.Open, this.Close, this.High, this.Low, OriginalObject.IsRolled, OriginalObject.IsSyntheticData);
-        
     }
 
     /// <inheritdoc/>

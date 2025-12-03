@@ -1,5 +1,7 @@
 ﻿using DeepSigma.DataSeries.DataModels;
 using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.General.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Accumulators;
 
@@ -15,6 +17,17 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     where T : class
 {
     /// <summary>
+    /// The loger.
+    /// </summary>
+    protected ILogger? Logger { get; private set; }
+
+    /// <inheritdoc/>
+    public void RegisterLogger(ILogger? logger = null)
+    {
+        Logger = logger;
+    }
+
+    /// <summary>
     /// The original record object.
     /// </summary>
     protected readonly T OriginalObject = Observation;
@@ -28,7 +41,7 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     /// <inheritdoc/>
     public Exception? Divide(T other)
     {
-        if (IsAboutToDivideByZero(other)) return new DivideByZeroException("Cannot divide by zero.");
+        if (IsAboutToDivideByZeroWithLogging(other)) return new DivideByZeroException("Cannot divide by zero.");
         return ComputeWithError(other, (a, b) => a / b);
     }
 
@@ -65,6 +78,19 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     protected abstract bool IsAboutToDivideByZero(T other);
 
     /// <summary>
+    /// Determines if the operation is about to divide by zero.
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    protected bool IsAboutToDivideByZeroWithLogging(T other)
+    {
+        bool divided_by_zero = IsAboutToDivideByZero(other);
+        Exception? error = divided_by_zero ? new DivideByZeroException() : null;
+        Logger.TryToLogWarningOnlyIfException(error, "Would have attempted to divide by zero value: {object}", other);
+        return divided_by_zero;
+    }
+
+    /// <summary>
     /// Performs a computation on the current Observation's Value with another Observation's Value using the provided operation.
     /// </summary>
     /// <param name="other"></param>
@@ -77,7 +103,10 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
             ApplyFunction(other, operation);
             return null;
         }
-        catch (Exception ex) { return ex; }
+        catch (Exception ex)
+        {
+            Logger.TryToLogError(ex, "Error during computation between {this_object} and {other} while running method {method}.", this, other, nameof(operation));
+            return ex; 
+        }
     }
-
 }

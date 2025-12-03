@@ -24,7 +24,7 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation>
     /// <summary>
     /// Logger interface used to control logging logic injected from dependency injection.
     /// </summary>
-    protected ILogger? Logger { get; set; }
+    protected ILogger? Logger { get; private set; }
 
     /// <summary>
     /// Max capacity used to restrict the size of the number of allowed sub series.
