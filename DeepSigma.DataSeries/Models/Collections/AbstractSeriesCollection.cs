@@ -1,5 +1,7 @@
-﻿using DeepSigma.General.Enums;
-using DeepSigma.DataSeries.Interfaces;
+﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Utilities;
+using DeepSigma.General.Enums;
+using DeepSigma.General.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Models.Collections;
@@ -7,12 +9,16 @@ namespace DeepSigma.DataSeries.Models.Collections;
 /// <summary>
 /// Represents a collection of time series data, allowing for mathematical operations on sub-series.
 /// </summary>
+/// <typeparam name="TKey"></typeparam>
 /// <typeparam name="TDataType"></typeparam>
 /// <typeparam name="TTransformation"></typeparam>
-public abstract class AbstractSeriesCollection<TDataType, TTransformation> 
-    : ISeriesCollection<TDataType, TTransformation> 
-    where TDataType : notnull
+/// <typeparam name="TAccumulator"></typeparam>
+public abstract class AbstractSeriesCollection<TKey, TDataType, TTransformation, TAccumulator> 
+    : ISeriesCollection<TKey, TDataType, TTransformation> 
+    where TKey : notnull
+    where TDataType : class, IDataModel<TDataType>
     where TTransformation : class, new()
+    where TAccumulator : class, IAccumulator<TDataType>
 {
 
     /// <inheritdoc/>
@@ -34,40 +40,20 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation>
     /// <summary>
     /// Collection of time series sub series.
     /// </summary>
-    protected List<SeriesCollectionPair<TDataType, TTransformation>> SubSeriesCollection { get; private set; } = [];
-
-    /// <summary>
-    /// Selects each element.
-    /// </summary>
-    /// <param name="expression"></param>
-    /// <returns></returns>
-    public IEnumerable<Z> Select<Z>(Func<SeriesCollectionPair<TDataType, TTransformation>, Z> expression)
-    {
-        return SubSeriesCollection.Select(expression);
-    }
-
-    /// <summary>
-    /// Filters the data set based on a provided expression.
-    /// </summary>
-    /// <param name="expression"></param>
-    /// <returns></returns>
-    public IEnumerable<SeriesCollectionPair<TDataType, TTransformation>> Where(Func<SeriesCollectionPair<TDataType, TTransformation>, bool> expression)
-    {
-        return SubSeriesCollection.Where(expression);
-    }
+    protected List<SeriesCollectionPair<TKey, TDataType, TTransformation>> SubSeriesCollection { get; private set; } = [];
 
     /// <summary>
     /// Adds element to collection.
     /// </summary>
     /// <param name="mathematical_operation"></param>
     /// <param name="data_series"></param>
-    public void Add(MathematicalOperation mathematical_operation, ISeries<TDataType, TTransformation> data_series)
+    public void Add(MathematicalOperation mathematical_operation, ISeries<TKey, TDataType, TTransformation> data_series)
     {
         if(SubSeriesCollection.Count >= MaxCapacity)
         {
             throw new InvalidOperationException($"Cannot add more than {MaxCapacity} sub-series to the collection.");
         }
-        SeriesCollectionPair<TDataType, TTransformation> pair = new(mathematical_operation, data_series);
+        SeriesCollectionPair<TKey, TDataType, TTransformation> pair = new(mathematical_operation, data_series);
         SubSeriesCollection.Add(pair);
     }
 
@@ -85,19 +71,13 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation>
     /// </summary>
     /// <param name="index"></param>
     /// <returns></returns>
-    internal SeriesCollectionPair<TDataType, TTransformation> ElementAt(int index)
-    {
-        return SubSeriesCollection.ElementAt(index);
-    }
-
+    internal SeriesCollectionPair<TKey, TDataType, TTransformation> ElementAt(int index) => SubSeriesCollection.ElementAt(index);
+    
     /// <summary>
     /// Returns all collection data.
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<SeriesCollectionPair<TDataType, TTransformation>> GetAllData()
-    {
-        return SubSeriesCollection;
-    }
+    public IEnumerable<SeriesCollectionPair<TKey, TDataType, TTransformation>> GetAllData() => SubSeriesCollection;
 
     /// <summary>
     /// Clears the collection of sub series.
@@ -111,14 +91,33 @@ public abstract class AbstractSeriesCollection<TDataType, TTransformation>
     /// Returns the count of sub-series in the data series.
     /// </summary>
     /// <returns></returns>
-    public int GetSubSeriesCount()
-    {
-        return SubSeriesCollection.Count;
-    }
+    public int GetSubSeriesCount() => SubSeriesCollection.Count;
 
     /// <summary>
-    /// Returns combined series data from all sub series.
+    /// Combines and transforms data from all sub-series into a single sorted dictionary, applying the specified
+    /// mathematical operations to each series as part of the combination process.
     /// </summary>
-    /// <returns></returns>
-    public abstract ICollection<TDataType>? GetCombinedAndTransformedSeriesData();
+    /// <remarks>If only one sub-series is present, its transformed data is returned directly. When multiple
+    /// sub-series are present, each is transformed and combined using the associated mathematical operation. If an
+    /// error occurs during the combination process, the method returns null and logs the error.</remarks>
+    /// <returns>A sorted dictionary containing the combined and transformed data from all sub-series, or null if the combination
+    /// fails or no data is available.</returns>
+    public SortedDictionary<TKey, TDataType>? GetCombinedAndTransformedSeriesData()
+    {
+        if (GetSubSeriesCount() == 1)
+        {
+            var selected_series = SubSeriesCollection.First();
+            SortedDictionary<TKey, TDataType>? data = selected_series.Series.GetSeriesDataTransformed()?.ToSortedDictionary();
+            return data;
+        }
+
+        List<(SortedDictionary<TKey, TDataType>, MathematicalOperation)> Series = [];
+        SubSeriesCollection.ForEach(x => Series.Add((x.Series.GetSeriesDataTransformed()?.ToSortedDictionary() ?? [], x.MathematicalOperation)));
+
+        (SortedDictionary<TKey, TDataType>? DataSeries, Exception? Error) Combined = SeriesUtilities.GetCombinedSeries<TKey, TDataType>(Series);
+        Logger.TryToLogErrorOnlyIfException(Combined.Error, "An error occured while combining the series");
+
+        if (Combined.Error != null || Combined.DataSeries is null) return null;
+        return Combined.DataSeries;
+    }
 }

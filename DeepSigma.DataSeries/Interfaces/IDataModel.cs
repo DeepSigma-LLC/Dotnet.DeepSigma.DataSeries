@@ -1,16 +1,12 @@
 ﻿
-using DeepSigma.General.Enums;
-
 namespace DeepSigma.DataSeries.Interfaces;
 
 /// <summary>
 /// Interface for mutable data models that support various mathematical operations.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-/// <typeparam name="TAccumulator"></typeparam>
-public interface IDataModel<T, TAccumulator>
+public interface IDataModel<T>
     where T : class
-    where TAccumulator : IAccumulator<T>
 {
     /// <summary>
     /// Signifies if the data point has been rolled.
@@ -26,5 +22,5 @@ public interface IDataModel<T, TAccumulator>
     /// Returns the current state of the data model as an accumulator.
     /// </summary>
     /// <returns></returns>
-    public TAccumulator GetAccumulator();
+    public IAccumulator<T> GetAccumulator();
 }

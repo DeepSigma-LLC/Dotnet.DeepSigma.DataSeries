@@ -1,8 +1,8 @@
 ﻿using Xunit;
-using DeepSigma.DataSeries.Series;
 using DeepSigma.DataSeries.Models.BaseSeries;
 using DeepSigma.DataSeries.DataModels;
-using DeepSigma.DataSeries.Accumulators;
+using DeepSigma.General.DateTimeUnification;
+using DeepSigma.DataSeries.Series;
 
 namespace DeepSigma.DataSeries.Tests.Tests.Series;
 
@@ -12,14 +12,14 @@ public class TimeSeries_Test
     public void Test_TimeSeries_Initialization()
     {
         // Arrange
-        var data = new SortedDictionary<DateTime, Observation>
+        var data = new SortedDictionary<DateTimeCustom, Observation>
         {
             { new DateTime(2024, 1, 1), new(100) },
             { new DateTime(2024, 1, 2), new(105) },
             { new DateTime(2024, 1, 3), new(110) }
         };
         // Act
-        TimeSeriesBase<Observation, ObservationAccumulator> timeSeries = new(data);
+        TimeSeriesBase<DateTimeCustom, Observation> timeSeries = new(data);
 
         // Assert
         Assert.False(timeSeries.IsEmpty);
@@ -31,7 +31,7 @@ public class TimeSeries_Test
     public void Test_MultipleSubSeries_Initialization()
     {
         // Arrange
-        var data = new SortedDictionary<DateTime, Observation>
+        var data = new SortedDictionary<DateOnlyCustom, Observation>
         {
             { new DateTime(2024, 1, 1), new(1) },
             { new DateTime(2024, 1, 2), new(2) },
@@ -39,18 +39,18 @@ public class TimeSeries_Test
         };
 
         // Arrange
-        var data1 = new SortedDictionary<DateTime, Observation>
+        var data1 = new SortedDictionary<DateOnlyCustom, Observation>
         {
             { new DateTime(2024, 1, 1), new(3) },
             { new DateTime(2024, 1, 2), new(4) },
             { new DateTime(2024, 1, 3), new(5) }
         };
 
-        TimeSeriesBase<Observation, ObservationAccumulator> timeSeriesdata = new(data);
-        TimeSeriesBase<Observation, ObservationAccumulator> timeSeriesdata1 = new(data1);
+        TimeSeriesBase<DateOnlyCustom, Observation> timeSeriesdata = new(data);
+        TimeSeriesBase<DateOnlyCustom, Observation> timeSeriesdata1 = new(data1);
 
         // Act
-        TimeSeries<Observation, ObservationAccumulator> timeSeries = new()
+        TimeSeries<DateOnlyCustom, Observation> timeSeries = new()
         {
             SeriesName = "SPX Index"
         };
@@ -66,11 +66,11 @@ public class TimeSeries_Test
     [Fact]
     public void Test_TimeSeries_WithDataModel()
     {
-        TimeSeriesDateOnly<BarObservation, BarObservationAccumulator> time_Series = new();
+        TimeSeries<DateOnlyCustom, BarObservation> time_Series = new();
         BarObservation bar = new(12, 23, 44, 32);
         BarObservation bar1 = new(12, 23, 44, 32);
 
-        TimeSeries<BarObservation, BarObservationAccumulator> seriesBase = new()
+        TimeSeries<DateOnlyCustom, BarObservation> seriesBase = new()
         {
             SeriesName = "Test Series"
         };

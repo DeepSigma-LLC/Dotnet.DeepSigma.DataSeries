@@ -11,7 +11,7 @@ namespace DeepSigma.DataSeries.DataModels;
 /// <param name="IsRolled">Indicates if the data is rolled.</param>
 /// <param name="IsSyntheticData">Indicates if the data is synthetic.</param>
 public record class BidAskSpreadObservation(decimal Bid, decimal Ask, bool IsRolled = false, bool IsSyntheticData = false)
-    : DataModelAbstract<BidAskSpreadObservation>, IDataModel<BidAskSpreadObservation, BidAskSpreadObservationAccumulator>
+    : DataModelAbstract<BidAskSpreadObservation>, IDataModel<BidAskSpreadObservation>
 {
     /// <summary>
     /// Calculates the spread, which is the difference between the ask and bid prices.
@@ -24,8 +24,5 @@ public record class BidAskSpreadObservation(decimal Bid, decimal Ask, bool IsRol
     public decimal Mid => (Bid + Ask) / 2;
 
     /// <inheritdoc/>
-    public sealed override BidAskSpreadObservationAccumulator GetAccumulator()
-    {
-        return new BidAskSpreadObservationAccumulator(this);
-    }
+    public sealed override IAccumulator<BidAskSpreadObservation> GetAccumulator() => new BidAskSpreadObservationAccumulator(this);
 }

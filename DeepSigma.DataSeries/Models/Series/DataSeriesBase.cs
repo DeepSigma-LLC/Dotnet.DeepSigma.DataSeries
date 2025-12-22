@@ -9,13 +9,10 @@ namespace DeepSigma.DataSeries.Models.BaseSeries;
 /// Base class for data series with decimal keys and TValueDataType values.
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
-/// <typeparam name="TValueAccumulatorDataType"></typeparam>
-public class DataSeriesBase<TValueDataType, TValueAccumulatorDataType> 
-    : AbstractFunctionalSeriesBase<decimal, TValueDataType, TValueAccumulatorDataType, SeriesTransformation>, ISeries<KeyValuePair<decimal, TValueDataType>, SeriesTransformation>
-    where TValueAccumulatorDataType : class, IAccumulator<TValueDataType>
-    where TValueDataType : class, IDataModel<TValueDataType, TValueAccumulatorDataType>
+public class DataSeriesBase<TValueDataType> 
+    : AbstractSeriesBase<decimal, TValueDataType, SeriesTransformation>
+    where TValueDataType : class, IDataModel<TValueDataType>
 {
-    /// <inheritdoc cref="DataSeriesBase{TValueDataType, TValueAccumulatorDataType}"/>
+    /// <inheritdoc cref="DataSeriesBase{TValueDataType}"/>
     public DataSeriesBase(SortedDictionary<decimal, TValueDataType> data) : base(data) { }
-
 }

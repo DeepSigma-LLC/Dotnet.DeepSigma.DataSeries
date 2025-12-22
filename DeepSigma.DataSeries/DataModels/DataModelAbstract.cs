@@ -8,8 +8,8 @@ namespace DeepSigma.DataSeries.DataModels;
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public abstract record class DataModelAbstract<T> 
-    : IDataModel<T, IAccumulator<T>>
-    where T : class, IDataModel<T, IAccumulator<T>>
+    : IDataModel<T>
+    where T : class, IDataModel<T>
 {
     /// <inheritdoc/>
     public abstract bool IsRolled { get; init; }

@@ -1,6 +1,4 @@
-﻿
-using DeepSigma.DataSeries.DataModels;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Interfaces;
 

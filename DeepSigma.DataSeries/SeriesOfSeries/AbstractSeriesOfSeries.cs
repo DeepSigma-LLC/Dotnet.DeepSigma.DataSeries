@@ -1,6 +1,7 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Models.Series;
 using DeepSigma.DataSeries.Transformations;
+using DeepSigma.DataSeries.Utilities;
 using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
 using Microsoft.Extensions.Logging;
@@ -10,16 +11,17 @@ namespace DeepSigma.DataSeries.Series;
 /// <summary>
 /// Base class for data series.
 /// </summary>
+/// <typeparam name="TCollectionKey">The key type of the underlying collection.</typeparam>
 /// <typeparam name="TCollectionDataType">The data type of the underlying collection.</typeparam>
 /// <typeparam name="TTransformation">The data type of the transformation.</typeparam>
-/// <typeparam name="TSeriesCollection">The type of the series collection.</typeparam>
-public abstract class AbstractSeriesOfSeries<TCollectionDataType, TTransformation, TSeriesCollection> : AbstractSeries<TCollectionDataType,TTransformation>, 
-    ISeries<TCollectionDataType, TTransformation> 
-    where TCollectionDataType : notnull 
+public abstract class AbstractSeriesOfSeries<TCollectionKey, TCollectionDataType, TTransformation> 
+    : AbstractSeries<TCollectionKey, TCollectionDataType, TTransformation>, 
+    ISeries<TCollectionKey, TCollectionDataType, TTransformation> 
+    where TCollectionKey : notnull
+    where TCollectionDataType : class, IDataModel<TCollectionDataType>
     where TTransformation : SeriesTransformation, new()
-    where TSeriesCollection : ISeriesCollection<TCollectionDataType, TTransformation>, new()
 {
-    /// <inheritdoc cref="AbstractSeriesOfSeries{TValue, TTransformation, TSeriesCollection}"/>
+    /// <inheritdoc cref="AbstractSeriesOfSeries{TCollectionKey, TValue, TTransformation}"/>
     protected AbstractSeriesOfSeries(ILogger? logger = null) : base()
     {
         SubSeriesCollection = new();
@@ -46,18 +48,15 @@ public abstract class AbstractSeriesOfSeries<TCollectionDataType, TTransformatio
     /// Returns the data points in the series.
     /// </summary>
     /// <returns></returns>
-    public sealed override ICollection<TCollectionDataType>? GetSeriesData()
+    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesData()
     {
-        ICollection<TCollectionDataType>? series = SubSeriesCollection.GetCombinedAndTransformedSeriesData();
+        SortedDictionary<TCollectionKey, TCollectionDataType>? series = SubSeriesCollection.GetCombinedAndTransformedSeriesData();
         return series;
     }
 
     /// <inheritdoc/>
-    public sealed override int GetSubSeriesCount()
-    {
-        return SubSeriesCollection.GetSubSeriesCount();
-    }
-
+    public sealed override int GetSubSeriesCount() => SubSeriesCollection.GetSubSeriesCount();
+    
     /// <inheritdoc/>
     public sealed override void Clear()
     {
@@ -65,8 +64,18 @@ public abstract class AbstractSeriesOfSeries<TCollectionDataType, TTransformatio
     }
 
     /// <inheritdoc/>
-    public void Add(ISeries<TCollectionDataType, TTransformation> series, MathematicalOperation mathematicalOperation = MathematicalOperation.Add)
+    public void Add(ISeries<TCollectionKey, TCollectionDataType, TTransformation> series, MathematicalOperation mathematicalOperation = MathematicalOperation.Add)
     {
         SubSeriesCollection.Add(mathematicalOperation, series);
+    }
+
+    /// <inheritdoc/>
+    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataTransformed()
+    {
+        var (Data, Error) = SeriesUtilities.GetTransformedSeries(GetSeriesData()?.ToSortedDictionary() ?? [], Transformation);
+
+        if (Error != null || Data is null) return null;
+
+        return Data;
     }
 }

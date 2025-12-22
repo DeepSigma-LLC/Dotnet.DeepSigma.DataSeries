@@ -11,11 +11,8 @@ namespace DeepSigma.DataSeries.DataModels;
 /// <param name="IsRolled">Indicates if the data is rolled.</param>
 /// <param name="IsSyntheticData">Indicates if the data is synthetic.</param>
 public record class TradeObservation(decimal Price, decimal Quantity, bool IsRolled = false, bool IsSyntheticData = false)
-    : DataModelAbstract<TradeObservation>, IDataModel<TradeObservation, TradeObservationAccumulator>
+    : DataModelAbstract<TradeObservation>, IDataModel<TradeObservation>
 {
     /// <inheritdoc/>
-    public sealed override TradeObservationAccumulator GetAccumulator()
-    {
-        return new TradeObservationAccumulator(this);
-    }
+    public sealed override IAccumulator<TradeObservation> GetAccumulator() => new TradeObservationAccumulator(this);
 }

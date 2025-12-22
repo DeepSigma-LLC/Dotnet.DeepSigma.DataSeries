@@ -4,16 +4,18 @@ using DeepSigma.DataSeries.Transformations;
 namespace DeepSigma.DataSeries.Models.Series;
 
 /// <summary>
-/// 
+/// Represents an abstract series.
 /// </summary>
+/// <typeparam name="TCollectionKey"></typeparam>
 /// <typeparam name="TCollectionDataType"></typeparam>
 /// <typeparam name="TTransformation"></typeparam>
-public abstract class AbstractSeries<TCollectionDataType, TTransformation> : ISeries<TCollectionDataType, TTransformation>
-    where TCollectionDataType : notnull
+public abstract class AbstractSeries<TCollectionKey, TCollectionDataType, TTransformation> : ISeries<TCollectionKey, TCollectionDataType, TTransformation>
+    where TCollectionKey : notnull
+    where TCollectionDataType : class, IDataModel<TCollectionDataType>
     where TTransformation : SeriesTransformation, new()
 {
 
-    /// <inheritdoc cref="AbstractSeries{TCollectionDataType, TTransformation}"/>
+    /// <inheritdoc cref="AbstractSeries{TCollectionKey, TCollectionDataType, TTransformation}"/>
     protected AbstractSeries()
     {
         Transformation = new();
@@ -49,13 +51,13 @@ public abstract class AbstractSeries<TCollectionDataType, TTransformation> : ISe
     /// Returns the data points in the series.
     /// </summary>
     /// <returns></returns>
-    public abstract ICollection<TCollectionDataType>? GetSeriesData();
+    public abstract SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesData();
 
     /// <summary>
     /// Returns the transformed data points in the series.
     /// </summary>
     /// <returns></returns>
-    public abstract ICollection<TCollectionDataType>? GetSeriesDataTransformed();
+    public abstract SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataTransformed();
 
     /// <inheritdoc/>
     public abstract int GetSubSeriesCount();

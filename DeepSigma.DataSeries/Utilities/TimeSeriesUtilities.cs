@@ -1,7 +1,9 @@
 ﻿using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General;
+using DeepSigma.General.DateTimeUnification;
 using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
+using DeepSigma.General.TimeStepper;
 
 namespace DeepSigma.DataSeries.Utilities;
 
@@ -16,9 +18,10 @@ public static class TimeSeriesUtilities
     /// <param name="Data"></param>
     /// <param name="Transformation"></param>
     /// <returns></returns>
-    public static SortedDictionary<DateTime, decimal> GetTransformedTimeSeriesData(SortedDictionary<DateTime, decimal> Data, TimeSeriesTransformation Transformation)
+    public static SortedDictionary<TDate, decimal> GetTransformedTimeSeriesData<TDate>(SortedDictionary<TDate, decimal> Data, TimeSeriesTransformation Transformation)
+        where TDate : struct, IDateTime<TDate>
     {
-        (SortedDictionary<DateTime, decimal>? results, Exception? error) = TimeSeriesTransformUtilities.TransformedTimeSeriesData(Data, Transformation.DataTransformation, Transformation.ObservationWindowCount);
+        (SortedDictionary<TDate, decimal>? results, Exception? error) = TimeSeriesTransformUtilities.TransformedTimeSeriesData(Data, Transformation.DataTransformation, Transformation.ObservationWindowCount);
         if (error != null || results is null) return [];
 
         results = SeriesUtilities.GetScaledSeries(results, Transformation.Scalar);
@@ -32,12 +35,13 @@ public static class TimeSeriesUtilities
     /// <param name="Data"></param>
     /// <param name="TimeStep"></param>
     /// <returns></returns>
-    public static SortedDictionary<DateTime, decimal> GetTimeSeriesWithTargetedDates(SortedDictionary<DateTime, decimal> Data, SelfAligningTimeStep TimeStep)
+    public static SortedDictionary<TDate, decimal> GetTimeSeriesWithTargetedDates<TDate>(SortedDictionary<TDate, decimal> Data, SelfAligningTimeStep<TDate> TimeStep)
+        where TDate : struct, IDateTime<TDate>
     {
-        SortedDictionary<DateTime, decimal> results = [];
-        DateTime StartDate = Data.Keys.Min();
-        DateTime EndDate = Data.Keys.Max();
-        DateTime selectedDateTime = StartDate;
+        SortedDictionary<TDate, decimal> results = [];
+        TDate StartDate = Data.Keys.Min();
+        TDate EndDate = Data.Keys.Max();
+        TDate selectedDateTime = StartDate;
         decimal PriorValue = Data.Values.FirstOrDefault();
         while (selectedDateTime <= EndDate)
         {
@@ -66,12 +70,13 @@ public static class TimeSeriesUtilities
     /// <param name="daySelection"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    private static SortedDictionary<DateTime, decimal> GetLaggedTimeSeries(SortedDictionary<DateTime, decimal> Data, int DaysToLag, DaySelectionType daySelection = DaySelectionType.AnyDay)
+    private static SortedDictionary<TDate, decimal> GetLaggedTimeSeries<TDate>(SortedDictionary<TDate, decimal> Data, int DaysToLag, DaySelectionType daySelection = DaySelectionType.AnyDay)
+        where TDate : struct, IDateTime<TDate>
     {
         return daySelection switch
         {
             (DaySelectionType.AnyDay) => _AddDaysToTimeSeriesDateTimes(Data, -DaysToLag),
-            (DaySelectionType.Weekday) => _AddBusinessDaysToTimeSeriesDateTimes(Data, -DaysToLag),
+            (DaySelectionType.WeekdaysOnly) => _AddBusinessDaysToTimeSeriesDateTimes(Data, -DaysToLag),
             _ => throw new NotImplementedException(),
         };
     }
@@ -82,7 +87,8 @@ public static class TimeSeriesUtilities
     /// <param name="Data"></param>
     /// <param name="DaysToAdd"></param>
     /// <returns></returns>
-    private static SortedDictionary<DateTime, decimal> _AddDaysToTimeSeriesDateTimes(SortedDictionary<DateTime, decimal> Data, int DaysToAdd)
+    private static SortedDictionary<TDate, decimal> _AddDaysToTimeSeriesDateTimes<TDate>(SortedDictionary<TDate, decimal> Data, int DaysToAdd)
+        where TDate : struct, IDateTime<TDate>
     {
         if (DaysToAdd == 0) return Data;
         return Data.ToDictionary(x => x.Key.AddDays(DaysToAdd), x => x.Value).ToSortedDictionary();
@@ -94,7 +100,8 @@ public static class TimeSeriesUtilities
     /// <param name="Data"></param>
     /// <param name="BusinessDaysToAdd"></param>
     /// <returns></returns>
-    private static SortedDictionary<DateTime, decimal> _AddBusinessDaysToTimeSeriesDateTimes(SortedDictionary<DateTime, decimal> Data, int BusinessDaysToAdd)
+    private static SortedDictionary<TDate, decimal> _AddBusinessDaysToTimeSeriesDateTimes<TDate>(SortedDictionary<TDate, decimal> Data, int BusinessDaysToAdd)
+        where TDate : struct, IDateTime<TDate>
     {
         if (BusinessDaysToAdd == 0) return Data;
         return Data.ToDictionary(x => x.Key.AddWeekdays(BusinessDaysToAdd), x => x.Value).ToSortedDictionary();

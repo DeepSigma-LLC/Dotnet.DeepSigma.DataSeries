@@ -32,10 +32,8 @@ public class ObservationAccumulator(Observation observation)
     }
 
     /// <inheritdoc/>
-    protected sealed override bool IsAboutToDivideByZero(Observation other)
-    {
-        return other.Value == 0;
-    }
+    protected sealed override bool IsAboutToDivideByZero(Observation other) => other.Value == 0;
+    
 
     /// <inheritdoc/>
     public sealed override Exception? Scale(decimal scalar)

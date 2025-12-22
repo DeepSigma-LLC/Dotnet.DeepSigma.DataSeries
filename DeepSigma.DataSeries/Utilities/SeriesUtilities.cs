@@ -1,11 +1,7 @@
-﻿
-using DeepSigma.DataSeries.Interfaces;
-using DeepSigma.DataSeries.Models.Collections;
+﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
-using System.ComponentModel.DataAnnotations;
-using System.Numerics;
 
 namespace DeepSigma.DataSeries.Utilities;
 
@@ -20,12 +16,11 @@ public static class SeriesUtilities
     /// <param name="Data"></param>
     /// <param name="Transformation"></param>
     /// <returns></returns>
-    public static (SortedDictionary<TKey, TDataModel>? Data, Exception? Error) GetTransformedSeries<TKey, TDataModel, TValueAccumulatorDataType>(SortedDictionary<TKey, TDataModel> Data, SeriesTransformation Transformation)
-        where TKey : notnull, IComparable<TKey>
-        where TDataModel : class, IDataModel<TDataModel, TValueAccumulatorDataType>
-        where TValueAccumulatorDataType : class, IAccumulator<TDataModel>
+    public static (SortedDictionary<TKey, TDataModel>? Data, Exception? Error) GetTransformedSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> Data, SeriesTransformation Transformation)
+        where TKey : notnull
+        where TDataModel : class, IDataModel<TDataModel>
     {
-        return ScaleSeries<TKey, TDataModel, TValueAccumulatorDataType>(Data, Transformation.Scalar);
+        return ScaleSeries(Data, Transformation.Scalar);
     }
 
     /// <summary>
@@ -34,12 +29,11 @@ public static class SeriesUtilities
     /// <param name="Data"></param>
     /// <param name="Transformation"></param>
     /// <returns></returns>
-    public static (List<Tuple<TKey, TDataModel>>? Data, Exception? Error) GetTransformedSeries<TKey, TDataModel, TValueAccumulatorDataType>(ICollection<Tuple<TKey, TDataModel>> Data, SeriesTransformation Transformation)
-        where TKey : notnull, IComparable<TKey>
-        where TDataModel : class, IDataModel<TDataModel, TValueAccumulatorDataType>
-        where TValueAccumulatorDataType : class, IAccumulator<TDataModel>
+    public static (List<Tuple<TKey, TDataModel>>? Data, Exception? Error) GetTransformedSeries<TKey, TDataModel>(ICollection<Tuple<TKey, TDataModel>> Data, SeriesTransformation Transformation)
+        where TKey : notnull
+        where TDataModel : class, IDataModel<TDataModel>
     {
-        return ScaleSeries<TKey, TDataModel, TValueAccumulatorDataType>(Data.ToList(), Transformation.Scalar);
+        return ScaleSeries(Data.ToList(), Transformation.Scalar);
     }
 
     /// <summary>
@@ -48,17 +42,16 @@ public static class SeriesUtilities
     /// <param name="Data"></param>
     /// <param name="Scalar"></param>
     /// <returns></returns>
-    public static (List<Tuple<TKey, TDataModel>>? Data, Exception? Error) ScaleSeries<TKey, TDataModel, TValueAccumulatorDataType>(List<Tuple<TKey, TDataModel>> Data, decimal Scalar)
-        where TKey : notnull, IComparable<TKey>
-        where TDataModel : class, IDataModel<TDataModel, TValueAccumulatorDataType>
-        where TValueAccumulatorDataType : class, IAccumulator<TDataModel>
+    public static (List<Tuple<TKey, TDataModel>>? Data, Exception? Error) ScaleSeries<TKey, TDataModel>(List<Tuple<TKey, TDataModel>> Data, decimal Scalar)
+        where TKey : notnull
+        where TDataModel : class, IDataModel<TDataModel>
     {
         if (Scalar == 1) return (Data.CloneDeep(), null);
 
         List<Tuple<TKey, TDataModel>> NewData = [];
         foreach (var x in Data)
         {
-            TValueAccumulatorDataType mutable_record = x.Item2.GetAccumulator();
+            IAccumulator<TDataModel> mutable_record = x.Item2.GetAccumulator();
             Exception? error = mutable_record.Scale(Scalar);
             if (error != null) return (null, error);
 
@@ -74,17 +67,16 @@ public static class SeriesUtilities
     /// <param name="Data"></param>
     /// <param name="Scalar"></param>
     /// <returns></returns>
-    public static (SortedDictionary<TKey, TDataModel>? Data, Exception? Error) ScaleSeries<TKey, TDataModel, TValueAccumulatorDataType>(SortedDictionary<TKey, TDataModel> Data, decimal Scalar)
-        where TKey : notnull, IComparable<TKey>
-        where TDataModel : class, IDataModel<TDataModel, TValueAccumulatorDataType>
-        where TValueAccumulatorDataType : class, IAccumulator<TDataModel>
+    public static (SortedDictionary<TKey, TDataModel>? Data, Exception? Error) ScaleSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> Data, decimal Scalar)
+        where TKey : notnull
+        where TDataModel : class, IDataModel<TDataModel>
     {
         if (Scalar == 1) return (Data.CloneDeep(), null);
 
         SortedDictionary<TKey, TDataModel> NewData = [];
         foreach (var x in Data)
         {
-            TValueAccumulatorDataType mutable_record = x.Value.GetAccumulator();
+            IAccumulator<TDataModel> mutable_record = x.Value.GetAccumulator();
             Exception? error = mutable_record.Scale(Scalar);
             if (error != null) return (null, error);
 
@@ -97,10 +89,9 @@ public static class SeriesUtilities
     /// Gets series data multiplied by a specified scalar.
     /// </summary>
     /// <returns></returns>
-    public static (SortedDictionary<TKey, TDataModel>? Data, Exception? Error) GetCombinedSeries<TKey, TDataModel, TValueAccumulatorDataType>(SortedDictionary<TKey, TDataModel> TargetSeries, SortedDictionary<TKey, TDataModel> OtherSeries, MathematicalOperation mathematicalOperation)
-        where TKey : notnull, IComparable<TKey>
-        where TDataModel : class, IDataModel<TDataModel, TValueAccumulatorDataType>
-        where TValueAccumulatorDataType : class, IAccumulator<TDataModel>
+    public static (SortedDictionary<TKey, TDataModel>? Data, Exception? Error) GetCombinedSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> TargetSeries, SortedDictionary<TKey, TDataModel> OtherSeries, MathematicalOperation mathematicalOperation)
+        where TKey : notnull
+        where TDataModel : class, IDataModel<TDataModel>
     {
         SortedDictionary<TKey, TDataModel> NewSeries = [];
         HashSet<TKey> Keys = TargetSeries.Keys.ToHashSet();
@@ -109,7 +100,7 @@ public static class SeriesUtilities
         foreach (TKey key in Keys.Order())
         {
             if (!OtherSeries.ContainsKey(key) || !TargetSeries.ContainsKey(key)) continue;
-            TValueAccumulatorDataType mutable_record = TargetSeries[key].GetAccumulator();
+            IAccumulator<TDataModel> mutable_record = TargetSeries[key].GetAccumulator();
 
             Exception? error = mathematicalOperation switch
             {
@@ -130,10 +121,9 @@ public static class SeriesUtilities
     /// Gets series data multiplied by a specified scalar.
     /// </summary>
     /// <returns></returns>
-    public static (SortedDictionary<TKey, TDataModel>? Data, Exception? Error) GetCombinedSeries<TKey, TDataModel, TValueAccumulatorDataType>(List<(SortedDictionary<TKey, TDataModel> Data, MathematicalOperation Operation)> Series)
-        where TKey : notnull, IComparable<TKey>
-        where TDataModel : class, IDataModel<TDataModel, TValueAccumulatorDataType>
-        where TValueAccumulatorDataType : class, IAccumulator<TDataModel>
+    public static (SortedDictionary<TKey, TDataModel>? Data, Exception? Error) GetCombinedSeries<TKey, TDataModel>(List<(SortedDictionary<TKey, TDataModel> Data, MathematicalOperation Operation)> Series)
+        where TKey : notnull
+        where TDataModel : class, IDataModel<TDataModel>
     {
         if (Series == null || Series.Count == 0) return (null, new ArgumentNullException("No series were provided."));
         if (Series.Count == 1) { return (Series[0].Data.CloneDeep(), null); }
@@ -146,7 +136,7 @@ public static class SeriesUtilities
         {
             if(!Series.All(x => x.Data.ContainsKey(key))) continue;
 
-            TValueAccumulatorDataType mutable_record = Series[0].Data[key].GetAccumulator();
+            IAccumulator<TDataModel> mutable_record = Series[0].Data[key].GetAccumulator();
 
             for (int i = 1; i < Series.Count; i++)
             {
@@ -182,7 +172,7 @@ public static class SeriesUtilities
     /// <param name="Scalar"></param>
     /// <returns></returns>
     public static SortedDictionary<TKey, decimal> GetScaledSeries<TKey>(SortedDictionary<TKey, decimal> Data, decimal Scalar)
-        where TKey : notnull, IComparable<TKey>
+        where TKey : notnull
     {
         if (Scalar == 1) return Data.CloneDeep();
         return Data.ToDictionary(x => x.Key, x => x.Value * Scalar).ToSortedDictionary();
@@ -198,7 +188,7 @@ public static class SeriesUtilities
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     public static (SortedDictionary<T, decimal>? Result, Exception? Error) GetCombinedSeries<T>(SortedDictionary<T, decimal> Data, SortedDictionary<T, decimal> Data2, MathematicalOperation mathematicalOperation)
-        where T : notnull, IComparable<T>
+        where T : notnull
     {
         Func<decimal, decimal, (decimal? Result, Exception? Error)>? function = mathematicalOperation switch
         {
@@ -222,7 +212,7 @@ public static class SeriesUtilities
     /// <param name="CalculationMethod"></param>
     /// <returns></returns>
     private static (SortedDictionary<T, decimal>? Data, Exception? Error) GetCombinedSeriesFromTwoSeriesWithMethodApplied<T>(SortedDictionary<T, decimal> DataSet, SortedDictionary<T, decimal> DataSet2, Func<decimal, decimal, (decimal? Result, Exception? Error)> CalculationMethod) 
-        where T : notnull, IComparable<T>
+        where T : notnull
     {
         HashSet<T> keys = DataSet.Keys.ToHashSet();
         keys.UnionWith(DataSet2.Keys);

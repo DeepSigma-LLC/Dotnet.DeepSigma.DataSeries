@@ -1,34 +1,38 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Models.Series;
 using DeepSigma.DataSeries.Transformations;
+using DeepSigma.DataSeries.Utilities;
+using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Models.BaseSeries;
 
 /// <summary>
 /// Abstract base class for data series.
 /// </summary>
+/// <typeparam name="TCollectionKey"></typeparam>
 /// <typeparam name="TCollectionDataType"></typeparam>
 /// <typeparam name="TTransformation"></typeparam>
-public abstract class AbstractSeriesBase<TCollectionDataType, TTransformation> 
-    : AbstractSeries<TCollectionDataType, TTransformation>, 
-    ISeries<TCollectionDataType, TTransformation>
-    where TCollectionDataType : notnull
+public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TTransformation> 
+    : AbstractSeries<TCollectionKey, TCollectionDataType, TTransformation>, 
+    ISeries<TCollectionKey, TCollectionDataType, TTransformation>
+    where TCollectionKey : notnull
+    where TCollectionDataType : class, IDataModel<TCollectionDataType>
     where TTransformation : SeriesTransformation, new()
 {
     /// <summary>
     /// The collection of data points in the series.
     /// </summary>
-    private protected readonly ICollection<TCollectionDataType> Data = [];
+    private protected readonly SortedDictionary<TCollectionKey, TCollectionDataType> Data = [];
 
-    /// <inheritdoc cref="AbstractSeriesBase{TCollectionDataType, TTransformation}"/>
+    /// <inheritdoc cref="AbstractSeriesBase{TCollectionKey, TCollectionDataType, TTransformation}"/>
     protected AbstractSeriesBase() : base()
     {
         this.AllowMultipleSubSeries = false;
         this.AllowDuplicateDataPoints = false;
     }
 
-    /// <inheritdoc cref="AbstractSeriesBase{TCollectionDataType, TTransformation}"/>
-    protected AbstractSeriesBase(ICollection<TCollectionDataType> data) : this()
+    /// <inheritdoc cref="AbstractSeriesBase{TCollectionKey, TCollectionDataType, TTransformation}"/>
+    protected AbstractSeriesBase(SortedDictionary<TCollectionKey, TCollectionDataType> data) : this()
     {
         Data = data;
     }
@@ -40,29 +44,34 @@ public abstract class AbstractSeriesBase<TCollectionDataType, TTransformation>
     }
 
     /// <inheritdoc/>
-    public sealed override ICollection<TCollectionDataType>? GetSeriesData()
+    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesData()
     {
         return Data;
     }
 
     /// <inheritdoc/>
-    public sealed override int GetSubSeriesCount()
+    public sealed override int GetSubSeriesCount() => 1;
+    
+    /// <inheritdoc/>
+    public void Add(TCollectionKey key, TCollectionDataType value)
     {
-        return 1;
+        Data.Add(key, value);
     }
 
     /// <inheritdoc/>
-    public void Add(TCollectionDataType point)
+    public void Add(IEnumerable<KeyValuePair<TCollectionKey, TCollectionDataType>> points)
     {
-        Data.Add(point);
+        points.ForEach(point => Data.Add(point.Key, point.Value));
     }
 
     /// <inheritdoc/>
-    public void Add(IEnumerable<TCollectionDataType> points)
+    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataTransformed()
     {
-        foreach (var point in points)
-        {
-            Data.Add(point);
-        }
+        SortedDictionary<TCollectionKey, TCollectionDataType>? Data = GetSeriesData()?.ToSortedDictionary();
+        if (Data is null) return null;
+
+        (var TransformedData, var Error) = SeriesUtilities.GetTransformedSeries(Data, Transformation);
+        if (Error is not null || TransformedData is null) return null;
+        return TransformedData;
     }
 }

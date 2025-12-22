@@ -6,9 +6,11 @@ namespace DeepSigma.DataSeries.Models.Collections;
 /// <summary>
 /// Represents a pair of mathematical operation and a data series.
 /// </summary>
+/// <typeparam name="TKey"></typeparam>
 /// <typeparam name="TDataType"></typeparam>
 /// <typeparam name="TTransformation">Transformation class</typeparam>
-public class SeriesCollectionPair<TDataType, TTransformation>(MathematicalOperation mathematical_operation, ISeries<TDataType, TTransformation> series) 
+public class SeriesCollectionPair<TKey, TDataType, TTransformation>(MathematicalOperation mathematical_operation, ISeries<TKey, TDataType, TTransformation> series)
+    where TKey : notnull
     where TDataType : notnull 
     where TTransformation : class
 {
@@ -20,14 +22,12 @@ public class SeriesCollectionPair<TDataType, TTransformation>(MathematicalOperat
     /// <summary>
     /// The data series associated with the mathematical operation.
     /// </summary>
-    public ISeries<TDataType, TTransformation> Series { get; set; } = series;
+    public ISeries<TKey, TDataType, TTransformation> Series { get; set; } = series;
 
     /// <summary>
     /// Deconstructs the SeriesCollectionPair into its components.
     /// </summary>
     /// <returns></returns>
-    public (ISeries<TDataType, TTransformation> Series, MathematicalOperation MathematicalOperation) Deconstruct()
-    {
-        return (Series, MathematicalOperation);
-    }
+    public (ISeries<TKey, TDataType, TTransformation> Series, MathematicalOperation MathematicalOperation) Deconstruct() => (Series, MathematicalOperation);
+    
 }

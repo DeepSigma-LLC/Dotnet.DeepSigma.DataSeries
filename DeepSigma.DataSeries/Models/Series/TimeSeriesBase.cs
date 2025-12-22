@@ -1,19 +1,20 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
+using DeepSigma.General.DateTimeUnification;
 
 namespace DeepSigma.DataSeries.Models.BaseSeries;
 
 /// <summary>
 /// Represents a base time series data structure that holds data points indexed by DateTime.
 /// </summary>
+/// <typeparam name="TDateKey"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
-/// <typeparam name="TValueAccumulatorDataType"></typeparam>
-public class TimeSeriesBase<TValueDataType, TValueAccumulatorDataType> : 
-    AbstractFunctionalSeriesBase<DateTime, TValueDataType, TValueAccumulatorDataType, TimeSeriesTransformation>
-    where TValueDataType : class, IDataModel<TValueDataType, TValueAccumulatorDataType>
-    where TValueAccumulatorDataType : class, IAccumulator<TValueDataType>
+public class TimeSeriesBase<TDateKey, TValueDataType> : 
+    AbstractSeriesBase<TDateKey, TValueDataType, TimeSeriesTransformation>
+    where TDateKey : struct, IDateTime<TDateKey>
+    where TValueDataType : class, IDataModel<TValueDataType>
 {
-    /// <inheritdoc cref="TimeSeriesBase{TValueDataType, TValueAccumulatorDataType}"/>
-    public TimeSeriesBase(SortedDictionary<DateTime, TValueDataType> data) : base(data){}
+    /// <inheritdoc cref="TimeSeriesBase{TDateKey, TValueDataType}"/>
+    public TimeSeriesBase(SortedDictionary<TDateKey, TValueDataType> data) : base(data){}
 
 }

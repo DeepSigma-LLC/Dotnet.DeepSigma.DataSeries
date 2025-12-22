@@ -10,7 +10,7 @@ public class FunctionalDataSet_Tests
     [Fact]
     public void FunctionalDataSet_Add_MultipleValues()
     {
-        var dataSet = new FunctionalDataSet<int, Observation, ObservationAccumulator>();
+        var dataSet = new DataSet<int, Observation, ObservationAccumulator>();
         var dataToAdd = new SortedDictionary<int, Observation>
         {
             { 1, new Observation(11m) },
@@ -31,7 +31,7 @@ public class FunctionalDataSet_Tests
     [Fact]
     public async Task FunctionalDataSet_Add_DuplicateKey_ThrowsException()
     {
-        var dataSet = new FunctionalDataSet<int, Observation, ObservationAccumulator>();
+        var dataSet = new DataSet<int, Observation, ObservationAccumulator>();
         dataSet.Add(1, new Observation(11m));
 
         await Assert.ThrowsAsync<ArgumentException>(async () => dataSet.Add(1, new Observation(12m)));

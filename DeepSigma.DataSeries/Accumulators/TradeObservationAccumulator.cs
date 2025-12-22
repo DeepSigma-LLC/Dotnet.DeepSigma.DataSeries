@@ -39,8 +39,6 @@ public class TradeObservationAccumulator(TradeObservation TradeObservation)
     }
 
     /// <inheritdoc/>
-    protected sealed override bool IsAboutToDivideByZero(TradeObservation other)
-    {
-        return other.Price == 0 || other.Quantity == 0;
-    }
+    protected sealed override bool IsAboutToDivideByZero(TradeObservation other) => other.Price == 0 || other.Quantity == 0;
+    
 }

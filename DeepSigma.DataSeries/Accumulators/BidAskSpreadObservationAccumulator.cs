@@ -39,8 +39,6 @@ public class BidAskSpreadObservationAccumulator(BidAskSpreadObservation BidAskSp
     }
 
     /// <inheritdoc/>
-    protected override bool IsAboutToDivideByZero(BidAskSpreadObservation other)
-    {
-        return other.Bid == 0m || other.Ask == 0m;
-    }
+    protected override bool IsAboutToDivideByZero(BidAskSpreadObservation other) => other.Bid == 0m || other.Ask == 0m;
+    
 }
