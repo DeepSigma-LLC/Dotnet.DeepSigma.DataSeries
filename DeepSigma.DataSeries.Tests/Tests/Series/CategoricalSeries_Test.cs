@@ -15,12 +15,12 @@ public class CategoricalSeries_Test
         Categories.Add("Liabilities", new(0, "Test", 1));
         CategoricalSeriesBase<Assets> data = new(Categories);
 
-        CategoricalSeries<Assets> categoricalSeries = new();
+        CategoricalSeries<Assets> categoricalSeries = [];
         categoricalSeries.Add(data,General.Enums.MathematicalOperation.Add);
 
         // Assert
         Assert.NotNull(categoricalSeries);
-        Assert.True(categoricalSeries.IsEmpty);
+        Assert.False(categoricalSeries.IsEmpty);
         Assert.Equal(1, categoricalSeries.GetSubSeriesCount());
     }
 }

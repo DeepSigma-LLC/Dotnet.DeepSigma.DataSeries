@@ -10,7 +10,7 @@ namespace DeepSigma.DataSeries.Series;
 /// <typeparam name="TCollectionDataType"></typeparam>
 /// <typeparam name="TTransformation"></typeparam>
 public abstract class AbstractSeries<TCollectionKey, TCollectionDataType, TTransformation> : ISeries<TCollectionKey, TCollectionDataType, TTransformation>
-    where TCollectionKey : notnull
+    where TCollectionKey : notnull, IComparable<TCollectionKey>
     where TCollectionDataType : class, IDataModel<TCollectionDataType>
     where TTransformation : SeriesTransformation, new()
 {

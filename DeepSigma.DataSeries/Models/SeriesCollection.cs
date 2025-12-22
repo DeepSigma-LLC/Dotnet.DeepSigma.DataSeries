@@ -15,7 +15,7 @@ namespace DeepSigma.DataSeries.Models;
 /// <typeparam name="TTransformation"></typeparam>
 public class SeriesCollection<TKey, TDataType, TTransformation> 
     : ISeriesCollection<TKey, TDataType, TTransformation>, IEnumerable<SeriesCollectionPair<TKey, TDataType, TTransformation>>
-    where TKey : notnull
+    where TKey : notnull, IComparable<TKey>
     where TDataType : class, IDataModel<TDataType>
     where TTransformation : class, new()
 {

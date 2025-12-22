@@ -17,7 +17,7 @@ internal static class DataSetUtilities
     /// <param name="target_property"></param>
     /// <returns></returns>
     internal static SortedDictionary<TKey, TResult> GetSingleSeries<TKey, TDataModel, TResult>(SortedDictionary<TKey, TDataModel> data, Expression<Func<TDataModel, TResult>> target_property)
-    where TKey : notnull
+    where TKey : notnull, IComparable<TKey>
     {
         Func<TDataModel, TResult> compiled_function = ObjectUtilities.ExpressionToExecutableFunction(target_property);
 

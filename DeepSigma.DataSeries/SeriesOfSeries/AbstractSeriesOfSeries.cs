@@ -18,14 +18,14 @@ namespace DeepSigma.DataSeries.Series;
 public abstract class AbstractSeriesOfSeries<TCollectionKey, TCollectionDataType, TTransformation> 
     : AbstractSeries<TCollectionKey, TCollectionDataType, TTransformation>, 
     ISeries<TCollectionKey, TCollectionDataType, TTransformation>, IEnumerable<SeriesCollectionPair<TCollectionKey, TCollectionDataType, TTransformation>>
-    where TCollectionKey : notnull
+    where TCollectionKey : notnull, IComparable<TCollectionKey>
     where TCollectionDataType : class, IDataModel<TCollectionDataType>
     where TTransformation : SeriesTransformation, new()
 {
     /// <inheritdoc cref="AbstractSeriesOfSeries{TCollectionKey, TValue, TTransformation}"/>
     protected AbstractSeriesOfSeries(ILogger? logger = null) : base()
     {
-        SubSeriesCollection = new();
+        SubSeriesCollection = [];
         AllowMultipleSubSeries = true;
         SubSeriesCollection.RegisterLogger(logger);
     }

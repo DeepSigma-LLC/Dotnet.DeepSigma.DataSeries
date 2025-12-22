@@ -7,7 +7,7 @@
 /// <typeparam name="TCollectionDataType">Data type for the series data collection element.</typeparam>
 /// <typeparam name="TTransformation">Transformation type.</typeparam>
 public interface ISeries<TCollectionKey, TCollectionDataType, TTransformation>
-    where TCollectionKey: notnull
+    where TCollectionKey: notnull, IComparable<TCollectionKey>
     where TCollectionDataType: notnull 
     where TTransformation : class
 {

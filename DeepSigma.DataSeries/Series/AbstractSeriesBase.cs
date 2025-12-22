@@ -15,7 +15,7 @@ namespace DeepSigma.DataSeries.Series;
 public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TTransformation> 
     : AbstractSeries<TCollectionKey, TCollectionDataType, TTransformation>, 
     ISeries<TCollectionKey, TCollectionDataType, TTransformation>, IEnumerable<KeyValuePair<TCollectionKey, TCollectionDataType>>
-    where TCollectionKey : notnull
+    where TCollectionKey : notnull, IComparable<TCollectionKey>
     where TCollectionDataType : class, IDataModel<TCollectionDataType>
     where TTransformation : SeriesTransformation, new()
 {
