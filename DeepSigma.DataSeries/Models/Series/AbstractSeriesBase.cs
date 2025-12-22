@@ -3,6 +3,7 @@ using DeepSigma.DataSeries.Models.Series;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using DeepSigma.General.Extensions;
+using System.Collections;
 
 namespace DeepSigma.DataSeries.Models.BaseSeries;
 
@@ -14,7 +15,7 @@ namespace DeepSigma.DataSeries.Models.BaseSeries;
 /// <typeparam name="TTransformation"></typeparam>
 public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TTransformation> 
     : AbstractSeries<TCollectionKey, TCollectionDataType, TTransformation>, 
-    ISeries<TCollectionKey, TCollectionDataType, TTransformation>
+    ISeries<TCollectionKey, TCollectionDataType, TTransformation>, IEnumerable<KeyValuePair<TCollectionKey, TCollectionDataType>>
     where TCollectionKey : notnull
     where TCollectionDataType : class, IDataModel<TCollectionDataType>
     where TTransformation : SeriesTransformation, new()
@@ -74,4 +75,11 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
         if (Error is not null || TransformedData is null) return null;
         return TransformedData;
     }
+
+    /// <inheritdoc/>
+    public IEnumerator<KeyValuePair<TCollectionKey, TCollectionDataType>> GetEnumerator() => Data.GetEnumerator();
+
+    /// <inheritdoc/>
+    IEnumerator IEnumerable.GetEnumerator() =>GetEnumerator();
+    
 }

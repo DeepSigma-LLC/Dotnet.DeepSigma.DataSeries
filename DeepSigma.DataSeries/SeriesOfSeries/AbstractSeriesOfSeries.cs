@@ -5,6 +5,8 @@ using DeepSigma.DataSeries.Utilities;
 using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
 using Microsoft.Extensions.Logging;
+using DeepSigma.DataSeries.Models.Collections;
+using System.Collections;
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -16,7 +18,7 @@ namespace DeepSigma.DataSeries.Series;
 /// <typeparam name="TTransformation">The data type of the transformation.</typeparam>
 public abstract class AbstractSeriesOfSeries<TCollectionKey, TCollectionDataType, TTransformation> 
     : AbstractSeries<TCollectionKey, TCollectionDataType, TTransformation>, 
-    ISeries<TCollectionKey, TCollectionDataType, TTransformation> 
+    ISeries<TCollectionKey, TCollectionDataType, TTransformation>, IEnumerable<SeriesCollectionPair<TCollectionKey, TCollectionDataType, TTransformation>>
     where TCollectionKey : notnull
     where TCollectionDataType : class, IDataModel<TCollectionDataType>
     where TTransformation : SeriesTransformation, new()
@@ -32,7 +34,7 @@ public abstract class AbstractSeriesOfSeries<TCollectionKey, TCollectionDataType
     /// <summary>
     /// Collection of sub-series within the series.
     /// </summary>
-    public TSeriesCollection SubSeriesCollection { get; set; }
+    public SeriesCollection<TCollectionKey, TCollectionDataType, TTransformation> SubSeriesCollection { get; set; }
 
     /// <summary>
     /// Indicates whether the series is empty.
@@ -73,9 +75,12 @@ public abstract class AbstractSeriesOfSeries<TCollectionKey, TCollectionDataType
     public sealed override SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataTransformed()
     {
         var (Data, Error) = SeriesUtilities.GetTransformedSeries(GetSeriesData()?.ToSortedDictionary() ?? [], Transformation);
-
-        if (Error != null || Data is null) return null;
-
-        return Data;
+        return (Error != null || Data is null) ? null : Data;
     }
+
+    /// <inheritdoc/>
+    public IEnumerator<SeriesCollectionPair<TCollectionKey, TCollectionDataType, TTransformation>> GetEnumerator() => SubSeriesCollection.GetEnumerator();
+
+    /// <inheritdoc/>
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

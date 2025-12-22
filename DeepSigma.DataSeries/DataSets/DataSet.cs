@@ -1,6 +1,9 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Utilities;
 using DeepSigma.General.Extensions;
+using OneOf.Types;
 using System.Collections;
+using System.Linq.Expressions;
 
 namespace DeepSigma.DataSeries.DataSets;
 
@@ -48,6 +51,15 @@ public class DataSet<TKeyDataType, TValueDataType, TValueAccumulatorDataType>
     /// <param name="key"></param>
     /// <returns></returns>
     public TValueDataType? TryGet(TKeyDataType key) => Data.TryGetValue(key, out var value) ? value : null;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public SortedDictionary<TKeyDataType, TResult> GetSingleSeries<TResult>(Expression<Func<TValueDataType, TResult>> target_property)
+    {
+        return DataSetUtilities.GetSingleSeries(Data, target_property);
+    }
 
     /// <inheritdoc/>
     public IEnumerator<KeyValuePair<TKeyDataType, TValueDataType>> GetEnumerator() => Data.GetEnumerator();

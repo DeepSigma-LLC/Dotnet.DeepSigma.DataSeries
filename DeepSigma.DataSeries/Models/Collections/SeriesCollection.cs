@@ -3,6 +3,7 @@ using DeepSigma.DataSeries.Utilities;
 using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
 using Microsoft.Extensions.Logging;
+using System.Collections;
 
 namespace DeepSigma.DataSeries.Models.Collections;
 
@@ -12,13 +13,11 @@ namespace DeepSigma.DataSeries.Models.Collections;
 /// <typeparam name="TKey"></typeparam>
 /// <typeparam name="TDataType"></typeparam>
 /// <typeparam name="TTransformation"></typeparam>
-/// <typeparam name="TAccumulator"></typeparam>
-public abstract class AbstractSeriesCollection<TKey, TDataType, TTransformation, TAccumulator> 
-    : ISeriesCollection<TKey, TDataType, TTransformation> 
+public class SeriesCollection<TKey, TDataType, TTransformation> 
+    : ISeriesCollection<TKey, TDataType, TTransformation>, IEnumerable<SeriesCollectionPair<TKey, TDataType, TTransformation>>
     where TKey : notnull
     where TDataType : class, IDataModel<TDataType>
     where TTransformation : class, new()
-    where TAccumulator : class, IAccumulator<TDataType>
 {
 
     /// <inheritdoc/>
@@ -33,11 +32,6 @@ public abstract class AbstractSeriesCollection<TKey, TDataType, TTransformation,
     protected ILogger? Logger { get; private set; }
 
     /// <summary>
-    /// Max capacity used to restrict the size of the number of allowed sub series.
-    /// </summary>
-    private protected int MaxCapacity { get; set; } = 1000;
-
-    /// <summary>
     /// Collection of time series sub series.
     /// </summary>
     protected List<SeriesCollectionPair<TKey, TDataType, TTransformation>> SubSeriesCollection { get; private set; } = [];
@@ -49,10 +43,6 @@ public abstract class AbstractSeriesCollection<TKey, TDataType, TTransformation,
     /// <param name="data_series"></param>
     public void Add(MathematicalOperation mathematical_operation, ISeries<TKey, TDataType, TTransformation> data_series)
     {
-        if(SubSeriesCollection.Count >= MaxCapacity)
-        {
-            throw new InvalidOperationException($"Cannot add more than {MaxCapacity} sub-series to the collection.");
-        }
         SeriesCollectionPair<TKey, TDataType, TTransformation> pair = new(mathematical_operation, data_series);
         SubSeriesCollection.Add(pair);
     }
@@ -114,10 +104,17 @@ public abstract class AbstractSeriesCollection<TKey, TDataType, TTransformation,
         List<(SortedDictionary<TKey, TDataType>, MathematicalOperation)> Series = [];
         SubSeriesCollection.ForEach(x => Series.Add((x.Series.GetSeriesDataTransformed()?.ToSortedDictionary() ?? [], x.MathematicalOperation)));
 
-        (SortedDictionary<TKey, TDataType>? DataSeries, Exception? Error) Combined = SeriesUtilities.GetCombinedSeries<TKey, TDataType>(Series);
+        (SortedDictionary<TKey, TDataType>? DataSeries, Exception? Error) Combined = SeriesUtilities.GetCombinedSeries(Series);
         Logger.TryToLogErrorOnlyIfException(Combined.Error, "An error occured while combining the series");
 
         if (Combined.Error != null || Combined.DataSeries is null) return null;
         return Combined.DataSeries;
     }
+
+    /// <inheritdoc/>
+    public IEnumerator<SeriesCollectionPair<TKey, TDataType, TTransformation>> GetEnumerator() => SubSeriesCollection.GetEnumerator();
+
+    /// <inheritdoc/>
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    
 }

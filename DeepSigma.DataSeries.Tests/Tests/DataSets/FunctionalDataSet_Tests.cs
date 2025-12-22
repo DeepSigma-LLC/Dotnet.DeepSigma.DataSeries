@@ -36,6 +36,4 @@ public class FunctionalDataSet_Tests
 
         await Assert.ThrowsAsync<ArgumentException>(async () => dataSet.Add(1, new Observation(12m)));
     }
-
-  
 }
