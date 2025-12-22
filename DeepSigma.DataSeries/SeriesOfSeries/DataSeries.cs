@@ -1,7 +1,4 @@
-﻿using DeepSigma.DataSeries.DataSets;
-using DeepSigma.DataSeries.Interfaces;
-using DeepSigma.DataSeries.Models;
-using DeepSigma.DataSeries.Models.Collections;
+﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using Microsoft.Extensions.Logging;
 using System.Numerics;

@@ -52,7 +52,7 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     }
 
     /// <inheritdoc/>
-    public abstract Exception? Scale(decimal scalar);
+    public abstract void Scale(decimal scalar);
 
     /// <inheritdoc/>
     public Exception? Subtract(T other)

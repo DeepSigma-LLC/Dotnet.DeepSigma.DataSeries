@@ -1,5 +1,5 @@
 ﻿using Xunit;
-using DeepSigma.DataSeries.DataSets;
+using DeepSigma.DataSeries.Models;
 using DeepSigma.DataSeries.DataModels;
 using DeepSigma.DataSeries.Accumulators;
 
@@ -10,7 +10,7 @@ public class FunctionalDataSet_Tests
     [Fact]
     public void FunctionalDataSet_Add_MultipleValues()
     {
-        var dataSet = new DataSet<int, Observation, ObservationAccumulator>();
+        var dataSet = new DataSet<int, Observation>();
         var dataToAdd = new SortedDictionary<int, Observation>
         {
             { 1, new Observation(11m) },
@@ -31,7 +31,7 @@ public class FunctionalDataSet_Tests
     [Fact]
     public async Task FunctionalDataSet_Add_DuplicateKey_ThrowsException()
     {
-        var dataSet = new DataSet<int, Observation, ObservationAccumulator>();
+        var dataSet = new DataSet<int, Observation>();
         dataSet.Add(1, new Observation(11m));
 
         await Assert.ThrowsAsync<ArgumentException>(async () => dataSet.Add(1, new Observation(12m)));

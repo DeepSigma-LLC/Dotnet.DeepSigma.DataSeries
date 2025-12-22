@@ -2,7 +2,7 @@
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General.DateTimeUnification;
 
-namespace DeepSigma.DataSeries.Models.BaseSeries;
+namespace DeepSigma.DataSeries.Series;
 
 /// <summary>
 /// Represents a base time series data structure that holds data points indexed by DateTime.

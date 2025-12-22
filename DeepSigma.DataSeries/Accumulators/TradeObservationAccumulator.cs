@@ -18,11 +18,10 @@ public class TradeObservationAccumulator(TradeObservation TradeObservation)
     private decimal Quantity { get; set; } = TradeObservation.Quantity;
 
     /// <inheritdoc/>
-    public sealed override Exception? Scale(decimal scalar)
+    public sealed override void Scale(decimal scalar)
     {
         this.Price = this.Price * scalar;
         this.Quantity = this.Quantity * scalar;
-        return null;
     }
 
     /// <inheritdoc/>

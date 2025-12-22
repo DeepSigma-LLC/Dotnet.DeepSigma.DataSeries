@@ -21,14 +21,13 @@ public class BarObservationWithVolumeAccumulator(BarObservationWithVolume observ
     private decimal Volume { get; set; } = observation.Volume;
 
     /// <inheritdoc/>
-    public override Exception? Scale(decimal scalar)
+    public override void Scale(decimal scalar)
     {
         this.Volume = Volume * scalar;
         this.Close = Close * scalar;
         this.Low = Low * scalar;
         this.High = High * scalar;
         this.Open = Open * scalar;
-        return null;
     }
 
 

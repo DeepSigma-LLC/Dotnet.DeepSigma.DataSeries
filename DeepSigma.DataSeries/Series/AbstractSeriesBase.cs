@@ -1,11 +1,10 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
-using DeepSigma.DataSeries.Models.Series;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using DeepSigma.General.Extensions;
 using System.Collections;
 
-namespace DeepSigma.DataSeries.Models.BaseSeries;
+namespace DeepSigma.DataSeries.Series;
 
 /// <summary>
 /// Abstract base class for data series.

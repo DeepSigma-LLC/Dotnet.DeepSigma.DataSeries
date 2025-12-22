@@ -21,13 +21,12 @@ public class BarObservationAccumulator(BarObservation observation)
     private decimal Low { get; set; } = observation.Low;
 
     /// <inheritdoc/>
-    public override Exception? Scale(decimal scalar)
+    public override void Scale(decimal scalar)
     {
         this.Close = Close * scalar;
         this.High = High * scalar;
         this.Low = Low * scalar;
         this.Open = Open * scalar;
-        return null;
     }
 
     /// <inheritdoc/>

@@ -3,7 +3,7 @@ using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using DeepSigma.General.Extensions;
 
-namespace DeepSigma.DataSeries.Models.BaseSeries;
+namespace DeepSigma.DataSeries.Series;
 
 /// <summary>
 /// Base class for data series with decimal keys and TValueDataType values.

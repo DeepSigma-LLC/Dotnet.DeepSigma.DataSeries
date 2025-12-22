@@ -36,9 +36,8 @@ public class ObservationAccumulator(Observation observation)
     
 
     /// <inheritdoc/>
-    public sealed override Exception? Scale(decimal scalar)
+    public sealed override void Scale(decimal scalar)
     {
         Value = Value * scalar;
-        return null;
     }
 }

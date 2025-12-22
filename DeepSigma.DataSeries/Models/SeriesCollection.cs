@@ -5,7 +5,7 @@ using DeepSigma.General.Extensions;
 using Microsoft.Extensions.Logging;
 using System.Collections;
 
-namespace DeepSigma.DataSeries.Models.Collections;
+namespace DeepSigma.DataSeries.Models;
 
 /// <summary>
 /// Represents a collection of time series data, allowing for mathematical operations on sub-series.

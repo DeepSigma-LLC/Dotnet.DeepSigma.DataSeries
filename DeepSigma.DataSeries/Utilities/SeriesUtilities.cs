@@ -52,9 +52,7 @@ public static class SeriesUtilities
         foreach (var x in Data)
         {
             IAccumulator<TDataModel> mutable_record = x.Item2.GetAccumulator();
-            Exception? error = mutable_record.Scale(Scalar);
-            if (error != null) return (null, error);
-
+            mutable_record.Scale(Scalar);
             NewData.Add(new Tuple<TKey,TDataModel>(x.Item1, mutable_record.ToRecord()));
         }
         return (NewData, null);
@@ -77,9 +75,7 @@ public static class SeriesUtilities
         foreach (var x in Data)
         {
             IAccumulator<TDataModel> mutable_record = x.Value.GetAccumulator();
-            Exception? error = mutable_record.Scale(Scalar);
-            if (error != null) return (null, error);
-
+            mutable_record.Scale(Scalar);
             NewData.Add(x.Key, mutable_record.ToRecord()); 
         }
         return (NewData, null);

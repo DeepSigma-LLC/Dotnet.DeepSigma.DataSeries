@@ -1,5 +1,5 @@
-﻿using DeepSigma.DataSeries.Interfaces;
-using DeepSigma.DataSeries.DataModels;
+﻿using DeepSigma.DataSeries.DataModels;
+using DeepSigma.DataSeries.Interfaces;
 
 namespace DeepSigma.DataSeries.Tests.Model;
 
@@ -12,7 +12,7 @@ namespace DeepSigma.DataSeries.Tests.Model;
 /// <param name="Value"></param>
 /// <param name="IsRolled"></param>
 /// <param name="IsSyntheticData"></param>
-public record class Assets(int Id, string Name, decimal Value, bool IsRolled = false, bool IsSyntheticData = false) : DataModelAbstract<Assets>, IDataModel<Assets, AssetAccumulator>
+public record class Assets(int Id, string Name, decimal Value, bool IsRolled = false, bool IsSyntheticData = false) : DataModelAbstract<Assets>, IDataModel<Assets>
 {
     /// <inheritdoc/>
     public sealed override AssetAccumulator GetAccumulator()

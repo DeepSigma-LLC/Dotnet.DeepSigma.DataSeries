@@ -18,11 +18,10 @@ public class BidAskSpreadObservationAccumulator(BidAskSpreadObservation BidAskSp
     private decimal Ask { get; set; } = BidAskSpreadObservation.Ask;
 
     /// <inheritdoc/>
-    public override Exception? Scale(decimal scalar)
+    public override void Scale(decimal scalar)
     {
         this.Ask = this.Ask * scalar;
         this.Bid = this.Bid * scalar;
-        return null;
     }
 
     /// <inheritdoc/>

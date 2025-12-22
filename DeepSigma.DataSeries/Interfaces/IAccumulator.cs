@@ -45,7 +45,7 @@ public interface IAccumulator<T>
     /// </summary>
     /// <param name="scalar"></param>
     /// <returns></returns>
-    public Exception? Scale(decimal scalar);
+    public void Scale(decimal scalar);
 
     /// <summary>
     /// Divides the accumulator by another record of type T.

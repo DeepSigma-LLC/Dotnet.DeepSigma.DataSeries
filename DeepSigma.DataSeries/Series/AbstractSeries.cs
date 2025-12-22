@@ -1,7 +1,7 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 
-namespace DeepSigma.DataSeries.Models.Series;
+namespace DeepSigma.DataSeries.Series;
 
 /// <summary>
 /// Represents an abstract series.

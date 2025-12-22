@@ -7,9 +7,9 @@ public class AssetAccumulator(Assets assets) : AbstractAccumulator<Assets>(asset
 {
     private decimal Price { get; set; } = assets.Value;
 
-    public override Exception? Scale(decimal scalar)
+    public override void Scale(decimal scalar)
     {
-        throw new NotImplementedException();
+        Price = Price * scalar;
     }
 
     /// <inheritdoc/>

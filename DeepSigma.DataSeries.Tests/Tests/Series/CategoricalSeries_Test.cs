@@ -1,6 +1,5 @@
 ﻿using Xunit;
 using DeepSigma.DataSeries.Tests.Model;
-using DeepSigma.DataSeries.Models.BaseSeries;
 using DeepSigma.DataSeries.Series;
 
 namespace DeepSigma.DataSeries.Tests.Tests.Series;

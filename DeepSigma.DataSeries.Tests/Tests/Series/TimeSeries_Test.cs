@@ -1,5 +1,4 @@
 ﻿using Xunit;
-using DeepSigma.DataSeries.Models.BaseSeries;
 using DeepSigma.DataSeries.DataModels;
 using DeepSigma.General.DateTimeUnification;
 using DeepSigma.DataSeries.Series;

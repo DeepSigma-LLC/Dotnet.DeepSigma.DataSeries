@@ -1,11 +1,10 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Utilities;
 using DeepSigma.General.Extensions;
-using OneOf.Types;
 using System.Collections;
 using System.Linq.Expressions;
 
-namespace DeepSigma.DataSeries.DataSets;
+namespace DeepSigma.DataSeries.Models;
 
 /// <summary>
 /// Represents a generic data set. 
@@ -14,11 +13,9 @@ namespace DeepSigma.DataSeries.DataSets;
 /// </summary>
 /// <typeparam name="TKeyDataType"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
-/// <typeparam name="TValueAccumulatorDataType"></typeparam>
-public class DataSet<TKeyDataType, TValueDataType, TValueAccumulatorDataType> 
+public class DataSet<TKeyDataType, TValueDataType> 
     : IEnumerable<KeyValuePair<TKeyDataType, TValueDataType>>
     where TKeyDataType : IComparable<TKeyDataType>
-    where TValueAccumulatorDataType : class, IAccumulator<TValueDataType>
     where TValueDataType : class, IDataModel<TValueDataType>
 {
     /// <summary>

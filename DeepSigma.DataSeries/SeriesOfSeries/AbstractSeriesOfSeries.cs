@@ -1,12 +1,11 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
-using DeepSigma.DataSeries.Models.Series;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
 using Microsoft.Extensions.Logging;
-using DeepSigma.DataSeries.Models.Collections;
 using System.Collections;
+using DeepSigma.DataSeries.Models;
 
 namespace DeepSigma.DataSeries.Series;
 
