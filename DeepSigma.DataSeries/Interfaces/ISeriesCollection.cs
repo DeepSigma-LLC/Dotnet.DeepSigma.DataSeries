@@ -1,4 +1,5 @@
 ﻿using DeepSigma.DataSeries.Models;
+using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General.Enums;
 using Microsoft.Extensions.Logging;
 
@@ -13,7 +14,7 @@ namespace DeepSigma.DataSeries.Interfaces;
 public interface ISeriesCollection<TKey, TDataType, TTransformation>
     where TKey : notnull, IComparable<TKey>
     where TDataType : notnull
-    where TTransformation : class, new()
+    where TTransformation : class, ISeriesTransformation, new()
 {
 
     /// <summary>

@@ -12,7 +12,7 @@ namespace DeepSigma.DataSeries.Series;
 public abstract class AbstractSeries<TCollectionKey, TCollectionDataType, TTransformation> : ISeries<TCollectionKey, TCollectionDataType, TTransformation>
     where TCollectionKey : notnull, IComparable<TCollectionKey>
     where TCollectionDataType : class, IDataModel<TCollectionDataType>
-    where TTransformation : SeriesTransformation, new()
+    where TTransformation : class, ISeriesTransformation, new()
 {
 
     /// <inheritdoc cref="AbstractSeries{TCollectionKey, TCollectionDataType, TTransformation}"/>

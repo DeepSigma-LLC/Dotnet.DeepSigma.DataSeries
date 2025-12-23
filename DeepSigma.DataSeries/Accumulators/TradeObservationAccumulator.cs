@@ -1,5 +1,6 @@
 ﻿using DeepSigma.DataSeries.DataModels;
 using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Accumulators;
 
@@ -39,5 +40,33 @@ public class TradeObservationAccumulator(TradeObservation TradeObservation)
 
     /// <inheritdoc/>
     protected sealed override bool IsAboutToDivideByZero(TradeObservation other) => other.Price == 0 || other.Quantity == 0;
-    
+
+    /// <inheritdoc/>
+    public sealed override void Add(decimal value)
+    {
+        this.Price = this.Price + value;
+        this.Quantity = this.Quantity + value;
+    }
+
+    /// <inheritdoc/>
+    public sealed override void Max(TradeObservation other)
+    {
+        this.Price = this.Price > other.Price ? this.Price : other.Price;
+        this.Quantity = this.Quantity > other.Quantity ? this.Quantity : other.Quantity;
+    }
+
+    /// <inheritdoc/>
+    public override void Min(TradeObservation other)
+    {
+        this.Price = this.Price < other.Price ? this.Price : other.Price;
+        this.Quantity = this.Quantity < other.Quantity ? this.Quantity : other.Quantity;
+    }
+
+
+    /// <inheritdoc/>
+    public sealed override void Power(decimal exponent)
+    {
+        this.Price = this.Price.Power(exponent);
+        this.Quantity = this.Quantity.Power(exponent);
+    }
 }

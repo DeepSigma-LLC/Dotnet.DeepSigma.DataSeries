@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a transformation applied to a data series.
 /// </summary>
-public class SeriesTransformation
+public class SeriesTransformation : ISeriesTransformation
 {
     /// <summary>
     /// Data series scalar multiplier.

@@ -1,5 +1,6 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.DataModels;
+using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Accumulators;
 
@@ -39,5 +40,28 @@ public class ObservationAccumulator(Observation observation)
     public sealed override void Scale(decimal scalar)
     {
         Value = Value * scalar;
+    }
+
+    /// <inheritdoc/>
+    public sealed override void Add(decimal value)
+    {
+        Value = Value + value;
+    }
+
+    /// <inheritdoc/>
+    public sealed override void Max(Observation other)
+    {
+        Value = Value > other.Value ? Value : other.Value;
+    }
+
+    /// <inheritdoc/>
+    public sealed override void Min(Observation other)
+    {
+        Value = Value < other.Value ? Value : other.Value;
+    }
+
+    public sealed override void Power(decimal exponent)
+    {
+        Value = Value.Power(exponent);
     }
 }

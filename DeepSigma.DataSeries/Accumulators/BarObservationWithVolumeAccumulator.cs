@@ -1,5 +1,6 @@
 ﻿using DeepSigma.DataSeries.DataModels;
 using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Accumulators;
 
@@ -21,7 +22,7 @@ public class BarObservationWithVolumeAccumulator(BarObservationWithVolume observ
     private decimal? Volume { get; set; } = observation.Volume;
 
     /// <inheritdoc/>
-    public override void Scale(decimal scalar)
+    public sealed override void Scale(decimal scalar)
     {
         this.Volume = Volume * scalar;
         this.Close = Close * scalar;
@@ -30,6 +31,15 @@ public class BarObservationWithVolumeAccumulator(BarObservationWithVolume observ
         this.Open = Open * scalar;
     }
 
+    /// <inheritdoc/>
+    public sealed override void Add(decimal value)
+    {
+        this.Open = Open + value;
+        this.Close = Close + value;
+        this.High = High + value;
+        this.Low = Open + value;
+        this.Volume = Volume + value;
+    }
 
     /// <inheritdoc/>
     public sealed override BarObservationWithVolume ToRecord()
@@ -53,4 +63,36 @@ public class BarObservationWithVolumeAccumulator(BarObservationWithVolume observ
         return other.Volume == 0 || other.Open == 0 || other.Close == 0 || other.High == 0 || other.Low == 0;
     }
 
+    /// <inheritdoc/>
+    public sealed override void Max(BarObservationWithVolume other)
+    {
+        this.Close = this.Close > other.Close ? this.Close : other.Close;
+        this.Low = this.Low > other.Low ? this.Low : other.Low;
+        this.High = this.High > other.High ? this.High : other.High;
+        this.Open = this.Open > other.Open ? this.Open : other.Open;
+        this.Volume = this.Volume > other.Volume ? this.Volume : other.Volume;
+    }
+
+    /// <inheritdoc/>
+    public sealed override void Min(BarObservationWithVolume other)
+    {
+        this.Close = this.Close < other.Close ? this.Close : other.Close;
+        this.Low = this.Low < other.Low ? this.Low : other.Low;
+        this.High = this.High < other.High ? this.High : other.High;
+        this.Open = this.Open < other.Open ? this.Open : other.Open;
+        this.Volume = this.Volume < other.Volume ? this.Volume : other.Volume;
+    }
+
+    /// <summary>
+    /// Raises each field to the specified power.
+    /// </summary>
+    /// <param name="exponent"></param>
+    public sealed override void Power(decimal exponent)
+    {
+        this.Open = this.Open.Power(exponent);
+        this.Low = this.Low.Power(exponent);
+        this.High = this.High.Power(exponent);
+        this.Close = this.Close.Power(exponent);
+        this.Volume = this.Volume.Power(exponent);
+    }
 }

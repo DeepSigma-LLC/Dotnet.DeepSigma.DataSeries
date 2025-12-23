@@ -48,6 +48,30 @@ public interface IAccumulator<T>
     public void Scale(decimal scalar);
 
     /// <summary>
+    /// Adds a decimal value to the accumulator.
+    /// </summary>
+    /// <param name="value"></param>
+    public void Add(decimal value);
+
+    /// <summary>
+    /// Sets the accumulator to the maximum of its current value and another record of type T.
+    /// </summary>
+    /// <param name="other"></param>
+    public void Max(T other);
+
+    /// <summary>
+    /// Sets the accumulator to the minimum of its current value and another record of type T.
+    /// </summary>
+    /// <param name="other"></param>
+    public void Min(T other);
+
+    /// <summary>
+    /// Raises the accumulator to the power of the specified exponent.
+    /// </summary>
+    /// <param name="exponent"></param>
+    public void Power(decimal exponent);
+
+    /// <summary>
     /// Divides the accumulator by another record of type T.
     /// </summary>
     /// <param name="other"></param>

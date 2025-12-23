@@ -1,5 +1,7 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
+using DeepSigma.DataSeries.Utilities;
+using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -14,4 +16,12 @@ public class CategoricalSeriesBase<TValueDataType>
 
     /// <inheritdoc cref="CategoricalSeriesBase{TValueDataType}"/>
     public CategoricalSeriesBase(SortedDictionary<string, TValueDataType> data) : base(data) { }
+
+    /// <inheritdoc/>
+    public override SortedDictionary<string, TValueDataType>? GetSeriesDataTransformed()
+    {
+        SortedDictionary<string, TValueDataType>? Data = GetSeriesData()?.ToSortedDictionary();
+        if (Data is null) return null;
+        return DataModelSeriesUtilities.GetTransformedSeries(Data, Transformation);
+    }
 }

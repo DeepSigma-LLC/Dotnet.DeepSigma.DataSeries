@@ -1,5 +1,6 @@
 ﻿using DeepSigma.DataSeries.Accumulators;
 using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Tests.Model;
 
@@ -10,6 +11,11 @@ public class AssetAccumulator(Assets assets) : AbstractAccumulator<Assets>(asset
     public override void Scale(decimal scalar)
     {
         Price = Price * scalar;
+    }
+
+    public override void Add(decimal value)
+    {
+        Price += value;
     }
 
     /// <inheritdoc/>
@@ -28,5 +34,20 @@ public class AssetAccumulator(Assets assets) : AbstractAccumulator<Assets>(asset
     protected override bool IsAboutToDivideByZero(Assets other)
     {
         return other.Value == 0;
+    }
+
+    public override void Max(Assets other)
+    {
+        Price = Price > other.Value ? Price : other.Value;
+    }
+
+    public override void Min(Assets other)
+    {
+        Price = Price < other.Value ? Price : other.Value;
+    }
+
+    public override void Power(decimal exponent)
+    {
+        Price = Price.Power(exponent);
     }
 }

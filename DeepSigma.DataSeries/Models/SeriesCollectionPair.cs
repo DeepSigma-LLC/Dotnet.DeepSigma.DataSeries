@@ -1,4 +1,5 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General.Enums;
 
 namespace DeepSigma.DataSeries.Models;
@@ -12,7 +13,7 @@ namespace DeepSigma.DataSeries.Models;
 public class SeriesCollectionPair<TKey, TDataType, TTransformation>(MathematicalOperation mathematical_operation, ISeries<TKey, TDataType, TTransformation> series)
     where TKey : notnull, IComparable<TKey>
     where TDataType : notnull 
-    where TTransformation : class
+    where TTransformation : class, ISeriesTransformation
 {
     /// <summary>
     /// The mathematical operation to be applied to the series.

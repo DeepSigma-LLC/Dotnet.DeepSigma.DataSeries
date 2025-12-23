@@ -17,7 +17,7 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
     ISeries<TCollectionKey, TCollectionDataType, TTransformation>, IEnumerable<KeyValuePair<TCollectionKey, TCollectionDataType>>
     where TCollectionKey : notnull, IComparable<TCollectionKey>
     where TCollectionDataType : class, IDataModel<TCollectionDataType>
-    where TTransformation : SeriesTransformation, new()
+    where TTransformation : class, ISeriesTransformation, new()
 {
     /// <summary>
     /// The collection of data points in the series.
@@ -62,14 +62,6 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
     public void Add(IEnumerable<KeyValuePair<TCollectionKey, TCollectionDataType>> points)
     {
         points.ForEach(point => Data.Add(point.Key, point.Value));
-    }
-
-    /// <inheritdoc/>
-    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataTransformed()
-    {
-        SortedDictionary<TCollectionKey, TCollectionDataType>? Data = GetSeriesData()?.ToSortedDictionary();
-        if (Data is null) return null;
-        return SeriesUtilities.GetTransformedSeries(Data, Transformation);
     }
 
     /// <inheritdoc/>

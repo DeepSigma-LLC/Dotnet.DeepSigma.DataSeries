@@ -2,7 +2,9 @@
 using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
+using DeepSigma.DataSeries.Utilities;
 using DeepSigma.General.DateTimeUnification;
+using DeepSigma.General.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Series;
@@ -24,5 +26,12 @@ public class TimeSeries<TDate, TValueDataType> :
 
     /// <inheritdoc cref="TimeSeries{TDate, TValueDataType}"/>
     public TimeSeries(ILogger? logger = null) : base(logger) { }
+
+    /// <inheritdoc/>
+    public sealed override SortedDictionary<TDate, TValueDataType> GetSeriesDataTransformed()
+    {
+        return DataModelSeriesUtilities.GetTransformedSeries(GetSeriesData() ?? [], Transformation);
+        //return DataModelSeriesUtilities.GetTransformedSeries(GetSeriesData()?.ToSortedDictionary() ?? [], Transformation);
+    }
 
 }

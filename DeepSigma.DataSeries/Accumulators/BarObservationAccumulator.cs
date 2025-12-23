@@ -21,7 +21,7 @@ public class BarObservationAccumulator(BarObservation observation)
     private decimal? Low { get; set; } = observation.Low;
 
     /// <inheritdoc/>
-    public override void Scale(decimal scalar)
+    public sealed override void Scale(decimal scalar)
     {
         this.Close = Close * scalar;
         this.High = High * scalar;
@@ -30,13 +30,22 @@ public class BarObservationAccumulator(BarObservation observation)
     }
 
     /// <inheritdoc/>
-    public override BarObservation ToRecord()
+    public sealed override void Add(decimal value)
+    {
+        this.Close = Close + value;
+        this.High = High + value;
+        this.Low = Low + value;
+        this.Open = Open + value;
+    }
+
+    /// <inheritdoc/>
+    public sealed override BarObservation ToRecord()
     {
         return new BarObservation(this.Open, this.Close, this.High, this.Low, OriginalObject.IsRolled, OriginalObject.IsSyntheticData);
     }
 
     /// <inheritdoc/>
-    protected override void ApplyFunction(BarObservation other, Func<decimal?, decimal?, decimal?> operation)
+    protected sealed override void ApplyFunction(BarObservation other, Func<decimal?, decimal?, decimal?> operation)
     {
         this.Open = operation(this.Open, other.Open);
         this.Close = operation(this.Close, other.Close);
@@ -45,8 +54,35 @@ public class BarObservationAccumulator(BarObservation observation)
     }
 
     /// <inheritdoc/>
-    protected override bool IsAboutToDivideByZero(BarObservation other)
+    protected sealed override bool IsAboutToDivideByZero(BarObservation other)
     {
         return other.Open == 0m || other.Close == 0m || other.High == 0m || other.Low == 0m;
+    }
+
+    /// <inheritdoc/>
+    public sealed override void Max(BarObservation other)
+    {
+        this.Open = this.Open > other.Open ? this.Open : other.Open;   
+        this.Close = this.Close > other.Close ? this.Close : other.Close;
+        this.High = this.High > other.High ? this.High : other.High;
+        this.Low = this.Low > other.Low ? this.Low : other.Low;
+    }
+
+    /// <inheritdoc/>
+    public sealed override void Min(BarObservation other)
+    {
+        this.Open = this.Open < other.Open ? this.Open : other.Open;   
+        this.Close = this.Close < other.Close ? this.Close : other.Close;
+        this.High = this.High < other.High ? this.High : other.High;
+        this.Low = this.Low < other.Low ? this.Low : other.Low;
+    }
+
+    /// <inheritdoc/>
+    public sealed override void Power(decimal exponent)
+    {
+        this.Open = this.Open.Power(exponent);
+        this.Close = this.Close.Power(exponent);
+        this.High = this.High.Power(exponent);
+        this.Low = this.Low.Power(exponent);
     }
 }

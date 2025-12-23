@@ -21,7 +21,7 @@ public abstract class AbstractSeriesOfSeries<TCollectionKey, TCollectionDataType
     IEnumerable<SeriesCollectionPair<TCollectionKey, TCollectionDataType, TTransformation>>
     where TCollectionKey : notnull, IComparable<TCollectionKey>
     where TCollectionDataType : class, IDataModel<TCollectionDataType>
-    where TTransformation : SeriesTransformation, new()
+    where TTransformation : class, ISeriesTransformation, new()
 {
     /// <inheritdoc cref="AbstractSeriesOfSeries{TCollectionKey, TValue, TTransformation}"/>
     protected AbstractSeriesOfSeries(ILogger? logger = null) : base()
@@ -69,12 +69,6 @@ public abstract class AbstractSeriesOfSeries<TCollectionKey, TCollectionDataType
     public void Add(ISeries<TCollectionKey, TCollectionDataType, TTransformation> series, MathematicalOperation mathematicalOperation = MathematicalOperation.Add)
     {
         SubSeriesCollection.Add(mathematicalOperation, series);
-    }
-
-    /// <inheritdoc/>
-    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataTransformed()
-    {
-        return SeriesUtilities.GetTransformedSeries(GetSeriesData()?.ToSortedDictionary() ?? [], Transformation);
     }
 
     /// <inheritdoc/>

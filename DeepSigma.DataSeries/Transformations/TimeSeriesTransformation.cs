@@ -6,7 +6,7 @@ namespace DeepSigma.DataSeries.Transformations;
 /// <summary>
 /// Represents a transformation applied to time series data.
 /// </summary>
-public class TimeSeriesTransformation : SeriesTransformation
+public class TimeSeriesTransformation : SeriesTransformation, ISeriesTransformation
 {
     /// <summary>
     /// Default observation window count. Used for moving averages and standard deviation counts.

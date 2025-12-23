@@ -59,6 +59,18 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     public abstract void Scale(decimal scalar);
 
     /// <inheritdoc/>
+    public abstract void Add(decimal value);
+
+    /// <inheritdoc/>
+    public abstract void Max(T other);
+
+    /// <inheritdoc/>
+    public abstract void Min(T other);
+
+    /// <inheritdoc/>
+    public abstract void Power(decimal exponent);
+
+    /// <inheritdoc/>
     public Exception? Subtract(T other)
     {
         return ComputeWithError(other, (a, b) => a - b);

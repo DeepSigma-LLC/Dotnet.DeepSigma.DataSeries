@@ -1,5 +1,6 @@
 ﻿using DeepSigma.DataSeries.DataModels;
 using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Accumulators;
 
@@ -18,26 +19,54 @@ public class BidAskSpreadObservationAccumulator(BidAskSpreadObservation BidAskSp
     private decimal? Ask { get; set; } = BidAskSpreadObservation.Ask;
 
     /// <inheritdoc/>
-    public override void Scale(decimal scalar)
+    public sealed override void Scale(decimal scalar)
     {
         this.Ask = this.Ask * scalar;
         this.Bid = this.Bid * scalar;
     }
 
     /// <inheritdoc/>
-    public override BidAskSpreadObservation ToRecord()
+    public sealed override void Add(decimal value)
+    {
+        this.Ask = this.Ask + value;
+        this.Bid = this.Bid + value;
+    }
+
+
+    /// <inheritdoc/>
+    public sealed override BidAskSpreadObservation ToRecord()
     {
         return new BidAskSpreadObservation(this.Bid, this.Ask, OriginalObject.IsRolled, OriginalObject.IsSyntheticData);
     }
 
     /// <inheritdoc/>
-    protected override void ApplyFunction(BidAskSpreadObservation other, Func<decimal?, decimal?, decimal?> operation)
+    protected sealed override void ApplyFunction(BidAskSpreadObservation other, Func<decimal?, decimal?, decimal?> operation)
     {
         this.Bid = operation(this.Bid, other.Bid);
         this.Ask = operation(this.Ask, other.Ask);
     }
 
     /// <inheritdoc/>
-    protected override bool IsAboutToDivideByZero(BidAskSpreadObservation other) => other.Bid == 0m || other.Ask == 0m;
-    
+    protected sealed override bool IsAboutToDivideByZero(BidAskSpreadObservation other) => other.Bid == 0m || other.Ask == 0m;
+
+    /// <inheritdoc/>
+    public sealed override void Max(BidAskSpreadObservation other)
+    {
+        this.Ask = this.Ask > other.Ask ? this.Ask : other.Ask;
+        this.Bid = this.Bid > other.Bid ? this.Bid : other.Bid;
+    }
+
+    /// <inheritdoc/>
+    public sealed override void Min(BidAskSpreadObservation other)
+    {
+        this.Ask = this.Ask < other.Ask ? this.Ask : other.Ask;
+        this.Bid = this.Bid < other.Bid ? this.Bid : other.Bid;
+    }
+
+    public sealed override void Power(decimal exponent)
+    {
+        this.Ask = this.Ask.Power(exponent);
+        this.Bid = this.Bid.Power(exponent);
+    }
 }
+

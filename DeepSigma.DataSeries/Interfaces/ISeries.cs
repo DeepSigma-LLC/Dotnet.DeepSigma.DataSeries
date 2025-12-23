@@ -1,4 +1,6 @@
-﻿namespace DeepSigma.DataSeries.Interfaces;
+﻿using DeepSigma.DataSeries.Transformations;
+
+namespace DeepSigma.DataSeries.Interfaces;
 
 /// <summary>
 /// Represents a generic series interface with transformation capabilities.
@@ -9,7 +11,7 @@
 public interface ISeries<TCollectionKey, TCollectionDataType, TTransformation>
     where TCollectionKey: notnull, IComparable<TCollectionKey>
     where TCollectionDataType: notnull 
-    where TTransformation : class
+    where TTransformation : class, ISeriesTransformation
 {
     /// <summary>
     /// The name of the series.
