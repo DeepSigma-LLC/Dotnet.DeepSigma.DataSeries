@@ -1,4 +1,5 @@
-﻿using DeepSigma.DataSeries.Enums;
+﻿using DeepSigma.DataSeries.DataModels;
+using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.General.DateTimeUnification;
 using DeepSigma.General.Extensions;
@@ -19,7 +20,7 @@ public static class DataModelSeriesTransformationUtilities
     /// <returns></returns>
     public static SortedDictionary<TDate, TValue> GetObservationReturns<TDate, TValue>(SortedDictionary<TDate, TValue> Data)
         where TDate : struct, IDateTime<TDate>
-        where TValue : class, IDataModel<TValue>
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         SortedDictionary<TDate, TValue> results = [];
         bool first = true;
@@ -28,7 +29,7 @@ public static class DataModelSeriesTransformationUtilities
         {
             if (first == true)
             {
-                results.Add(kvp.Key, null); // I don't love this. Come back to it later and refactor with object with nullable values.
+                results.Add(kvp.Key, TValue.Empty);
                 first = false;
                 continue;
             }
@@ -49,7 +50,7 @@ public static class DataModelSeriesTransformationUtilities
     /// <returns></returns>
     public static SortedDictionary<TDate, TValue> GetCumulativeReturns<TDate, TValue>(SortedDictionary<TDate, TValue> Data)
         where TDate : struct, IDateTime<TDate>
-        where TValue : class, IDataModel<TValue>
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         SortedDictionary<TDate, TValue> results = [];
         bool first = true;
@@ -57,7 +58,7 @@ public static class DataModelSeriesTransformationUtilities
         {
             if (first == true)
             {
-                results.Add(kvp.Key, null); // I don't love this. Come back to it later and refactor with object with nullable values.
+                results.Add(kvp.Key, TValue.Empty);
                 first = false;
                 continue;
             }
@@ -149,14 +150,14 @@ public static class DataModelSeriesTransformationUtilities
     /// <returns></returns>
     public static SortedDictionary<TDate, TValue> GetMovingAverageWindowed<TDate, TValue>(SortedDictionary<TDate, TValue> Data, int ObservationWindowCount = 20)
         where TDate : struct, IDateTime<TDate>
-        where TValue : class, IDataModel<TValue>
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         SortedDictionary<TDate, TValue> results = [];
 
         // Fill initial values with nulls
         for (int i = 0; i < ObservationWindowCount - 1; i++)
         {
-            results.Add(Data.ElementAt(i).Key, null);
+            results.Add(Data.ElementAt(i).Key, TValue.Empty);
         }
 
         // Calculate moving averages
@@ -182,12 +183,12 @@ public static class DataModelSeriesTransformationUtilities
     /// <returns></returns>
     public static SortedDictionary<TDate, TValue> GetStandardDeviationExpandingWindow<TDate, TValue>(SortedDictionary<TDate, TValue> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
         where TDate : struct, IDateTime<TDate>
-        where TValue : class, IDataModel<TValue>
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         SortedDictionary<TDate, TValue> results = [];
         if (Data.Count >= 1)
         {
-            results.Add(Data.FirstOrDefault().Key, null); // First value is always null since there's no variance with one data point.
+            results.Add(Data.FirstOrDefault().Key, TValue.Empty); // First value is always null since there's no variance with one data point.
         }
 
         for (int i = 1; i < Data.Count; i++)
@@ -205,17 +206,18 @@ public static class DataModelSeriesTransformationUtilities
     /// </summary>
     /// <param name="Data"></param>
     /// <param name="SetClassification"></param>
+    /// <param name="ObservationWindowCount"></param>
     /// <returns></returns>
     public static SortedDictionary<TDate, TValue> GetStandardDeviationWindowed<TDate, TValue>(SortedDictionary<TDate, TValue> Data, int ObservationWindowCount = 20, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
         where TDate : struct, IDateTime<TDate>
-        where TValue : class, IDataModel<TValue>
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         SortedDictionary<TDate, TValue> results = [];
 
         // Fill initial values with nulls
         for (int i = 0; i < ObservationWindowCount - 1; i++)
         {
-            results.Add(Data.FirstOrDefault().Key, null); // Add nulls for initial values where we don't have enough data points
+            results.Add(Data.FirstOrDefault().Key, TValue.Empty); // Add nulls for initial values where we don't have enough data points
         }
 
         // Calculate moving averages
@@ -257,7 +259,7 @@ public static class DataModelSeriesTransformationUtilities
             IAccumulator<TValue> diff_accumulator = item.Value.GetAccumulator();
             diff_accumulator.Subtract(window_average.ToRecord());
 
-            diff_accumulator.Multiply(diff_accumulator.ToRecord()); // Square the difference
+            diff_accumulator.Power(2); // Square the difference
             sum_squared_diff_accumulator.Add(diff_accumulator.ToRecord());
         }
 

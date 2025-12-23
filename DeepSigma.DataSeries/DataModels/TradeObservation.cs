@@ -10,10 +10,18 @@ namespace DeepSigma.DataSeries.DataModels;
 /// <param name="Quantity">The quantity of the trade.</param>
 /// <param name="IsRolled">Indicates if the data is rolled.</param>
 /// <param name="IsSyntheticData">Indicates if the data is synthetic.</param>
-public record class TradeObservation(decimal? Price, decimal? Quantity, bool IsRolled = false, bool IsSyntheticData = false)
-    : DataModelAbstract<TradeObservation>, IDataModel<TradeObservation>
+/// <param name="IsInvalid">Indicates if the data is valid.</param>
+public record class TradeObservation(decimal? Price, decimal? Quantity, bool IsRolled = false, bool IsSyntheticData = false, bool IsInvalid = false)
+    : DataModelAbstract<TradeObservation>, IDataModel<TradeObservation>, IDataModelStatic<TradeObservation>
 {
 
     /// <inheritdoc/>
     public sealed override IAccumulator<TradeObservation> GetAccumulator() => new TradeObservationAccumulator(this);
+
+
+    /// <inheritdoc/>
+    public sealed override bool IsEmpty => Price is null || Quantity is null;
+
+    /// <inheritdoc/>
+    public static TradeObservation Empty => new(null, null, false, false, IsInvalid: true);
 }

@@ -159,7 +159,7 @@ public class TimeSeries_Test
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
 
         SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataTransformed();
-        var results = DataModelSeriesUtilities.GetObservationReturns(seriesData);
+        var results = DataModelSeriesTransformationUtilities.GetObservationReturns(seriesData);
         Assert.NotEmpty(results);
         Assert.Equal(1m, results.ElementAt(1).Value.Close);
         Assert.Equal(-0.25m, results.ElementAt(2).Value.Close);
@@ -171,7 +171,7 @@ public class TimeSeries_Test
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
 
         SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataTransformed();
-        var results = DataModelSeriesUtilities.GetCumulativeReturns(seriesData);
+        var results = DataModelSeriesTransformationUtilities.GetCumulativeReturns(seriesData);
         Assert.NotEmpty(results);
         Assert.Equal(1m, results.ElementAt(1).Value.Close);
         Assert.Equal(0.5m, results.ElementAt(2).Value.Close);
@@ -183,7 +183,7 @@ public class TimeSeries_Test
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
 
         SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataTransformed();
-        var results = DataModelSeriesUtilities.GetWealth(seriesData);
+        var results = DataModelSeriesTransformationUtilities.GetWealth(seriesData);
         Assert.NotEmpty(results);
         Assert.Equal(1000m, results.ElementAt(0).Value.Close);
         Assert.Equal(2000m, results.ElementAt(1).Value.Close);
@@ -196,7 +196,7 @@ public class TimeSeries_Test
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
 
         SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataTransformed();
-        var results = DataModelSeriesUtilities.GetDrawdownPercentage(seriesData);
+        var results = DataModelSeriesTransformationUtilities.GetDrawdownPercentage(seriesData);
         Assert.NotEmpty(results);
         Assert.Equal(0, results.ElementAt(0).Value.Close);
         Assert.Equal(0, results.ElementAt(1).Value.Close);
@@ -210,7 +210,7 @@ public class TimeSeries_Test
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
 
         SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataTransformed();
-        var results = DataModelSeriesUtilities.GetMovingAverageWindowed(seriesData, 2);
+        var results = DataModelSeriesTransformationUtilities.GetMovingAverageWindowed(seriesData, 2);
         Assert.NotEmpty(results);
         Assert.Equal(3, results.ElementAt(1).Value.Close);
         Assert.Equal(3.5m, results.ElementAt(2).Value.Close);
@@ -222,7 +222,7 @@ public class TimeSeries_Test
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
 
         SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataTransformed();
-        var results = DataModelSeriesUtilities.GetStandardDeviationExpandingWindow(seriesData, Enums.StatisticsDataSetClassification.Sample);
+        var results = DataModelSeriesTransformationUtilities.GetStandardDeviationExpandingWindow(seriesData, Enums.StatisticsDataSetClassification.Sample);
         Assert.NotEmpty(results);
         
         Assert.Equal(1.414213562, results.ElementAt(1).Value.Close.ToDouble()!.Value, 8);
@@ -236,7 +236,7 @@ public class TimeSeries_Test
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
 
         SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataTransformed();
-        var results = DataModelSeriesUtilities.GetStandardDeviationWindowed(seriesData, 2, Enums.StatisticsDataSetClassification.Sample);
+        var results = DataModelSeriesTransformationUtilities.GetStandardDeviationWindowed(seriesData, 2, Enums.StatisticsDataSetClassification.Sample);
         Assert.NotEmpty(results);
 
         Assert.Equal(1.414213562, results.ElementAt(1).Value.Close.ToDouble()!.Value, 8);

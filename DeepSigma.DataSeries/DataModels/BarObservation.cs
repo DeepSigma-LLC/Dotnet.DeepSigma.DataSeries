@@ -12,8 +12,9 @@ namespace DeepSigma.DataSeries.DataModels;
 /// <param name="Low">The lowest price of the bar.</param>
 /// <param name="IsRolled">Indicates if the data is rolled.</param>
 /// <param name="IsSyntheticData">Indicates if the data is synthetic.</param>
-public record class BarObservation(decimal? Open, decimal? Close, decimal? High, decimal? Low, bool IsRolled = false, bool IsSyntheticData = false)
-        : DataModelAbstract<BarObservation>, IDataModel<BarObservation>
+/// <param name="IsInvalid">Indicates if the data is invaild.</param>
+public record class BarObservation(decimal? Open, decimal? Close, decimal? High, decimal? Low, bool IsRolled = false, bool IsSyntheticData = false, bool IsInvalid = false)
+        : DataModelAbstract<BarObservation>, IDataModel<BarObservation>, IDataModelStatic<BarObservation>
 {
     /// <summary>
     /// Calculates the range of the bar, which is the difference between the high and low prices.
@@ -29,4 +30,10 @@ public record class BarObservation(decimal? Open, decimal? Close, decimal? High,
 
     /// <inheritdoc/>
     public sealed override IAccumulator<BarObservation> GetAccumulator() => new BarObservationAccumulator(this);
+
+    /// <inheritdoc/>
+    public static BarObservation Empty => new(null, null, null, null, false, false, IsInvalid: true);
+
+    /// <inheritdoc/>
+    public sealed override bool IsEmpty => Open is null && Close is null && High is null && Low is null;
 }

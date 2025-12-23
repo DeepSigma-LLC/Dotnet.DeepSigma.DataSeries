@@ -10,8 +10,9 @@ namespace DeepSigma.DataSeries.DataModels;
 /// <param name="Ask">The ask price.</param>
 /// <param name="IsRolled">Indicates if the data is rolled.</param>
 /// <param name="IsSyntheticData">Indicates if the data is synthetic.</param>
-public record class BidAskSpreadObservation(decimal? Bid, decimal? Ask, bool IsRolled = false, bool IsSyntheticData = false)
-    : DataModelAbstract<BidAskSpreadObservation>, IDataModel<BidAskSpreadObservation>
+/// <param name="IsInvalid">Indicates if the data is invalid.</param>
+public record class BidAskSpreadObservation(decimal? Bid, decimal? Ask, bool IsRolled = false, bool IsSyntheticData = false, bool IsInvalid = false)
+    : DataModelAbstract<BidAskSpreadObservation>, IDataModel<BidAskSpreadObservation>, IDataModelStatic<BidAskSpreadObservation>
 {
     /// <summary>
     /// Calculates the spread, which is the difference between the ask and bid prices.
@@ -25,4 +26,10 @@ public record class BidAskSpreadObservation(decimal? Bid, decimal? Ask, bool IsR
 
     /// <inheritdoc/>
     public sealed override IAccumulator<BidAskSpreadObservation> GetAccumulator() => new BidAskSpreadObservationAccumulator(this);
+
+    /// <inheritdoc/>
+    public sealed override bool IsEmpty => Bid is null && Ask is null;
+
+    /// <inheritdoc/>
+    public static BidAskSpreadObservation Empty => new(null, null, false, false, IsInvalid: true);
 }

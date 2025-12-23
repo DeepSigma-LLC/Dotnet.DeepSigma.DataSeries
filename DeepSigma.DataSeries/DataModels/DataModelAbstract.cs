@@ -18,5 +18,14 @@ public abstract record class DataModelAbstract<T>
     public abstract bool IsSyntheticData { get; init; }
 
     /// <inheritdoc/>
+    public abstract bool IsInvalid { get; init; }
+
+    /// <inheritdoc/>
+    public abstract bool IsEmpty { get; }
+
+    /// <inheritdoc/>
+    public bool IsEmptyOrInvalid() => IsEmpty || IsInvalid;
+
+    /// <inheritdoc/>
     public abstract IAccumulator<T> GetAccumulator();
 }

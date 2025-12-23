@@ -13,8 +13,9 @@ namespace DeepSigma.DataSeries.DataModels;
 /// <param name="Volume">The trading volume during the bar period.</param>
 /// <param name="IsRolled">Indicates if the data is rolled.</param>
 /// <param name="IsSyntheticData">Indicates if the data is synthetic.</param>
-public record class BarObservationWithVolume(decimal? Open, decimal? Close, decimal? High, decimal? Low, decimal? Volume, bool IsRolled = false, bool IsSyntheticData = false)
-       : DataModelAbstract<BarObservationWithVolume>, IDataModel<BarObservationWithVolume>
+/// <param name="IsInvalid">Indicates if the data point is invalid.</param>
+public record class BarObservationWithVolume(decimal? Open, decimal? Close, decimal? High, decimal? Low, decimal? Volume, bool IsRolled = false, bool IsSyntheticData = false, bool IsInvalid = false)
+       : DataModelAbstract<BarObservationWithVolume>, IDataModel<BarObservationWithVolume>, IDataModelStatic<BarObservationWithVolume>
 {
     /// <summary>
     /// Calculates the range of the bar, which is the difference between the high and low prices.
@@ -30,4 +31,10 @@ public record class BarObservationWithVolume(decimal? Open, decimal? Close, deci
 
     /// <inheritdoc/>
     public sealed override IAccumulator<BarObservationWithVolume> GetAccumulator() => new BarObservationWithVolumeAccumulator(this);
+
+    /// <inheritdoc/>
+    public sealed override bool IsEmpty => Open is null && Close is null && High is null && Low is null && Volume is null;
+
+    /// <inheritdoc/>
+    public static BarObservationWithVolume Empty => new(null, null, null, null, null, false, false, IsInvalid: true);
 }

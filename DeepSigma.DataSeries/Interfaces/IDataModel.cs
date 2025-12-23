@@ -17,6 +17,22 @@ public interface IDataModel<T>
     /// Signifies if the data point is sythetic (i.e., data imputation / interpolation)
     /// </summary>
     public bool IsSyntheticData { get; init; }
+    
+    /// <summary>
+    /// Gets a value indicating whether the current state is invalid.
+    /// </summary>
+    public bool IsInvalid { get; init; }
+
+    /// <summary>
+    /// Signifies if the data point is empty (e.g., all properties are null).
+    /// </summary>
+    public bool IsEmpty { get; }
+
+    /// <summary>
+    /// Signifies if the data point is empty or null.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsEmptyOrInvalid();
 
     /// <summary>
     /// Returns the current state of the data model as an accumulator.
