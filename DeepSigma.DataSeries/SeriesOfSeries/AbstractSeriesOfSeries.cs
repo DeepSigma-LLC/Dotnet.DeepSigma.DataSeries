@@ -17,7 +17,8 @@ namespace DeepSigma.DataSeries.Series;
 /// <typeparam name="TTransformation">The data type of the transformation.</typeparam>
 public abstract class AbstractSeriesOfSeries<TCollectionKey, TCollectionDataType, TTransformation> 
     : AbstractSeries<TCollectionKey, TCollectionDataType, TTransformation>, 
-    ISeries<TCollectionKey, TCollectionDataType, TTransformation>, IEnumerable<SeriesCollectionPair<TCollectionKey, TCollectionDataType, TTransformation>>
+    ISeries<TCollectionKey, TCollectionDataType, TTransformation>, 
+    IEnumerable<SeriesCollectionPair<TCollectionKey, TCollectionDataType, TTransformation>>
     where TCollectionKey : notnull, IComparable<TCollectionKey>
     where TCollectionDataType : class, IDataModel<TCollectionDataType>
     where TTransformation : SeriesTransformation, new()
@@ -71,10 +72,9 @@ public abstract class AbstractSeriesOfSeries<TCollectionKey, TCollectionDataType
     }
 
     /// <inheritdoc/>
-    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataTransformed()
+    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataTransformed()
     {
-        var (Data, Error) = SeriesUtilities.GetTransformedSeries(GetSeriesData()?.ToSortedDictionary() ?? [], Transformation);
-        return (Error != null || Data is null) ? null : Data;
+        return SeriesUtilities.GetTransformedSeries(GetSeriesData()?.ToSortedDictionary() ?? [], Transformation);
     }
 
     /// <inheritdoc/>

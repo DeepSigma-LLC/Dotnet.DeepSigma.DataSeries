@@ -15,10 +15,10 @@ namespace DeepSigma.DataSeries.Accumulators;
 public class BarObservationAccumulator(BarObservation observation) 
     : AbstractAccumulator<BarObservation>(observation), IAccumulator<BarObservation>
 {
-    private decimal Open { get; set; } = observation.Open;
-    private decimal Close { get; set; } = observation.Close;
-    private decimal High { get; set; } = observation.High;
-    private decimal Low { get; set; } = observation.Low;
+    private decimal? Open { get; set; } = observation.Open;
+    private decimal? Close { get; set; } = observation.Close;
+    private decimal? High { get; set; } = observation.High;
+    private decimal? Low { get; set; } = observation.Low;
 
     /// <inheritdoc/>
     public override void Scale(decimal scalar)
@@ -36,7 +36,7 @@ public class BarObservationAccumulator(BarObservation observation)
     }
 
     /// <inheritdoc/>
-    protected override void ApplyFunction(BarObservation other, Func<decimal, decimal, decimal> operation)
+    protected override void ApplyFunction(BarObservation other, Func<decimal?, decimal?, decimal?> operation)
     {
         this.Open = operation(this.Open, other.Open);
         this.Close = operation(this.Close, other.Close);

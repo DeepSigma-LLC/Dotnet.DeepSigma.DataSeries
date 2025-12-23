@@ -5,7 +5,7 @@ namespace DeepSigma.DataSeries.Tests.Model;
 
 public class AssetAccumulator(Assets assets) : AbstractAccumulator<Assets>(assets), IAccumulator<Assets>
 {
-    private decimal Price { get; set; } = assets.Value;
+    private decimal? Price { get; set; } = assets.Value;
 
     public override void Scale(decimal scalar)
     {
@@ -19,7 +19,7 @@ public class AssetAccumulator(Assets assets) : AbstractAccumulator<Assets>(asset
     }
 
     /// <inheritdoc/>
-    protected override void ApplyFunction(Assets other, Func<decimal, decimal, decimal> operation)
+    protected override void ApplyFunction(Assets other, Func<decimal?, decimal?, decimal?> operation)
     {
         Price = operation(Price, other.Value);
     }

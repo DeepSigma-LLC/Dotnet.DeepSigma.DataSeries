@@ -12,8 +12,14 @@ namespace DeepSigma.DataSeries.Tests.Model;
 /// <param name="Value"></param>
 /// <param name="IsRolled"></param>
 /// <param name="IsSyntheticData"></param>
-public record class Assets(int Id, string Name, decimal Value, bool IsRolled = false, bool IsSyntheticData = false) : DataModelAbstract<Assets>, IDataModel<Assets>
+public record class Assets(int Id, string Name, decimal? Value, bool IsRolled = false, bool IsSyntheticData = false) : DataModelAbstract<Assets>, IDataModel<Assets>
 {
+
+    public Assets() : this(0, string.Empty, null)
+    {
+        
+    }
+
     /// <inheritdoc/>
     public sealed override AssetAccumulator GetAccumulator()
     {

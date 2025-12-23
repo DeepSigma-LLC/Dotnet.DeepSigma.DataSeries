@@ -69,10 +69,7 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
     {
         SortedDictionary<TCollectionKey, TCollectionDataType>? Data = GetSeriesData()?.ToSortedDictionary();
         if (Data is null) return null;
-
-        (var TransformedData, var Error) = SeriesUtilities.GetTransformedSeries(Data, Transformation);
-        if (Error is not null || TransformedData is null) return null;
-        return TransformedData;
+        return SeriesUtilities.GetTransformedSeries(Data, Transformation);
     }
 
     /// <inheritdoc/>

@@ -104,11 +104,7 @@ public class SeriesCollection<TKey, TDataType, TTransformation>
         List<(SortedDictionary<TKey, TDataType>, MathematicalOperation)> Series = [];
         SubSeriesCollection.ForEach(x => Series.Add((x.Series.GetSeriesDataTransformed()?.ToSortedDictionary() ?? [], x.MathematicalOperation)));
 
-        (SortedDictionary<TKey, TDataType>? DataSeries, Exception? Error) Combined = SeriesUtilities.GetCombinedSeries(Series);
-        Logger.TryToLogErrorOnlyIfException(Combined.Error, "An error occured while combining the series");
-
-        if (Combined.Error != null || Combined.DataSeries is null) return null;
-        return Combined.DataSeries;
+        return SeriesUtilities.GetCombinedSeries(Series);
     }
 
     /// <inheritdoc/>

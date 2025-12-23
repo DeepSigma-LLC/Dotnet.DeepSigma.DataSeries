@@ -14,8 +14,8 @@ namespace DeepSigma.DataSeries.Accumulators;
 public class BidAskSpreadObservationAccumulator(BidAskSpreadObservation BidAskSpreadObservation)
     : AbstractAccumulator<BidAskSpreadObservation>(BidAskSpreadObservation), IAccumulator<BidAskSpreadObservation>
 {
-    private decimal Bid { get; set; } = BidAskSpreadObservation.Bid;
-    private decimal Ask { get; set; } = BidAskSpreadObservation.Ask;
+    private decimal? Bid { get; set; } = BidAskSpreadObservation.Bid;
+    private decimal? Ask { get; set; } = BidAskSpreadObservation.Ask;
 
     /// <inheritdoc/>
     public override void Scale(decimal scalar)
@@ -31,7 +31,7 @@ public class BidAskSpreadObservationAccumulator(BidAskSpreadObservation BidAskSp
     }
 
     /// <inheritdoc/>
-    protected override void ApplyFunction(BidAskSpreadObservation other, Func<decimal, decimal, decimal> operation)
+    protected override void ApplyFunction(BidAskSpreadObservation other, Func<decimal?, decimal?, decimal?> operation)
     {
         this.Bid = operation(this.Bid, other.Bid);
         this.Ask = operation(this.Ask, other.Ask);

@@ -17,7 +17,7 @@ public class ObservationAccumulator(Observation observation)
     /// <summary>
     /// The accumulated value.
     /// </summary>
-    private decimal Value { get; set; } = observation.Value;
+    private decimal? Value { get; set; } = observation.Value;
 
     /// <inheritdoc/>
     public sealed override Observation ToRecord()
@@ -26,7 +26,7 @@ public class ObservationAccumulator(Observation observation)
     }
 
     /// <inheritdoc/>
-    protected sealed override void ApplyFunction(Observation other, Func<decimal, decimal, decimal> operation)
+    protected sealed override void ApplyFunction(Observation other, Func<decimal?, decimal?, decimal?> operation)
     {
         Value = operation(Value, other.Value);
     }

@@ -41,7 +41,11 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     /// <inheritdoc/>
     public Exception? Divide(T other)
     {
-        if (IsAboutToDivideByZeroWithLogging(other)) return new DivideByZeroException("Cannot divide by zero.");
+        if (IsAboutToDivideByZeroWithLogging(other))
+        {
+            ComputeWithError(other, (a, b) => null); // Set value to null on divide by zero
+            return new DivideByZeroException("Cannot divide by zero.");
+        }
         return ComputeWithError(other, (a, b) => a / b);
     }
 
@@ -68,7 +72,7 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     /// </summary>
     /// <param name="other"></param>
     /// <param name="operation"></param>
-    protected abstract void ApplyFunction(T other, Func<decimal, decimal, decimal> operation);
+    protected abstract void ApplyFunction(T other, Func<decimal?, decimal?, decimal?> operation);
 
     /// <summary>
     /// Determines if the operation is about to divide by zero.
@@ -96,7 +100,7 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     /// <param name="other"></param>
     /// <param name="operation"></param>
     /// <returns></returns>
-    private protected Exception? ComputeWithError(T other, Func<decimal, decimal, decimal> operation)
+    private protected Exception? ComputeWithError(T other, Func<decimal?, decimal?, decimal?> operation)
     {
         try
         {

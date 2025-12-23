@@ -14,8 +14,8 @@ namespace DeepSigma.DataSeries.Accumulators;
 public class TradeObservationAccumulator(TradeObservation TradeObservation) 
     : AbstractAccumulator<TradeObservation>(TradeObservation), IAccumulator<TradeObservation>
 {
-    private decimal Price { get; set; } = TradeObservation.Price;
-    private decimal Quantity { get; set; } = TradeObservation.Quantity;
+    private decimal? Price { get; set; } = TradeObservation.Price;
+    private decimal? Quantity { get; set; } = TradeObservation.Quantity;
 
     /// <inheritdoc/>
     public sealed override void Scale(decimal scalar)
@@ -31,7 +31,7 @@ public class TradeObservationAccumulator(TradeObservation TradeObservation)
     }
 
     /// <inheritdoc/>
-    protected sealed override void ApplyFunction(TradeObservation other, Func<decimal, decimal, decimal> operation)
+    protected sealed override void ApplyFunction(TradeObservation other, Func<decimal?, decimal?, decimal?> operation)
     {
         Price = operation(this.Price, other.Price);
         Quantity = operation(this.Quantity, other.Quantity);
