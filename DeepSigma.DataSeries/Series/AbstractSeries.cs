@@ -1,5 +1,6 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
+using DeepSigma.DataSeries.Utilities;
 
 namespace DeepSigma.DataSeries.Series;
 
@@ -36,11 +37,6 @@ public abstract class AbstractSeries<TCollectionKey, TCollectionDataType, TTrans
     /// </summary>
     public bool AllowMultipleSubSeries { get; init; }
 
-    /// <summary>
-    /// Indicates whether duplicate data points are allowed.
-    /// </summary>
-    public bool AllowDuplicateDataPoints { get; init; }
-
     /// <inheritdoc/>
     public string SeriesName { get; set; } = string.Empty;
 
@@ -51,13 +47,16 @@ public abstract class AbstractSeries<TCollectionKey, TCollectionDataType, TTrans
     /// Returns the data points in the series.
     /// </summary>
     /// <returns></returns>
-    public abstract SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesData();
+    public abstract SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataScaled();
 
     /// <summary>
     /// Returns the transformed data points in the series.
     /// </summary>
     /// <returns></returns>
-    public abstract SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataTransformed();
+    public SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataScaledAndTransformed()
+    {
+        return TransformationUnification.GetTransformedData(GetSeriesDataScaled() ?? [], this.Transformation);
+    }
 
     /// <inheritdoc/>
     public abstract int GetSubSeriesCount();

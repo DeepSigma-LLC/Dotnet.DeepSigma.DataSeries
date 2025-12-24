@@ -5,7 +5,6 @@ using DeepSigma.General.DateTimeUnification;
 using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
 using DeepSigma.General.TimeStepper;
-using Newtonsoft.Json.Linq;
 
 namespace DeepSigma.DataSeries.Utilities;
 
@@ -26,7 +25,7 @@ public static class GenericTimeSeriesUtilities
     {
         //SortedDictionary<TDate, TValue> results = TimeSeriesTransformUtilities.TransformedTimeSeriesData(Data, Transformation.DataTransformation, Transformation.ObservationWindowCount);
         SortedDictionary<TDate, TValue> results = Data;
-        results = DataModelSeriesUtilities.ScaleSeries(results, Transformation.Scalar);
+        results = DataModelSeriesUtilities.GetScaledSeries(results, Transformation.Scalar);
         results = GetLaggedTimeSeries(results, Transformation.ObservationLag, Transformation.DaySelectionTypeForLag);
         return results;
     }
@@ -44,13 +43,12 @@ public static class GenericTimeSeriesUtilities
         TDate StartDate = Data.Keys.Min();
         TDate EndDate = Data.Keys.Max();
         TDate selectedDateTime = StartDate;
-        decimal? PriorValue = Data.Values.FirstOrDefault();
         while (selectedDateTime <= EndDate)
         {
-            if (Data.ContainsKey(selectedDateTime) == true)
+            bool found = Data.TryGetValue(selectedDateTime, out var value);
+            if (found)
             {
-                results.Add(selectedDateTime, Data[selectedDateTime]);
-                PriorValue = Data[selectedDateTime];
+                results.Add(selectedDateTime, value);
             }
             selectedDateTime = TimeStep.GetNextTimeStep(selectedDateTime);
         }
@@ -92,8 +90,8 @@ public static class GenericTimeSeriesUtilities
     private static SortedDictionary<TDate, TValue> _AddDaysToTimeSeriesDateTimes<TDate, TValue>(SortedDictionary<TDate, TValue> Data, int DaysToAdd)
         where TDate : struct, IDateTime<TDate>
     {
-        if (DaysToAdd == 0) return Data;
-        return Data.ToDictionary(x => x.Key.AddDays(DaysToAdd), x => x.Value).ToSortedDictionary();
+        return DaysToAdd == 0 ? Data :
+            Data.ToDictionary(x => x.Key.AddDays(DaysToAdd), x => x.Value).ToSortedDictionary();
     }
 
     /// <summary>
@@ -105,7 +103,7 @@ public static class GenericTimeSeriesUtilities
     private static SortedDictionary<TDate, TValue> _AddBusinessDaysToTimeSeriesDateTimes<TDate, TValue>(SortedDictionary<TDate, TValue> Data, int BusinessDaysToAdd)
         where TDate : struct, IDateTime<TDate>
     {
-        if (BusinessDaysToAdd == 0) return Data;
-        return Data.ToDictionary(x => x.Key.AddWeekdays(BusinessDaysToAdd), x => x.Value).ToSortedDictionary();
+        return BusinessDaysToAdd == 0 ? Data :
+             Data.ToDictionary(x => x.Key.AddWeekdays(BusinessDaysToAdd), x => x.Value).ToSortedDictionary();
     }
 }

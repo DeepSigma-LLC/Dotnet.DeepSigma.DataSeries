@@ -26,12 +26,4 @@ public class TimeSeries<TDate, TValueDataType> :
 
     /// <inheritdoc cref="TimeSeries{TDate, TValueDataType}"/>
     public TimeSeries(ILogger? logger = null) : base(logger) { }
-
-    /// <inheritdoc/>
-    public sealed override SortedDictionary<TDate, TValueDataType> GetSeriesDataTransformed()
-    {
-        return DataModelSeriesUtilities.GetTransformedSeries(GetSeriesData() ?? [], Transformation);
-        //return DataModelSeriesUtilities.GetTransformedSeries(GetSeriesData()?.ToSortedDictionary() ?? [], Transformation);
-    }
-
 }

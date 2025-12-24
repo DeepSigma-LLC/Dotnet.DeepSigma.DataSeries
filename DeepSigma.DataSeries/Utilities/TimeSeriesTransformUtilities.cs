@@ -1,111 +1,20 @@
 ﻿using DeepSigma.DataSeries.Enums;
-using DeepSigma.General;
-using DeepSigma.General.Enums;
-using DeepSigma.DataSeries.Transformations;
-using DeepSigma.General.TimeStepper;
 using DeepSigma.General.DateTimeUnification;
 using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Utilities;
 
+/// <summary>
+/// Utility class for transforming decimal time series data.
+/// </summary>
 internal static class TimeSeriesTransformUtilities
 {
-    /// <summary>
-    /// Gets transformed time series data.
-    /// </summary>
-    /// <typeparam name="TDate"></typeparam>
-    /// <param name="Data"></param>
-    /// <param name="Transformation"></param>
-    /// <returns></returns>
-    internal static SortedDictionary<TDate, decimal?> TransformedTimeSeriesData<TDate>(SortedDictionary<TDate, decimal?> Data, TimeSeriesTransformation Transformation)
-        where TDate : struct, IDateTime<TDate>
-    {
-        return TransformedTimeSeriesData(Data, Transformation.DataTransformation, Transformation.ObservationWindowCount);
-    }
-
-    /// <summary>
-    /// Gets transformed time series data.
-    /// </summary>
-    /// <typeparam name="TDate"></typeparam>
-    /// <param name="Data"></param>
-    /// <param name="Selection"></param>
-    /// <param name="ObservationWindowCount"></param>
-    /// <returns></returns>
-    internal static SortedDictionary<TDate, decimal?> TransformedTimeSeriesData<TDate>(SortedDictionary<TDate, decimal?> Data, TimeSeriesDataTransformation Selection, int ObservationWindowCount = 20)
-        where TDate : struct, IDateTime<TDate>
-    {
-        SortedDictionary<TDate, decimal?> TempData;
-        SortedDictionary<TDate, decimal?> ReturnData;
-        SortedDictionary<TDate, decimal?> SDData;
-        SortedDictionary<TDate, decimal?> CumulativeReturnData;
-
-        switch (Selection)
-        {
-            case (TimeSeriesDataTransformation.None):
-                return Data;
-            case (TimeSeriesDataTransformation.MovingAverageWindow):
-                return GetMovingAverageWindowed(Data, ObservationWindowCount);
-            case (TimeSeriesDataTransformation.CumulativeReturn):
-                return GetCumulativeReturns(Data);
-            case (TimeSeriesDataTransformation.Wealth):
-                return GetWealth(Data);
-            case (TimeSeriesDataTransformation.WealthReverse):
-                return GetWealthReverse(Data);
-            case (TimeSeriesDataTransformation.Return):
-                return GetObservationReturns(Data);
-            case (TimeSeriesDataTransformation.AnnualizedVolatilityExpandingWindow):
-                TempData = GenericTimeSeriesUtilities.GetTimeSeriesWithTargetedDates(Data, new SelfAligningTimeStep<TDate>(new(Periodicity.Daily)));
-                TempData = GetObservationReturns(TempData);
-                decimal AnnualizationMultiplier = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.Select(x => x.DateTime).ToArray());
-                return DecimalValueSeriesUtilities.GetScaledSeries(GetStandardDeviationExpandingWindow(TempData), AnnualizationMultiplier);
-            case (TimeSeriesDataTransformation.AnnualizedVolatilityWindow):
-                TempData = GenericTimeSeriesUtilities.GetTimeSeriesWithTargetedDates(Data, new SelfAligningTimeStep<TDate>(new(Periodicity.Daily)));
-                TempData = GetObservationReturns(TempData);
-                decimal AnnualizationMultiplier2 = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.Select(x => x.DateTime).ToArray());
-                return DecimalValueSeriesUtilities.GetScaledSeries(GetStandardDeviationWindowed(TempData, ObservationWindowCount: ObservationWindowCount), AnnualizationMultiplier2);
-            case (TimeSeriesDataTransformation.Drawdown):
-                return GetDrawdown(Data);
-            case (TimeSeriesDataTransformation.SD_1_Positive):
-                ReturnData = GetObservationReturns(Data);
-                CumulativeReturnData = GetMovingAverageWindowed(GetCumulativeReturns(Data), ObservationWindowCount);
-                SDData = GetStandardDeviationWindowed(ReturnData, ObservationWindowCount: ObservationWindowCount);
-                return DecimalValueSeriesUtilities.GetCombinedSeries(CumulativeReturnData, SDData, MathematicalOperation.Add);
-            case (TimeSeriesDataTransformation.SD_1_Negative):
-                ReturnData = GetObservationReturns(Data);
-                CumulativeReturnData = GetMovingAverageWindowed(GetCumulativeReturns(Data), ObservationWindowCount);
-                SDData = GetStandardDeviationWindowed(ReturnData, ObservationWindowCount: ObservationWindowCount);
-                return DecimalValueSeriesUtilities.GetCombinedSeries(ReturnData, SDData, MathematicalOperation.Subtract);
-            case (TimeSeriesDataTransformation.SD_2_Positive):
-                ReturnData = GetObservationReturns(Data);
-                CumulativeReturnData = GetMovingAverageWindowed(GetCumulativeReturns(Data), ObservationWindowCount);
-                SDData = DecimalValueSeriesUtilities.GetScaledSeries(GetStandardDeviationWindowed(ReturnData, ObservationWindowCount: ObservationWindowCount), 2);
-                return DecimalValueSeriesUtilities.GetCombinedSeries(CumulativeReturnData, SDData, MathematicalOperation.Add);
-            case (TimeSeriesDataTransformation.SD_2_Negative):
-                ReturnData = GetObservationReturns(Data);
-                CumulativeReturnData = GetMovingAverageWindowed(GetCumulativeReturns(Data), ObservationWindowCount);
-                SDData = DecimalValueSeriesUtilities.GetScaledSeries(GetStandardDeviationWindowed(ReturnData, ObservationWindowCount: ObservationWindowCount), -2);
-                return DecimalValueSeriesUtilities.GetCombinedSeries(CumulativeReturnData, SDData, MathematicalOperation.Add);
-            case (TimeSeriesDataTransformation.SD_3_Positive):
-                ReturnData = GetObservationReturns(Data);
-                CumulativeReturnData = GetMovingAverageWindowed(GetCumulativeReturns(Data), ObservationWindowCount);
-                SDData = DecimalValueSeriesUtilities.GetScaledSeries(GetStandardDeviationWindowed(ReturnData, ObservationWindowCount: ObservationWindowCount), 3);
-                return DecimalValueSeriesUtilities.GetCombinedSeries(CumulativeReturnData, SDData, MathematicalOperation.Add);
-            case (TimeSeriesDataTransformation.SD_3_Negative):
-                ReturnData = GetObservationReturns(Data);
-                CumulativeReturnData = GetMovingAverageWindowed(GetCumulativeReturns(Data), ObservationWindowCount);
-                SDData = DecimalValueSeriesUtilities.GetScaledSeries(GetStandardDeviationWindowed(ReturnData, ObservationWindowCount: ObservationWindowCount), -3);
-                return DecimalValueSeriesUtilities.GetCombinedSeries(CumulativeReturnData, SDData, MathematicalOperation.Add);
-            default:
-                return [];
-        }
-    }
-
     /// <summary>
     /// Gets observation return time series.
     /// </summary>
     /// <param name="Data"></param>
     /// <returns></returns>
-    private static SortedDictionary<TDate, decimal?> GetObservationReturns<TDate>(SortedDictionary<TDate, decimal?> Data)
+    internal static SortedDictionary<TDate, decimal?> GetObservationReturns<TDate>(SortedDictionary<TDate, decimal?> Data)
         where TDate : struct, IDateTime<TDate>
     {
         SortedDictionary<TDate, decimal?> results = [];
@@ -126,15 +35,12 @@ internal static class TimeSeriesTransformUtilities
         return results;
     }
 
-
-
-
     /// <summary>
     /// Gets cumulative return converted time series.
     /// </summary>
     /// <param name="Data"></param>
     /// <returns></returns>
-    private static SortedDictionary<TDate, decimal?> GetCumulativeReturns<TDate>(SortedDictionary<TDate, decimal?> Data)
+    internal static SortedDictionary<TDate, decimal?> GetCumulativeReturns<TDate>(SortedDictionary<TDate, decimal?> Data)
         where TDate : struct, IDateTime<TDate>
     {
         SortedDictionary<TDate, decimal?> results = [];
@@ -161,7 +67,7 @@ internal static class TimeSeriesTransformUtilities
     /// <param name="Data"></param>
     /// <param name="starting_wealth"></param>
     /// <returns></returns>
-    private static SortedDictionary<TDate, decimal?> GetWealth<TDate>(SortedDictionary<TDate, decimal?> Data, decimal starting_wealth = 1000)
+    internal static SortedDictionary<TDate, decimal?> GetWealth<TDate>(SortedDictionary<TDate, decimal?> Data, decimal starting_wealth = 1000)
         where TDate : struct, IDateTime<TDate>
     {
         SortedDictionary<TDate, decimal?> results = [];
@@ -187,7 +93,7 @@ internal static class TimeSeriesTransformUtilities
     /// </summary>
     /// <param name="Data"></param>
     /// <returns></returns>
-    private static SortedDictionary<TDate, decimal?> GetWealthReverse<TDate>(SortedDictionary<TDate, decimal?> Data)
+    internal static SortedDictionary<TDate, decimal?> GetWealthReverse<TDate>(SortedDictionary<TDate, decimal?> Data)
         where TDate : struct, IDateTime<TDate>
     {
         SortedDictionary<TDate, decimal?> results = [];
@@ -215,7 +121,7 @@ internal static class TimeSeriesTransformUtilities
     /// </summary>
     /// <param name="Data"></param>
     /// <returns></returns>
-    private static SortedDictionary<TDate, decimal?> GetDrawdown<TDate>(SortedDictionary<TDate, decimal?> Data)
+    internal static SortedDictionary<TDate, decimal?> GetDrawdown<TDate>(SortedDictionary<TDate, decimal?> Data)
         where TDate : struct, IDateTime<TDate>
     {
         SortedDictionary<TDate, decimal?> results = [];
@@ -242,7 +148,7 @@ internal static class TimeSeriesTransformUtilities
     /// <param name="Data"></param>
     /// <param name="ObservationWindowCount"></param>
     /// <returns></returns>
-    private static SortedDictionary<TDate, decimal?> GetMovingAverageWindowed<TDate>(SortedDictionary<TDate, decimal?> Data, int ObservationWindowCount = 20)
+    internal static SortedDictionary<TDate, decimal?> GetMovingAverageWindowed<TDate>(SortedDictionary<TDate, decimal?> Data, int ObservationWindowCount = 20)
         where TDate : struct, IDateTime<TDate>
     {
         SortedDictionary<TDate, decimal?> results = [];
@@ -270,7 +176,7 @@ internal static class TimeSeriesTransformUtilities
     /// <param name="Data"></param>
     /// <param name="SetClassification"></param>
     /// <returns></returns>
-    private static SortedDictionary<TDate, decimal?> GetStandardDeviationExpandingWindow<TDate>(SortedDictionary<TDate, decimal?> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
+    internal static SortedDictionary<TDate, decimal?> GetStandardDeviationExpandingWindow<TDate>(SortedDictionary<TDate, decimal?> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
         where TDate : struct, IDateTime<TDate>
     {
         SortedDictionary<TDate, decimal?> results = [];
@@ -301,7 +207,7 @@ internal static class TimeSeriesTransformUtilities
     /// <param name="SetClassification"></param>
     /// <param name="ObservationWindowCount"></param>
     /// <returns></returns>
-    private static SortedDictionary<TDate, decimal?> GetStandardDeviationWindowed<TDate>(SortedDictionary<TDate, decimal?> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample, int ObservationWindowCount = 20)
+    internal static SortedDictionary<TDate, decimal?> GetStandardDeviationWindowed<TDate>(SortedDictionary<TDate, decimal?> Data, int ObservationWindowCount = 20, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
         where TDate : struct, IDateTime<TDate>
     {
         SortedDictionary<TDate, decimal?> results = [];

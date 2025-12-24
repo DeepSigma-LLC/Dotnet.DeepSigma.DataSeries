@@ -12,39 +12,12 @@ namespace DeepSigma.DataSeries.Utilities;
 public static class DataModelSeriesUtilities
 {
     /// <summary>
-    /// Applies transformation to series data.
-    /// </summary>
-    /// <param name="Data"></param>
-    /// <param name="Transformation"></param>
-    /// <returns></returns>
-    public static SortedDictionary<TKey, TDataModel> GetTransformedSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> Data, SeriesTransformation Transformation)
-        where TKey : notnull, IComparable<TKey>
-        where TDataModel : class, IDataModel<TDataModel>
-    {
-        return ScaleSeries(Data, Transformation.Scalar);
-    }
-
-    /// <summary>
-    /// Applies transformation to series data.
-    /// </summary>
-    /// <param name="Data"></param>
-    /// <param name="Transformation"></param>
-    /// <returns></returns>
-    public static List<Tuple<TKey, TDataModel>> GetTransformedSeries<TKey, TDataModel>(ICollection<Tuple<TKey, TDataModel>> Data, SeriesTransformation Transformation)
-        where TKey : notnull
-        where TDataModel : class, IDataModel<TDataModel>
-    {
-        return ScaleSeries(Data.ToList(), Transformation.Scalar);
-    }
-
-
-    /// <summary>
     /// Gets series data multiplied by a specified scalar.
     /// </summary>
     /// <param name="Data"></param>
     /// <param name="Scalar"></param>
     /// <returns></returns>
-    public static List<Tuple<TKey, TDataModel>> ScaleSeries<TKey, TDataModel>(List<Tuple<TKey, TDataModel>> Data, decimal Scalar)
+    public static List<Tuple<TKey, TDataModel>> GetScaledSeries<TKey, TDataModel>(List<Tuple<TKey, TDataModel>> Data, decimal Scalar)
         where TKey : notnull
         where TDataModel : class, IDataModel<TDataModel>
     {
@@ -60,14 +33,13 @@ public static class DataModelSeriesUtilities
         return NewData;
     }
 
-
     /// <summary>
     /// Gets series data multiplied by a specified scalar.
     /// </summary>
     /// <param name="Data"></param>
     /// <param name="Scalar"></param>
     /// <returns></returns>
-    public static SortedDictionary<TKey, TDataModel> ScaleSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> Data, decimal Scalar)
+    public static SortedDictionary<TKey, TDataModel> GetScaledSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> Data, decimal Scalar)
         where TKey : notnull, IComparable<TKey>
         where TDataModel : class, IDataModel<TDataModel>
     {
@@ -83,7 +55,6 @@ public static class DataModelSeriesUtilities
         return NewData;
     }
 
-
     /// <summary>
     /// Gets series data multiplied by a specified scalar.
     /// </summary>
@@ -92,9 +63,12 @@ public static class DataModelSeriesUtilities
         where TKey : notnull, IComparable<TKey>
         where TDataModel : class, IDataModel<TDataModel>
     {
-        List<(SortedDictionary<TKey, TDataModel> Data, MathematicalOperation Operation)> SeriesConfig = [];
-        SeriesConfig.Add((FirstSeries, MathematicalOperation.Add));
-        SeriesConfig.Add((OtherSeries, mathematicalOperation));
+        List<(SortedDictionary<TKey, TDataModel> Data, MathematicalOperation Operation)> SeriesConfig = 
+            [
+                (FirstSeries, MathematicalOperation.Add),
+                (OtherSeries, mathematicalOperation)
+            ];
+
         return GetCombinedSeries(SeriesConfig);
     }
 
@@ -102,44 +76,57 @@ public static class DataModelSeriesUtilities
     /// Gets series data multiplied by a specified scalar.
     /// </summary>
     /// <returns></returns>
-    public static SortedDictionary<TKey, TDataModel>  GetCombinedSeries<TKey, TDataModel>(List<(SortedDictionary<TKey, TDataModel> Data, MathematicalOperation Operation)> Series)
+    public static SortedDictionary<TKey, TDataModel>  GetCombinedSeries<TKey, TDataModel>(List<(SortedDictionary<TKey, TDataModel> Data, MathematicalOperation Operation)> SeriesConfigs)
         where TKey : notnull, IComparable<TKey>
         where TDataModel : class, IDataModel<TDataModel>
     {
-        if (Series == null || Series.Count == 0) return [];
-        if (Series.Count == 1) return Series[0].Data.CloneDeep();
+        if (SeriesConfigs == null || SeriesConfigs.Count == 0) return [];
+        if (SeriesConfigs.Count == 1) return SeriesConfigs[0].Data.CloneDeep();
 
         SortedDictionary<TKey, TDataModel> NewSeries = [];
         HashSet<TKey> Keys = [];
-        Series.ForEach(x => Keys.UnionWith(x.Data.Keys));
+        SeriesConfigs.ForEach(x => Keys.UnionWith(x.Data.Keys));
 
         foreach (var key in Keys)
         {
-            IAccumulator<TDataModel>? mutable_record = null;
-            foreach(var series in Series)
-            {
-                if (series.Data.ContainsKey(key))
-                {
-                    mutable_record = series.Data[key].GetAccumulator();
-                    break;
-                }
-            }
-            if(mutable_record is null) throw new InvalidOperationException("No series contains the specified key.");
+            IAccumulator<TDataModel> mutable_record = FindMutableRecord(SeriesConfigs, key) ??
+                throw new InvalidOperationException("No series contains the specified key.");
 
-            for (int i = 1; i < Series.Count; i++)
+            for (int i = 1; i < SeriesConfigs.Count; i++)
             {
-                Exception? error = Series[i].Operation switch
+                Exception? error = SeriesConfigs[i].Operation switch
                 {
-                    MathematicalOperation.Add => mutable_record.Add(Series[i].Data[key]),
-                    MathematicalOperation.Subtract => mutable_record.Subtract(Series[i].Data[key]),
-                    MathematicalOperation.Multiply => mutable_record.Multiply(Series[i].Data[key]),
-                    MathematicalOperation.Divide => mutable_record.Divide(Series[i].Data[key]),
+                    MathematicalOperation.Add => mutable_record.Add(SeriesConfigs[i].Data[key]),
+                    MathematicalOperation.Subtract => mutable_record.Subtract(SeriesConfigs[i].Data[key]),
+                    MathematicalOperation.Multiply => mutable_record.Multiply(SeriesConfigs[i].Data[key]),
+                    MathematicalOperation.Divide => mutable_record.Divide(SeriesConfigs[i].Data[key]),
                     _ => new NotImplementedException("The specified mathematical operation is not implemented."),
                 };
             }
-
             NewSeries.Add(key, mutable_record.ToRecord());
         }
         return NewSeries;
+    }
+
+    /// <summary>
+    /// Finds a mutable record for a given key from a list of series configurations.
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="series_configs"></param>
+    /// <param name="selected_key"></param>
+    /// <returns></returns>
+    private static IAccumulator<TValue>? FindMutableRecord<TKey, TValue>(List<(SortedDictionary<TKey, TValue> Data, MathematicalOperation Operation)> series_configs, TKey selected_key)
+        where TKey : notnull, IComparable<TKey>
+        where TValue : class, IDataModel<TValue>
+    {
+        foreach (var (Data, Operation) in series_configs)
+        {
+            if (Data.ContainsKey(selected_key))
+            {
+                return Data[selected_key].GetAccumulator();
+            }
+        }
+        return null;
     }
 }

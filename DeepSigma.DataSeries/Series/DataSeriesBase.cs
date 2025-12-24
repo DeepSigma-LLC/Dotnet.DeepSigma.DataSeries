@@ -19,11 +19,4 @@ public class DataSeriesBase<TKeyType, TValueDataType>
     /// <inheritdoc cref="DataSeriesBase{TKeyType,TValueDataType}"/>
     public DataSeriesBase(SortedDictionary<TKeyType, TValueDataType> data) : base(data) { }
 
-    /// <inheritdoc/>
-    public override SortedDictionary<TKeyType, TValueDataType>? GetSeriesDataTransformed()
-    {
-        SortedDictionary<TKeyType, TValueDataType>? Data = GetSeriesData()?.ToSortedDictionary();
-        if (Data is null) return null;
-        return DataModelSeriesUtilities.GetTransformedSeries(Data, Transformation);
-    }
 }

@@ -1,11 +1,11 @@
 ﻿using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DeepSigma.DataSeries.Utilities;
 
+/// <summary>
+/// Utilities for working with decimal value series.
+/// </summary>
 public class DecimalValueSeriesUtilities
 {
     /// <summary>
@@ -33,7 +33,6 @@ public class DecimalValueSeriesUtilities
         return GetCombinedSeriesFromTwoSeriesWithMethodApplied(Data, Data2, function);
     }
 
-
     /// <summary>
     /// Gets series data multiplied by a specified scalar.
     /// </summary>
@@ -46,7 +45,6 @@ public class DecimalValueSeriesUtilities
         if (Scalar == 1) return Data.CloneDeep();
         return Data.ToDictionary(x => x.Key, x => x.Value * Scalar).ToSortedDictionary();
     }
-
 
     /// <summary>
     /// Get one series by mathmatically combining two series with a specified calculation method.
@@ -65,9 +63,11 @@ public class DecimalValueSeriesUtilities
         SortedDictionary<T, decimal?> results = [];
         foreach (T key in keys.Order())
         {
-            if (DataSet.ContainsKey(key) && DataSet2.ContainsKey(key))
+            bool found1 = DataSet.TryGetValue(key, out decimal? value1);
+            bool found2 = DataSet2.TryGetValue(key, out decimal? value2);
+            if (found1 && found2)
             {
-                decimal? result = CalculationMethod(DataSet[key], DataSet2[key]);
+                decimal? result = CalculationMethod(value1, value2);
                 results.Add(key, result);
                 continue;
             }
@@ -75,25 +75,8 @@ public class DecimalValueSeriesUtilities
         }
         return results;
     }
-
-
-    private static decimal? Add(decimal? value, decimal? value2)
-    {
-        return value + value2;
-    }
-
-    private static decimal? Subtract(decimal? value, decimal? value2)
-    {
-        return value - value2;
-    }
-
-    private static decimal? Multiply(decimal? value, decimal? value2)
-    {
-        return value * value2;
-    }
-
-    private static decimal? Divide(decimal? value, decimal? value2)
-    {
-        return value2 == 0 ? null : value / value2;
-    }
+    private static decimal? Add(decimal? value, decimal? value2) => value + value2;
+    private static decimal? Subtract(decimal? value, decimal? value2) => value - value2;
+    private static decimal? Multiply(decimal? value, decimal? value2) => value * value2;
+    private static decimal? Divide(decimal? value, decimal? value2) => value2 == 0 ? null : value / value2;
 }

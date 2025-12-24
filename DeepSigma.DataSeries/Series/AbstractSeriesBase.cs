@@ -28,7 +28,6 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
     protected AbstractSeriesBase() : base()
     {
         this.AllowMultipleSubSeries = false;
-        this.AllowDuplicateDataPoints = false;
     }
 
     /// <inheritdoc cref="AbstractSeriesBase{TCollectionKey, TCollectionDataType, TTransformation}"/>
@@ -44,9 +43,9 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
     }
 
     /// <inheritdoc/>
-    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesData()
+    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataScaled()
     {
-        return Data;
+        return DataModelSeriesUtilities.GetScaledSeries(Data, Transformation.Scalar);
     }
 
     /// <inheritdoc/>
@@ -68,6 +67,6 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
     public IEnumerator<KeyValuePair<TCollectionKey, TCollectionDataType>> GetEnumerator() => Data.GetEnumerator();
 
     /// <inheritdoc/>
-    IEnumerator IEnumerable.GetEnumerator() =>GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     
 }

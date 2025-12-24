@@ -4,7 +4,9 @@ using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Utilities;
 
-
+/// <summary>
+/// Utility class for dataset operations.
+/// </summary>
 internal static class DataSetUtilities
 {
     /// <summary>
