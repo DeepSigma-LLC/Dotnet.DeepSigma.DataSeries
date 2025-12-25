@@ -4,7 +4,7 @@ using DeepSigma.General.Enums;
 namespace DeepSigma.DataSeries.Transformations;
 
 /// <summary>
-/// Represents a transformation applied to time series data.
+/// Represents a transformation applied to time series.
 /// </summary>
 public class TimeSeriesTransformation : SeriesTransformation, ISeriesTransformation
 {

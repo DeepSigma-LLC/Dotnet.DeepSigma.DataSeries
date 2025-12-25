@@ -50,12 +50,23 @@ public class DataSet<TKeyDataType, TValueDataType>
     public TValueDataType? TryGet(TKeyDataType key) => Data.TryGetValue(key, out var value) ? value : null;
 
     /// <summary>
+    /// Retrieves a single series of data from the data set based on a specified target property.
+    /// For example, if TValueDataType has a property named "Price", you can retrieve a series of prices by passing an expression that points to that property.
     /// 
+    /// <code>
+    /// SortedDictionary&lt;DateTime, decimal?&gt; priceSeries = dataSet.GetSingleSeries(x => x.Price);
+    /// </code>
     /// </summary>
+    /// <remarks>
+    /// Note: This method uses expressions to specify the target property, allowing for strong typing and compile-time checking of property names.
+    /// This method will create a new SortedDictionary containing the keys from the original data set and the values obtained by evaluating the target property on each TValueDataType instance.
+    /// </remarks>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="target_property"></param>
     /// <returns></returns>
-    public SortedDictionary<TKeyDataType, TResult> GetSingleSeries<TResult>(Expression<Func<TValueDataType, TResult>> target_property)
+    public SortedDictionary<TKeyDataType, TResult?> GetSingleSeries<TResult>(Expression<Func<TValueDataType, TResult?>> target_property)
     {
-        return DataSetUtilities.GetSingleSeries(Data, target_property);
+        return Data.GetExtractedPropertyAsSeriesSorted(target_property);
     }
 
     /// <inheritdoc/>

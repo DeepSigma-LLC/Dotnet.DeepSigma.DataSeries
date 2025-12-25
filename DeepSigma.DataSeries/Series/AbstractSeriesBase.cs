@@ -25,10 +25,7 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
     private protected readonly SortedDictionary<TCollectionKey, TCollectionDataType> Data = [];
 
     /// <inheritdoc cref="AbstractSeriesBase{TCollectionKey, TCollectionDataType, TTransformation}"/>
-    protected AbstractSeriesBase() : base()
-    {
-        this.AllowMultipleSubSeries = false;
-    }
+    protected AbstractSeriesBase() : base() { }
 
     /// <inheritdoc cref="AbstractSeriesBase{TCollectionKey, TCollectionDataType, TTransformation}"/>
     protected AbstractSeriesBase(SortedDictionary<TCollectionKey, TCollectionDataType> data) : this()
@@ -37,10 +34,13 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
     }
 
     /// <inheritdoc/>
-    public sealed override void Clear()
-    {
-        Data.Clear();
-    }
+    public sealed override bool IsEmpty => Data.Count == 0;
+
+    /// <inheritdoc/>
+    public sealed override bool IsAggregatedSeries => false;
+
+    /// <inheritdoc/>
+    public sealed override int GetSubSeriesCount() => 1;
 
     /// <inheritdoc/>
     public sealed override SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataScaled()
@@ -48,8 +48,17 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
         return DataModelSeriesUtilities.GetScaledSeries(Data, Transformation.Scalar);
     }
 
-    /// <inheritdoc/>
-    public sealed override int GetSubSeriesCount() => 1;
+    /// <summary>
+    /// Gets the underlying series data as an unscaled sorted dictionary.
+    /// </summary>
+    /// <returns>A sorted dictionary containing the unscaled series data, where each key represents a collection key and each
+    /// value represents the associated data.</returns>
+    /// <remarks>
+    /// Note: the collection is passed by reference to avoid reallocation of the data structure as a copy in memory.
+    /// Modifying the collection will modify the objects data directly.
+    /// </remarks>
+    public SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataUnscaled() => Data;
+
     
     /// <inheritdoc/>
     public void Add(TCollectionKey key, TCollectionDataType value)
@@ -61,6 +70,12 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
     public void Add(IEnumerable<KeyValuePair<TCollectionKey, TCollectionDataType>> points)
     {
         points.ForEach(point => Data.Add(point.Key, point.Value));
+    }
+
+    /// <inheritdoc/>
+    public sealed override void Clear()
+    {
+        Data.Clear();
     }
 
     /// <inheritdoc/>

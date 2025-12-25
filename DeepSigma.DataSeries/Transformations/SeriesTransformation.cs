@@ -5,8 +5,7 @@
 /// </summary>
 public class SeriesTransformation : ISeriesTransformation
 {
-    /// <summary>
-    /// Data series scalar multiplier.
-    /// </summary>
+  
+    /// <inheritdoc/>
     public decimal Scalar { get; set; } = 1;
 }

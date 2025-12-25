@@ -10,7 +10,8 @@ namespace DeepSigma.DataSeries.Series;
 /// <typeparam name="TCollectionKey"></typeparam>
 /// <typeparam name="TCollectionDataType"></typeparam>
 /// <typeparam name="TTransformation"></typeparam>
-public abstract class AbstractSeries<TCollectionKey, TCollectionDataType, TTransformation> : ISeries<TCollectionKey, TCollectionDataType, TTransformation>
+public abstract class AbstractSeries<TCollectionKey, TCollectionDataType, TTransformation> 
+    : ISeries<TCollectionKey, TCollectionDataType, TTransformation>
     where TCollectionKey : notnull, IComparable<TCollectionKey>
     where TCollectionDataType : class, IDataModel<TCollectionDataType>
     where TTransformation : class, ISeriesTransformation, new()
@@ -35,7 +36,7 @@ public abstract class AbstractSeries<TCollectionKey, TCollectionDataType, TTrans
     /// <summary>
     /// Indicates whether multiple sub-series are allowed.
     /// </summary>
-    public bool AllowMultipleSubSeries { get; init; }
+    public bool AllowMultipleSubSeries { get; init; } = false;
 
     /// <inheritdoc/>
     public string SeriesName { get; set; } = string.Empty;
@@ -43,16 +44,10 @@ public abstract class AbstractSeries<TCollectionKey, TCollectionDataType, TTrans
     /// <inheritdoc/>
     public TTransformation Transformation { get; set; }
 
-    /// <summary>
-    /// Returns the data points in the series.
-    /// </summary>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public abstract SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataScaled();
 
-    /// <summary>
-    /// Returns the transformed data points in the series.
-    /// </summary>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataScaledAndTransformed()
     {
         return TransformationUnification.GetTransformedData(GetSeriesDataScaled() ?? [], this.Transformation);
