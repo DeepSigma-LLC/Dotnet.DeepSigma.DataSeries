@@ -68,7 +68,7 @@ internal class DecimalTimeSeriesTransformer
     private static SortedDictionary<TDate, decimal?> AnnualizedVolatilityExpandingWindow<TDate>(SortedDictionary<TDate, decimal?> Data)
         where TDate : struct, IDateTime<TDate>
     {
-        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = GenericTimeSeriesUtilities.GetTimeSeriesWithTargetedDates(Data, new SelfAligningTimeStep<TDate>(new (Periodicity.Daily, DaySelectionType.WeekdaysOnly)));
+        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = GenericTimeSeriesUtilities.GetTimeSeriesWithTargetedDates(Data, new SelfAligningTimeStepper<TDate>(new (Periodicity.Daily, DaySelectionType.Weekday)));
         SortedDictionary<TDate, decimal?> observation_returns = TimeSeriesTransformUtilities.GetObservationReturns(data_with_missing_days_filled);
         decimal AnnualizationMultiplier = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.Select(x => x.DateTime).ToArray());
         return DecimalValueSeriesUtilities.GetScaledSeries(TimeSeriesTransformUtilities.GetStandardDeviationExpandingWindow(observation_returns), AnnualizationMultiplier);
@@ -77,7 +77,7 @@ internal class DecimalTimeSeriesTransformer
     private static SortedDictionary<TDate, decimal?> AnnualizedVolatilityWindowed<TDate>(SortedDictionary<TDate, decimal?> Data, int ObservationWindowCount)
     where TDate : struct, IDateTime<TDate>
     {
-        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = GenericTimeSeriesUtilities.GetTimeSeriesWithTargetedDates(Data, new SelfAligningTimeStep<TDate>(new(Periodicity.Daily, DaySelectionType.WeekdaysOnly)));
+        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = GenericTimeSeriesUtilities.GetTimeSeriesWithTargetedDates(Data, new SelfAligningTimeStepper<TDate>(new(Periodicity.Daily, DaySelectionType.Weekday)));
         SortedDictionary<TDate, decimal?> observation_returns = TimeSeriesTransformUtilities.GetObservationReturns(data_with_missing_days_filled);
         decimal AnnualizationMultiplier = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.Select(x => x.DateTime).ToArray());
         return DecimalValueSeriesUtilities.GetScaledSeries(TimeSeriesTransformUtilities.GetStandardDeviationWindowed(observation_returns, ObservationWindowCount: ObservationWindowCount), AnnualizationMultiplier);

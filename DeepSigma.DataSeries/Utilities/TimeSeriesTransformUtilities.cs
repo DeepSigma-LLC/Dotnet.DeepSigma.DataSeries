@@ -44,8 +44,7 @@ internal static class TimeSeriesTransformUtilities
         where TDate : struct, IDateTime<TDate>
     {
         SortedDictionary<TDate, decimal?> results = [];
-        TDate minDate = Data.Keys.Min();
-        decimal startingValue = Data[minDate] ?? 0;
+        decimal startingValue = Data.First().Value ?? 0;
         foreach (KeyValuePair<TDate, decimal?> kvp in Data)
         {
             if (startingValue == 0)
@@ -71,8 +70,7 @@ internal static class TimeSeriesTransformUtilities
         where TDate : struct, IDateTime<TDate>
     {
         SortedDictionary<TDate, decimal?> results = [];
-        TDate minDate = Data.Keys.Min();
-        decimal startingValue = Data[minDate] ?? 0;
+        decimal startingValue = Data.First().Value ?? 0;
         foreach (KeyValuePair<TDate, decimal?> kvp in Data)
         {
             if (startingValue == 0)
@@ -98,7 +96,7 @@ internal static class TimeSeriesTransformUtilities
     {
         SortedDictionary<TDate, decimal?> results = [];
         TDate maxDate = Data.Keys.Max();
-        decimal endingValue = Data[maxDate] ?? 0;
+        decimal endingValue = Data.Last().Value ?? 0;
         decimal wealthValue = 1000;
         foreach (KeyValuePair<TDate, decimal?> kvp in Data)
         {

@@ -36,7 +36,7 @@ public static class GenericTimeSeriesUtilities
     /// <param name="Data"></param>
     /// <param name="TimeStep"></param>
     /// <returns></returns>
-    public static SortedDictionary<TDate, decimal?> GetTimeSeriesWithTargetedDates<TDate>(SortedDictionary<TDate, decimal?> Data, SelfAligningTimeStep<TDate> TimeStep)
+    public static SortedDictionary<TDate, decimal?> GetTimeSeriesWithTargetedDates<TDate>(SortedDictionary<TDate, decimal?> Data, SelfAligningTimeStepper<TDate> TimeStep)
         where TDate : struct, IDateTime<TDate>
     {
         SortedDictionary<TDate, decimal?> results = [];
@@ -70,13 +70,13 @@ public static class GenericTimeSeriesUtilities
     /// <param name="daySelection"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    private static SortedDictionary<TDate, TValue> GetLaggedTimeSeries<TDate, TValue>(SortedDictionary<TDate, TValue> Data, int DaysToLag, DaySelectionType daySelection = DaySelectionType.AnyDay)
+    private static SortedDictionary<TDate, TValue> GetLaggedTimeSeries<TDate, TValue>(SortedDictionary<TDate, TValue> Data, int DaysToLag, DaySelectionType daySelection = DaySelectionType.Any)
         where TDate : struct, IDateTime<TDate>
     {
         return daySelection switch
         {
-            (DaySelectionType.AnyDay) => _AddDaysToTimeSeriesDateTimes(Data, -DaysToLag),
-            (DaySelectionType.WeekdaysOnly) => _AddBusinessDaysToTimeSeriesDateTimes(Data, -DaysToLag),
+            (DaySelectionType.Any) => _AddDaysToTimeSeriesDateTimes(Data, -DaysToLag),
+            (DaySelectionType.Weekday) => _AddBusinessDaysToTimeSeriesDateTimes(Data, -DaysToLag),
             _ => throw new NotImplementedException(),
         };
     }
