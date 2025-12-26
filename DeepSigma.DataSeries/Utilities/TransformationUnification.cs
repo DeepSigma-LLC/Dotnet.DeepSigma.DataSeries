@@ -1,7 +1,10 @@
 ﻿
 
+using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
+using DeepSigma.General.DateTimeUnification;
 using OneOf.Types;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DeepSigma.DataSeries.Utilities;
 
@@ -28,7 +31,7 @@ public static class TransformationUnification
     /// <returns></returns>
     public static SortedDictionary<TKey, TValue> GetTransformedData<TKey, TValue, TTransformation>(SortedDictionary<TKey, TValue> data, TTransformation transformation)
         where TKey : notnull, IComparable<TKey>
-        where TValue : notnull
+        where TValue : class, IDataModel<TValue>
         where TTransformation : ISeriesTransformation
     {
         // Developer note: Note that order matters when your types inherit from eachother.
@@ -52,10 +55,10 @@ public static class TransformationUnification
     /// <param name="transformation"></param>
     /// <returns></returns>
     public static SortedDictionary<TKey, TValue> GetTransformedData<TKey, TValue>(SortedDictionary<TKey, TValue> data, SeriesTransformation transformation)
-        where TKey : notnull, IComparable<TKey>
-        where TValue : notnull
+        where TKey : struct, IComparable<TKey>
+        where TValue : class, IDataModel<TValue>
     {
-
+        return GenericTimeSeriesUtilities.GetScaledSeries(data, transformation.Scalar);
     }
 
     /// <summary>
@@ -67,9 +70,9 @@ public static class TransformationUnification
     /// <param name="transformation"></param>
     /// <returns></returns>
     public static SortedDictionary<TKey, TValue> GetTransformedData<TKey, TValue>(SortedDictionary<TKey, TValue> data, TimeSeriesTransformation transformation)
-        where TKey : notnull, IComparable<TKey>
-        where TValue : notnull
+        where TKey : struct, IDateTime<TKey>
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-
+        return GenericTimeSeriesTransformer.TransformedTimeSeriesData(data, transformation);
     }
 }

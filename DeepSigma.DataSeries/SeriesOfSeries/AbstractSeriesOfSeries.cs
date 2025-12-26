@@ -52,7 +52,7 @@ public abstract class AbstractSeriesOfSeries<TCollectionKey, TCollectionDataType
     /// <returns></returns>
     public sealed override SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataScaled()
     {
-        SortedDictionary<TCollectionKey, TCollectionDataType>? series = SubSeriesCollection.GetCombinedAndTransformedSeriesData();
+        SortedDictionary<TCollectionKey, TCollectionDataType>? series = SubSeriesCollection.GetCombinedScaledAndTransformedSeriesData();
         return series;
     }
 

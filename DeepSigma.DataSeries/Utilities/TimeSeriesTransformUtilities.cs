@@ -1,6 +1,7 @@
 ﻿using DeepSigma.DataSeries.Enums;
 using DeepSigma.General.DateTimeUnification;
 using DeepSigma.General.Extensions;
+using System.Numerics;
 
 namespace DeepSigma.DataSeries.Utilities;
 
@@ -237,4 +238,5 @@ internal static class TimeSeriesTransformUtilities
         }
         return results;
     }
+
 }
