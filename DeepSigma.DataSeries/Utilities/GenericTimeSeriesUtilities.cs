@@ -30,37 +30,6 @@ public static class GenericTimeSeriesUtilities
     }
 
     /// <summary>
-    /// Gets time series with targeted dates determined from periodicity. Missing values will be rolled.
-    /// </summary>
-    /// <param name="Data"></param>
-    /// <param name="TimeStep"></param>
-    /// <returns></returns>
-    public static SortedDictionary<TDate, decimal?> GetTimeSeriesWithTargetedDates<TDate>(SortedDictionary<TDate, decimal?> Data, SelfAligningTimeStepper<TDate> TimeStep)
-        where TDate : struct, IDateTime<TDate>
-    {
-        SortedDictionary<TDate, decimal?> results = [];
-        TDate StartDate = Data.Keys.Min();
-        TDate EndDate = Data.Keys.Max();
-        TDate selectedDateTime = StartDate;
-        while (selectedDateTime <= EndDate)
-        {
-            bool found = Data.TryGetValue(selectedDateTime, out var value);
-            if (found)
-            {
-                results.Add(selectedDateTime, value);
-            }
-            selectedDateTime = TimeStep.GetNextTimeStep(selectedDateTime);
-        }
-
-        //Add final value if not added
-        if (!results.ContainsKey(EndDate))
-        {
-            results.Add(EndDate, Data[EndDate]);
-        }
-        return results;
-    }
-
-    /// <summary>
     /// Gets series data multiplied by a specified scalar.
     /// </summary>
     /// <param name="Data"></param>
@@ -156,6 +125,71 @@ public static class GenericTimeSeriesUtilities
             NewSeries.Add(key, mutable_record.ToRecord());
         }
         return NewSeries;
+    }
+
+
+    /// <summary>
+    /// Rolls forward the last known value to fill missing dates in the time series. Required dates determined from periodicity time stepper.
+    /// </summary>
+    /// <param name="Data"></param>
+    /// <param name="TimeStep"></param>
+    /// <returns></returns>
+    public static SortedDictionary<TDate, TValue?> RollMissingValues<TDate, TValue>(SortedDictionary<TDate, TValue?> Data, SelfAligningTimeStepper<TDate> TimeStep)
+        where TDate : struct, IDateTime<TDate>
+    {
+        SortedDictionary<TDate, TValue?> results = [];
+        TDate StartDate = Data.Keys.Min();
+        TDate EndDate = Data.Keys.Max();
+        TDate selectedDateTime = StartDate;
+        TValue? lastKnownValue = default;
+        while (selectedDateTime <= EndDate)
+        {
+            bool found = Data.TryGetValue(selectedDateTime, out lastKnownValue);
+            results.Add(selectedDateTime, lastKnownValue);
+            selectedDateTime = TimeStep.GetNextTimeStep(selectedDateTime);
+        }
+
+        //Add final value if not added
+        if (!results.ContainsKey(EndDate))
+        {
+            results.Add(EndDate, Data[EndDate]);
+        }
+        return results;
+    }
+
+    /// <summary>
+    /// Fills missing dates required by the time step with null if no data exists for that date.
+    /// </summary>
+    /// <param name="Data"></param>
+    /// <param name="TimeStep"></param>
+    /// <returns></returns>
+    public static SortedDictionary<TDate, TValue?> FillMissingValuesWithNull<TDate, TValue>(SortedDictionary<TDate, TValue?> Data, SelfAligningTimeStepper<TDate> TimeStep)
+        where TDate : struct, IDateTime<TDate>
+    {
+        SortedDictionary<TDate, TValue?> results = [];
+        TDate StartDate = Data.Keys.Min();
+        TDate EndDate = Data.Keys.Max();
+        TDate selectedDateTime = StartDate;
+        while (selectedDateTime <= EndDate)
+        {
+            bool found = Data.TryGetValue(selectedDateTime, out var value);
+            if (found)
+            {
+                results.Add(selectedDateTime, value);
+            }
+            else
+            {
+                results.Add(selectedDateTime, default); // Add null for missing dates
+            }
+            selectedDateTime = TimeStep.GetNextTimeStep(selectedDateTime);
+        }
+
+        //Add final value if not added
+        if (!results.ContainsKey(EndDate))
+        {
+            results.Add(EndDate, Data[EndDate]);
+        }
+        return results;
     }
 
 

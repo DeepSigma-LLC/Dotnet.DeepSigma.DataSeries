@@ -3,8 +3,6 @@
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General.DateTimeUnification;
-using OneOf.Types;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DeepSigma.DataSeries.Utilities;
 
