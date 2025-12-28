@@ -83,9 +83,11 @@ public static class GenericTimeSeriesTransformer
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        PeriodicityConfiguration configuration = new(Periodicity.Daily, DaySelectionType.Weekday);
-        SortedDictionary<TDate, TValue> TempData = Data.FillMissingValuesWithNullAndDropExcess(new SelfAligningTimeStepper<TDate>(configuration));
-        TempData = DataModelSeriesTransformationUtilities.GetObservationReturns(TempData);
+        //PeriodicityConfiguration configuration = new(Periodicity.Daily, DaySelectionType.Weekday);
+        //SortedDictionary<TDate, TValue> TempData = Data.FillMissingValuesWithNullAndDropExcess(new SelfAligningTimeStepper<TDate>(configuration));
+        //TempData = DataModelSeriesTransformationUtilities.GetObservationReturns(TempData);
+
+        SortedDictionary<TDate, TValue> TempData = DataModelSeriesTransformationUtilities.GetObservationReturns(Data);
         decimal AnnualizationMultiplier = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.Select(x => x.DateTime).ToArray());
         return GenericTimeSeriesUtilities.GetScaledSeries(DataModelSeriesTransformationUtilities.GetStandardDeviationExpandingWindow(TempData), AnnualizationMultiplier);
     }
@@ -94,9 +96,11 @@ public static class GenericTimeSeriesTransformer
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        PeriodicityConfiguration configuration = new(Periodicity.Daily, DaySelectionType.Weekday);
-        SortedDictionary<TDate, TValue> TempData = Data.FillMissingValuesWithNullAndDropExcess(new SelfAligningTimeStepper<TDate>(configuration));
-        TempData = DataModelSeriesTransformationUtilities.GetObservationReturns(TempData);
+        //PeriodicityConfiguration configuration = new(Periodicity.Daily, DaySelectionType.Weekday);
+        //SortedDictionary<TDate, TValue> TempData = Data.FillMissingValuesWithNullAndDropExcess(new SelfAligningTimeStepper<TDate>(configuration));
+        //TempData = DataModelSeriesTransformationUtilities.GetObservationReturns(TempData);
+
+        SortedDictionary<TDate, TValue>  TempData = DataModelSeriesTransformationUtilities.GetObservationReturns(Data);
         decimal AnnualizationMultiplier = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.Select(x => x.DateTime).ToArray());
         return GenericTimeSeriesUtilities.GetScaledSeries(DataModelSeriesTransformationUtilities.GetStandardDeviationWindowed(TempData, ObservationWindowCount: ObservationWindowCount), AnnualizationMultiplier);
     }

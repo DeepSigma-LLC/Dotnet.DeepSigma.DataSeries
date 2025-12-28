@@ -66,7 +66,7 @@ internal static class TimeSeriesTransformUtilities
     /// <param name="Data"></param>
     /// <param name="starting_wealth"></param>
     /// <returns></returns>
-    internal static SortedDictionary<TDate, decimal?> GetWealth<TDate>(SortedDictionary<TDate, decimal?> Data, decimal starting_wealth = 1000)
+    internal static SortedDictionary<TDate, decimal?> GetWealth<TDate>(SortedDictionary<TDate, decimal?> Data, decimal starting_wealth = 1_000)
         where TDate : struct, IDateTime<TDate>
     {
         SortedDictionary<TDate, decimal?> results = [];
