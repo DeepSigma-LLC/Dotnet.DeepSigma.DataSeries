@@ -14,6 +14,21 @@ namespace DeepSigma.DataSeries.Utilities;
 /// </summary>
 public static class GenericTimeSeriesTransformer
 {
+    /// <summary>
+    /// Gets transformed time series.
+    /// </summary>
+    /// <param name="Data"></param>
+    /// <param name="Transformation"></param>
+    /// <returns></returns>
+    public static SortedDictionary<TDate, TValue> GetCompleteTransformedTimeSeriesData<TDate, TValue>(SortedDictionary<TDate, TValue> Data, TimeSeriesTransformation Transformation)
+        where TDate : struct, IDateTime<TDate>
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        SortedDictionary<TDate, TValue> results = GenericTimeSeriesTransformer.TransformedTimeSeriesData(Data, Transformation);
+        results = GenericTimeSeriesUtilities.GetScaledSeries(results, Transformation.Scalar);
+        results = results.LagByDays(Transformation.ObservationLag, Transformation.DaySelectionTypeForLag);
+        return results;
+    }
 
     /// <summary>
     /// Gets transformed time series data.
@@ -23,7 +38,7 @@ public static class GenericTimeSeriesTransformer
     /// <param name="Data"></param>
     /// <param name="transformation"></param>
     /// <returns></returns>
-    public static SortedDictionary<TDate, TValue> TransformedTimeSeriesData<TDate, TValue>(SortedDictionary<TDate, TValue> Data, TimeSeriesTransformation transformation)
+    private static SortedDictionary<TDate, TValue> TransformedTimeSeriesData<TDate, TValue>(SortedDictionary<TDate, TValue> Data, TimeSeriesTransformation transformation)
       where TDate : struct, IDateTime<TDate>
       where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -39,7 +54,7 @@ public static class GenericTimeSeriesTransformer
     /// <param name="Selection"></param>
     /// <param name="ObservationWindowCount"></param>
     /// <returns></returns>
-    public static SortedDictionary<TDate, TValue> TransformedTimeSeriesData<TDate, TValue>(SortedDictionary<TDate, TValue> Data, TimeSeriesDataTransformation Selection, int ObservationWindowCount = 20)
+    private static SortedDictionary<TDate, TValue> TransformedTimeSeriesData<TDate, TValue>(SortedDictionary<TDate, TValue> Data, TimeSeriesDataTransformation Selection, int ObservationWindowCount = 20)
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -69,7 +84,7 @@ public static class GenericTimeSeriesTransformer
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         PeriodicityConfiguration configuration = new(Periodicity.Daily, DaySelectionType.Weekday);
-        SortedDictionary<TDate, TValue> TempData = GenericTimeSeriesUtilities.GetTimeSeriesWithTargetedDates(Data, new SelfAligningTimeStepper<TDate>(configuration));
+        SortedDictionary<TDate, TValue> TempData = Data.FillMissingValuesWithNullAndDropExcess(new SelfAligningTimeStepper<TDate>(configuration));
         TempData = DataModelSeriesTransformationUtilities.GetObservationReturns(TempData);
         decimal AnnualizationMultiplier = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.Select(x => x.DateTime).ToArray());
         return GenericTimeSeriesUtilities.GetScaledSeries(DataModelSeriesTransformationUtilities.GetStandardDeviationExpandingWindow(TempData), AnnualizationMultiplier);
@@ -80,7 +95,7 @@ public static class GenericTimeSeriesTransformer
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         PeriodicityConfiguration configuration = new(Periodicity.Daily, DaySelectionType.Weekday);
-        SortedDictionary<TDate, TValue> TempData = GenericTimeSeriesUtilities.GetTimeSeriesWithTargetedDates(Data, new SelfAligningTimeStepper<TDate>(configuration));
+        SortedDictionary<TDate, TValue> TempData = Data.FillMissingValuesWithNullAndDropExcess(new SelfAligningTimeStepper<TDate>(configuration));
         TempData = DataModelSeriesTransformationUtilities.GetObservationReturns(TempData);
         decimal AnnualizationMultiplier = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.Select(x => x.DateTime).ToArray());
         return GenericTimeSeriesUtilities.GetScaledSeries(DataModelSeriesTransformationUtilities.GetStandardDeviationWindowed(TempData, ObservationWindowCount: ObservationWindowCount), AnnualizationMultiplier);
@@ -95,7 +110,4 @@ public static class GenericTimeSeriesTransformer
         SortedDictionary<TDate, TValue> ScaledWindowedStandardDeviation = GenericTimeSeriesUtilities.GetScaledSeries(DataModelSeriesTransformationUtilities.GetStandardDeviationWindowed(ObservationReturns, ObservationWindowCount: ObservationWindowCount), scalar);
         return GenericTimeSeriesUtilities.GetCombinedSeries(CumulativeReturnMovingAverage, ScaledWindowedStandardDeviation, MathematicalOperation.Add);
     }
-
-
-
 }

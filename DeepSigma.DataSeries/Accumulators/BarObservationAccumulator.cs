@@ -62,19 +62,19 @@ public class BarObservationAccumulator(BarObservation observation)
     /// <inheritdoc/>
     public sealed override void Max(BarObservation other)
     {
-        this.Open = this.Open > other.Open ? this.Open : other.Open;   
-        this.Close = this.Close > other.Close ? this.Close : other.Close;
-        this.High = this.High > other.High ? this.High : other.High;
-        this.Low = this.Low > other.Low ? this.Low : other.Low;
+        this.Open = Math.Max(this.Open, other.Open);
+        this.Close = Math.Max(this.Close, other.Close);
+        this.High = Math.Max(this.High, other.High);
+        this.Low = Math.Max(this.Low, other.Low);
     }
 
     /// <inheritdoc/>
     public sealed override void Min(BarObservation other)
     {
-        this.Open = this.Open < other.Open ? this.Open : other.Open;   
-        this.Close = this.Close < other.Close ? this.Close : other.Close;
-        this.High = this.High < other.High ? this.High : other.High;
-        this.Low = this.Low < other.Low ? this.Low : other.Low;
+        this.Open = Math.Min(this.Open, other.Open);   
+        this.Close = Math.Min(this.Close, other.Close);
+        this.High = Math.Min(this.High, other.High);
+        this.Low = Math.Min(this.Low, other.Low);
     }
 
     /// <inheritdoc/>

@@ -22,7 +22,7 @@ internal class DecimalTimeSeriesTransformer
     internal static SortedDictionary<TDate, decimal?> TransformedTimeSeriesData<TDate>(SortedDictionary<TDate, decimal?> Data, TimeSeriesTransformation Transformation)
         where TDate : struct, IDateTime<TDate>
     {
-        return TransformedTimeSeriesData(Data, Transformation.DataTransformation, Transformation.ObservationWindowCount);
+        return ComputeTransformedTimeSeriesData(Data, Transformation.DataTransformation, Transformation.ObservationWindowCount);
     }
 
     /// <summary>
@@ -33,7 +33,7 @@ internal class DecimalTimeSeriesTransformer
     /// <param name="Selection"></param>
     /// <param name="ObservationWindowCount"></param>
     /// <returns></returns>
-    internal static SortedDictionary<TDate, decimal?> TransformedTimeSeriesData<TDate>(SortedDictionary<TDate, decimal?> Data, TimeSeriesDataTransformation Selection, int ObservationWindowCount = 20)
+    private static SortedDictionary<TDate, decimal?> ComputeTransformedTimeSeriesData<TDate>(SortedDictionary<TDate, decimal?> Data, TimeSeriesDataTransformation Selection, int ObservationWindowCount = 20)
         where TDate : struct, IDateTime<TDate>
     {
         return Selection switch
@@ -69,8 +69,7 @@ internal class DecimalTimeSeriesTransformer
     private static SortedDictionary<TDate, decimal?> AnnualizedVolatilityExpandingWindow<TDate>(SortedDictionary<TDate, decimal?> Data)
         where TDate : struct, IDateTime<TDate>
     {
-       
-        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = TimeSeriesTransformUtilities.FillMissingValuesWithNull(Data, new SelfAligningTimeStepper<TDate>(new(Periodicity.Daily, DaySelectionType.Weekday)));
+        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = Data.FillMissingValuesWithNull(new SelfAligningTimeStepper<TDate>(new(Periodicity.Daily, DaySelectionType.Weekday)));
         SortedDictionary<TDate, decimal?> observation_returns = TimeSeriesTransformUtilities.GetObservationReturns(data_with_missing_days_filled);
         decimal AnnualizationMultiplier = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.Select(x => x.DateTime).ToArray());
         return GetScaledSeries(TimeSeriesTransformUtilities.GetStandardDeviationExpandingWindow(observation_returns), AnnualizationMultiplier);
@@ -79,7 +78,7 @@ internal class DecimalTimeSeriesTransformer
     private static SortedDictionary<TDate, decimal?> AnnualizedVolatilityWindowed<TDate>(SortedDictionary<TDate, decimal?> Data, int ObservationWindowCount)
     where TDate : struct, IDateTime<TDate>
     {
-        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = GenericTimeSeriesUtilities.FillMissingValuesWithNull(Data, new SelfAligningTimeStepper<TDate>(new(Periodicity.Daily, DaySelectionType.Weekday)));
+        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = Data.FillMissingValuesWithNull(new SelfAligningTimeStepper<TDate>(new(Periodicity.Daily, DaySelectionType.Weekday)));
         SortedDictionary<TDate, decimal?> observation_returns = TimeSeriesTransformUtilities.GetObservationReturns(data_with_missing_days_filled);
         decimal AnnualizationMultiplier = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.Select(x => x.DateTime).ToArray());
         return GetScaledSeries(TimeSeriesTransformUtilities.GetStandardDeviationWindowed(observation_returns, ObservationWindowCount: ObservationWindowCount), AnnualizationMultiplier);

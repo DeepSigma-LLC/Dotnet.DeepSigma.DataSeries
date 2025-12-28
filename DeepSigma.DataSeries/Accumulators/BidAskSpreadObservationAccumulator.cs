@@ -52,17 +52,18 @@ public class BidAskSpreadObservationAccumulator(BidAskSpreadObservation BidAskSp
     /// <inheritdoc/>
     public sealed override void Max(BidAskSpreadObservation other)
     {
-        this.Ask = this.Ask > other.Ask ? this.Ask : other.Ask;
-        this.Bid = this.Bid > other.Bid ? this.Bid : other.Bid;
+        this.Ask = Math.Max(this.Ask, other.Ask);
+        this.Bid = Math.Max(this.Bid, other.Bid);
     }
 
     /// <inheritdoc/>
     public sealed override void Min(BidAskSpreadObservation other)
     {
-        this.Ask = this.Ask < other.Ask ? this.Ask : other.Ask;
-        this.Bid = this.Bid < other.Bid ? this.Bid : other.Bid;
+        this.Ask = Math.Min(this.Ask, other.Ask);
+        this.Bid = Math.Min(this.Bid, other.Bid);
     }
 
+    /// <inheritdoc/>
     public sealed override void Power(decimal exponent)
     {
         this.Ask = this.Ask.Power(exponent);

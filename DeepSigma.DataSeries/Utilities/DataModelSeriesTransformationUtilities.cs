@@ -1,5 +1,4 @@
-﻿using DeepSigma.DataSeries.DataModels;
-using DeepSigma.DataSeries.Enums;
+﻿using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.General.DateTimeUnification;
 using DeepSigma.General.Extensions;
@@ -25,20 +24,20 @@ public static class DataModelSeriesTransformationUtilities
         SortedDictionary<TDate, TValue> results = [];
         bool first = true;
         TValue prior_value = Data.FirstOrDefault().Value;
-        foreach (KeyValuePair<TDate, TValue> kvp in Data)
+        foreach (KeyValuePair<TDate, TValue> current_point in Data)
         {
             if (first == true)
             {
-                results.Add(kvp.Key, TValue.Empty);
+                results.Add(current_point.Key, TValue.Empty);
                 first = false;
                 continue;
             }
 
-            IAccumulator<TValue> accumulator = kvp.Value.GetAccumulator();
+            IAccumulator<TValue> accumulator = current_point.Value.GetAccumulator();
             accumulator.Divide(prior_value);
             accumulator.Add(-1);
-            results.Add(kvp.Key, accumulator.ToRecord());
-            prior_value = kvp.Value;
+            results.Add(current_point.Key, accumulator.ToRecord());
+            prior_value = current_point.Value;
         }
         return results;
     }
@@ -54,19 +53,21 @@ public static class DataModelSeriesTransformationUtilities
     {
         SortedDictionary<TDate, TValue> results = [];
         bool first = true;
-        foreach (KeyValuePair<TDate, TValue> kvp in Data)
+        TValue startingValue = Data.FirstOrDefault().Value;
+        foreach (KeyValuePair<TDate, TValue> current_point in Data)
         {
+            startingValue ??= current_point.Value; // Update only if null
             if (first == true)
             {
-                results.Add(kvp.Key, TValue.Empty);
+                results.Add(current_point.Key, TValue.Empty);
                 first = false;
                 continue;
             }
 
-            IAccumulator<TValue> accumulator = kvp.Value.GetAccumulator();
-            accumulator.Divide(Data.FirstOrDefault().Value); // Always divide by the starting value.
+            IAccumulator<TValue> accumulator = current_point.Value.GetAccumulator();
+            accumulator.Divide(startingValue); // Always divide by the starting value.
             accumulator.Add(-1);
-            results.Add(kvp.Key, accumulator.ToRecord());
+            results.Add(current_point.Key, accumulator.ToRecord());
         }
         return results;
     }
@@ -80,16 +81,17 @@ public static class DataModelSeriesTransformationUtilities
     /// <returns></returns>
     public static SortedDictionary<TDate, TValue> GetWealth<TDate, TValue>(SortedDictionary<TDate, TValue> Data, decimal starting_wealth = 1000)
         where TDate : struct, IDateTime<TDate>
-        where TValue : class, IDataModel<TValue>
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         SortedDictionary<TDate, TValue> results = [];
         TValue startingValue = Data.FirstOrDefault().Value;
-        foreach (KeyValuePair<TDate, TValue> kvp in Data)
+        foreach (KeyValuePair<TDate, TValue> current_value in Data)
         {
-            IAccumulator<TValue> accumulator = kvp.Value.GetAccumulator();
+            startingValue ??=current_value.Value; // Update only if null
+            IAccumulator<TValue> accumulator = current_value.Value.GetAccumulator();
             accumulator.Divide(startingValue);
             accumulator.Scale(starting_wealth);
-            results.Add(kvp.Key, accumulator.ToRecord());
+            results.Add(current_value.Key, accumulator.ToRecord());
         }
         return results;
     }
@@ -105,10 +107,11 @@ public static class DataModelSeriesTransformationUtilities
         where TValue : class, IDataModel<TValue>
     {
         SortedDictionary<TDate, TValue> results = [];
+        TValue lastValue = Data.LastOrDefault().Value;
         foreach (KeyValuePair<TDate, TValue> kvp in Data)
         {
             IAccumulator<TValue> accumulator = kvp.Value.GetAccumulator();
-            accumulator.Divide(Data.LastOrDefault().Value);
+            accumulator.Divide(lastValue);
             accumulator.Scale(ending_wealth);
             results.Add(kvp.Key, accumulator.ToRecord());
         }

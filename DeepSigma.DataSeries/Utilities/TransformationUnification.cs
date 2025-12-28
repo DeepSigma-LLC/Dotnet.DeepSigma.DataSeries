@@ -71,6 +71,6 @@ public static class TransformationUnification
         where TKey : struct, IDateTime<TKey>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        return GenericTimeSeriesTransformer.TransformedTimeSeriesData(data, transformation);
+        return GenericTimeSeriesTransformer.GetCompleteTransformedTimeSeriesData(data, transformation);
     }
 }

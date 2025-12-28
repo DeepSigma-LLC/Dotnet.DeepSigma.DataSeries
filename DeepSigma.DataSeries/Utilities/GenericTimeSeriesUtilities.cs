@@ -1,10 +1,8 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
-using DeepSigma.General;
 using DeepSigma.General.DateTimeUnification;
 using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
-using DeepSigma.General.TimeStepper;
 
 namespace DeepSigma.DataSeries.Utilities;
 
@@ -13,21 +11,6 @@ namespace DeepSigma.DataSeries.Utilities;
 /// </summary>
 public static class GenericTimeSeriesUtilities
 {
-    /// <summary>
-    /// Gets transformed time series.
-    /// </summary>
-    /// <param name="Data"></param>
-    /// <param name="Transformation"></param>
-    /// <returns></returns>
-    public static SortedDictionary<TDate, TValue> GetTransformedTimeSeriesData<TDate, TValue>(SortedDictionary<TDate, TValue> Data, TimeSeriesTransformation Transformation)
-        where TDate : struct, IDateTime<TDate>
-        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
-    {
-        SortedDictionary<TDate, TValue> results = GenericTimeSeriesTransformer.TransformedTimeSeriesData(Data, Transformation);
-        results = GetScaledSeries(results, Transformation.Scalar);
-        results = GetLaggedTimeSeries(results, Transformation.ObservationLag, Transformation.DaySelectionTypeForLag);
-        return results;
-    }
 
     /// <summary>
     /// Gets series data multiplied by a specified scalar.
@@ -42,7 +25,7 @@ public static class GenericTimeSeriesUtilities
         if (Scalar == 1) return Data.CloneDeep();
 
         SortedDictionary<TKey, TDataModel> NewData = [];
-        foreach (var x in Data)
+        foreach (KeyValuePair<TKey, TDataModel> x in Data)
         {
             IAccumulator<TDataModel> mutable_record = x.Value.GetAccumulator();
             mutable_record.Scale(Scalar);
@@ -103,139 +86,30 @@ public static class GenericTimeSeriesUtilities
         if (SeriesConfigs.Count == 1) return SeriesConfigs[0].Data.CloneDeep();
 
         SortedDictionary<TKey, TDataModel> NewSeries = [];
-        HashSet<TKey> Keys = [];
-        SeriesConfigs.ForEach(x => Keys.UnionWith(x.Data.Keys));
+        HashSet<TKey> AggregatedKeys = [];
+        SeriesConfigs.ForEach(x => AggregatedKeys.UnionWith(x.Data.Keys));
 
-        foreach (var key in Keys)
+        foreach (TKey key in AggregatedKeys)
         {
             IAccumulator<TDataModel> mutable_record = FindMutableRecord(SeriesConfigs, key) ??
                 throw new InvalidOperationException("No series contains the specified key.");
 
             for (int i = 1; i < SeriesConfigs.Count; i++)
             {
+                TDataModel current_data_model = SeriesConfigs[i].Data[key];
                 Exception? error = SeriesConfigs[i].Operation switch
                 {
-                    MathematicalOperation.Add => mutable_record.Add(SeriesConfigs[i].Data[key]),
-                    MathematicalOperation.Subtract => mutable_record.Subtract(SeriesConfigs[i].Data[key]),
-                    MathematicalOperation.Multiply => mutable_record.Multiply(SeriesConfigs[i].Data[key]),
-                    MathematicalOperation.Divide => mutable_record.Divide(SeriesConfigs[i].Data[key]),
+                    MathematicalOperation.Add => mutable_record.Add(current_data_model),
+                    MathematicalOperation.Subtract => mutable_record.Subtract(current_data_model),
+                    MathematicalOperation.Multiply => mutable_record.Multiply(current_data_model),
+                    MathematicalOperation.Divide => mutable_record.Divide(current_data_model),
                     _ => new NotImplementedException("The specified mathematical operation is not implemented."),
                 };
             }
+
             NewSeries.Add(key, mutable_record.ToRecord());
         }
         return NewSeries;
-    }
-
-
-    /// <summary>
-    /// Rolls forward the last known value to fill missing dates in the time series. Required dates determined from periodicity time stepper.
-    /// </summary>
-    /// <param name="Data"></param>
-    /// <param name="TimeStep"></param>
-    /// <returns></returns>
-    public static SortedDictionary<TDate, TValue?> RollMissingValues<TDate, TValue>(SortedDictionary<TDate, TValue?> Data, SelfAligningTimeStepper<TDate> TimeStep)
-        where TDate : struct, IDateTime<TDate>
-    {
-        SortedDictionary<TDate, TValue?> results = [];
-        TDate StartDate = Data.Keys.Min();
-        TDate EndDate = Data.Keys.Max();
-        TDate selectedDateTime = StartDate;
-        TValue? lastKnownValue = default;
-        while (selectedDateTime <= EndDate)
-        {
-            bool found = Data.TryGetValue(selectedDateTime, out lastKnownValue);
-            results.Add(selectedDateTime, lastKnownValue);
-            selectedDateTime = TimeStep.GetNextTimeStep(selectedDateTime);
-        }
-
-        //Add final value if not added
-        if (!results.ContainsKey(EndDate))
-        {
-            results.Add(EndDate, Data[EndDate]);
-        }
-        return results;
-    }
-
-    /// <summary>
-    /// Fills missing dates required by the time step with null if no data exists for that date.
-    /// </summary>
-    /// <param name="Data"></param>
-    /// <param name="TimeStep"></param>
-    /// <returns></returns>
-    public static SortedDictionary<TDate, TValue?> FillMissingValuesWithNull<TDate, TValue>(SortedDictionary<TDate, TValue?> Data, SelfAligningTimeStepper<TDate> TimeStep)
-        where TDate : struct, IDateTime<TDate>
-    {
-        SortedDictionary<TDate, TValue?> results = [];
-        TDate StartDate = Data.Keys.Min();
-        TDate EndDate = Data.Keys.Max();
-        TDate selectedDateTime = StartDate;
-        while (selectedDateTime <= EndDate)
-        {
-            bool found = Data.TryGetValue(selectedDateTime, out var value);
-            if (found)
-            {
-                results.Add(selectedDateTime, value);
-            }
-            else
-            {
-                results.Add(selectedDateTime, default); // Add null for missing dates
-            }
-            selectedDateTime = TimeStep.GetNextTimeStep(selectedDateTime);
-        }
-
-        //Add final value if not added
-        if (!results.ContainsKey(EndDate))
-        {
-            results.Add(EndDate, Data[EndDate]);
-        }
-        return results;
-    }
-
-
-    /// <summary>
-    /// Gets lagged time series.
-    /// </summary>
-    /// <param name="Data"></param>
-    /// <param name="DaysToLag"></param>
-    /// <param name="daySelection"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    private static SortedDictionary<TDate, TValue> GetLaggedTimeSeries<TDate, TValue>(SortedDictionary<TDate, TValue> Data, int DaysToLag, DaySelectionType daySelection = DaySelectionType.Any)
-        where TDate : struct, IDateTime<TDate>
-    {
-        return daySelection switch
-        {
-            (DaySelectionType.Any) => _AddDaysToTimeSeriesDateTimes(Data, -DaysToLag),
-            (DaySelectionType.Weekday) => _AddBusinessDaysToTimeSeriesDateTimes(Data, -DaysToLag),
-            _ => throw new NotImplementedException(),
-        };
-    }
-
-    /// <summary>
-    /// Adds days to time series date times.
-    /// </summary>
-    /// <param name="Data"></param>
-    /// <param name="DaysToAdd"></param>
-    /// <returns></returns>
-    private static SortedDictionary<TDate, TValue> _AddDaysToTimeSeriesDateTimes<TDate, TValue>(SortedDictionary<TDate, TValue> Data, int DaysToAdd)
-        where TDate : struct, IDateTime<TDate>
-    {
-        return DaysToAdd == 0 ? Data :
-            Data.ToDictionary(x => x.Key.AddDays(DaysToAdd), x => x.Value).ToSortedDictionary();
-    }
-
-    /// <summary>
-    /// Adds business days to time series date times.
-    /// </summary>
-    /// <param name="Data"></param>
-    /// <param name="BusinessDaysToAdd"></param>
-    /// <returns></returns>
-    private static SortedDictionary<TDate, TValue> _AddBusinessDaysToTimeSeriesDateTimes<TDate, TValue>(SortedDictionary<TDate, TValue> Data, int BusinessDaysToAdd)
-        where TDate : struct, IDateTime<TDate>
-    {
-        return BusinessDaysToAdd == 0 ? Data :
-             Data.ToDictionary(x => x.Key.AddWeekdays(BusinessDaysToAdd), x => x.Value).ToSortedDictionary();
     }
 
     /// <summary>
@@ -250,11 +124,11 @@ public static class GenericTimeSeriesUtilities
         where TKey : notnull, IComparable<TKey>
         where TValue : class, IDataModel<TValue>
     {
-        foreach (var (Data, Operation) in series_configs)
+        foreach ((SortedDictionary<TKey, TValue> Data, var _) in series_configs)
         {
-            if (Data.ContainsKey(selected_key))
+            if (Data.TryGetValue(selected_key, out TValue? value))
             {
-                return Data[selected_key].GetAccumulator();
+                return value?.GetAccumulator();
             }
         }
         return null;

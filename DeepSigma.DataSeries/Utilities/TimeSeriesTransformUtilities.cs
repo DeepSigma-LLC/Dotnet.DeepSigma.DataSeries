@@ -1,7 +1,6 @@
 ﻿using DeepSigma.DataSeries.Enums;
 using DeepSigma.General.DateTimeUnification;
 using DeepSigma.General.Extensions;
-using DeepSigma.General.TimeStepper;
 
 namespace DeepSigma.DataSeries.Utilities;
 
@@ -182,7 +181,7 @@ internal static class TimeSeriesTransformUtilities
         foreach (KeyValuePair<TDate, decimal?> kvp in Data)
         {
             decimal windowCount = Data.Where(x => x.Key <= kvp.Key).Count();
-            if (SetClassification == StatisticsDataSetClassification.Sample) windowCount = windowCount - 1;
+            if (SetClassification == StatisticsDataSetClassification.Sample) windowCount--;
 
             decimal? windowAverage = Data.Where(x => x.Key <= kvp.Key && x.Value.HasValue).Average(x => x.Value);
             decimal? sum = Data.Where(x => x.Key <= kvp.Key && x.Value.HasValue).Sum(x => (x.Value - windowAverage).PowerExact(2));
@@ -213,7 +212,7 @@ internal static class TimeSeriesTransformUtilities
         TDate? windowStartDateTime = Data.Keys.Min();
 
         int windowCount = ObservationWindowCount;
-        if (SetClassification == StatisticsDataSetClassification.Sample) windowCount = windowCount - 1;
+        if (SetClassification == StatisticsDataSetClassification.Sample) windowCount--;
 
         int observationIndex = 0;
         foreach (KeyValuePair<TDate, decimal?> kvp in Data)
@@ -235,70 +234,6 @@ internal static class TimeSeriesTransformUtilities
                 results.Add(kvp.Key, standardDeviation);
             }
             observationIndex++;
-        }
-        return results;
-    }
-
-    /// <summary>
-    /// Fills missing dates required by the time step with null if no data exists for that date.
-    /// </summary>
-    /// <param name="Data"></param>
-    /// <param name="TimeStep"></param>
-    /// <returns></returns>
-    public static SortedDictionary<TDate, decimal?> FillMissingValuesWithNull<TDate>(SortedDictionary<TDate, decimal?> Data, SelfAligningTimeStepper<TDate> TimeStep)
-        where TDate : struct, IDateTime<TDate>
-    {
-        SortedDictionary<TDate, decimal?> results = [];
-        TDate StartDate = Data.Keys.Min();
-        TDate EndDate = Data.Keys.Max();
-        TDate selectedDateTime = StartDate;
-        while (selectedDateTime <= EndDate)
-        {
-            bool found = Data.TryGetValue(selectedDateTime, out var value);
-            if (found)
-            {
-                results.Add(selectedDateTime, value);
-            }
-            else
-            {
-                results.Add(selectedDateTime, null); // Add null for missing dates
-            }
-            selectedDateTime = TimeStep.GetNextTimeStep(selectedDateTime);
-        }
-
-        //Add final value if not added
-        if (!results.ContainsKey(EndDate))
-        {
-            results.Add(EndDate, Data[EndDate]);
-        }
-        return results;
-    }
-
-    /// <summary>
-    /// Rolls forward the last known value to fill missing dates in the time series. Required dates determined from periodicity time stepper.
-    /// </summary>
-    /// <param name="Data"></param>
-    /// <param name="TimeStep"></param>
-    /// <returns></returns>
-    public static SortedDictionary<TDate, decimal?> RollMissingValues<TDate>(SortedDictionary<TDate, decimal?> Data, SelfAligningTimeStepper<TDate> TimeStep)
-        where TDate : struct, IDateTime<TDate>
-    {
-        SortedDictionary<TDate, decimal?> results = [];
-        TDate StartDate = Data.Keys.Min();
-        TDate EndDate = Data.Keys.Max();
-        TDate selectedDateTime = StartDate;
-        decimal? lastKnownValue = null;
-        while (selectedDateTime <= EndDate)
-        {
-            bool found = Data.TryGetValue(selectedDateTime, out lastKnownValue);
-            results.Add(selectedDateTime, lastKnownValue);
-            selectedDateTime = TimeStep.GetNextTimeStep(selectedDateTime);
-        }
-
-        //Add final value if not added
-        if (!results.ContainsKey(EndDate))
-        {
-            results.Add(EndDate, Data[EndDate]);
         }
         return results;
     }

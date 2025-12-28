@@ -51,13 +51,13 @@ public class ObservationAccumulator(Observation observation)
     /// <inheritdoc/>
     public sealed override void Max(Observation other)
     {
-        Value = Value > other.Value ? Value : other.Value;
+        Value = Math.Max(Value, other.Value);
     }
 
     /// <inheritdoc/>
     public sealed override void Min(Observation other)
     {
-        Value = Value < other.Value ? Value : other.Value;
+        Value = Math.Min(Value, other.Value);
     }
 
     public sealed override void Power(decimal exponent)

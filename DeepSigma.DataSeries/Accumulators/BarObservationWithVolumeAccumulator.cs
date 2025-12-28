@@ -66,21 +66,21 @@ public class BarObservationWithVolumeAccumulator(BarObservationWithVolume observ
     /// <inheritdoc/>
     public sealed override void Max(BarObservationWithVolume other)
     {
-        this.Close = this.Close > other.Close ? this.Close : other.Close;
-        this.Low = this.Low > other.Low ? this.Low : other.Low;
-        this.High = this.High > other.High ? this.High : other.High;
-        this.Open = this.Open > other.Open ? this.Open : other.Open;
-        this.Volume = this.Volume > other.Volume ? this.Volume : other.Volume;
+        this.Close = Math.Max(this.Close, other.Close);
+        this.Low = Math.Max(this.Low, other.Low);
+        this.High = Math.Max(this.High, other.High);
+        this.Open = Math.Max(this.Open, other.Open);
+        this.Volume = Math.Max(this.Volume, other.Volume);
     }
 
     /// <inheritdoc/>
     public sealed override void Min(BarObservationWithVolume other)
     {
-        this.Close = this.Close < other.Close ? this.Close : other.Close;
-        this.Low = this.Low < other.Low ? this.Low : other.Low;
-        this.High = this.High < other.High ? this.High : other.High;
-        this.Open = this.Open < other.Open ? this.Open : other.Open;
-        this.Volume = this.Volume < other.Volume ? this.Volume : other.Volume;
+        this.Close = Math.Min(this.Close, other.Close);
+        this.Low = Math.Min(this.Low, other.Low);
+        this.High = Math.Min(this.High, other.High);
+        this.Open = Math.Min(this.Open, other.Open);
+        this.Volume = Math.Min(this.Volume, other.Volume);
     }
 
     /// <summary>

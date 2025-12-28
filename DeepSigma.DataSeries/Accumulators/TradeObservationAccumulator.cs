@@ -51,15 +51,15 @@ public class TradeObservationAccumulator(TradeObservation TradeObservation)
     /// <inheritdoc/>
     public sealed override void Max(TradeObservation other)
     {
-        this.Price = this.Price > other.Price ? this.Price : other.Price;
-        this.Quantity = this.Quantity > other.Quantity ? this.Quantity : other.Quantity;
+        this.Price = Math.Max(this.Price, other.Price);
+        this.Quantity = Math.Max(this.Quantity, other.Quantity);
     }
 
     /// <inheritdoc/>
     public override void Min(TradeObservation other)
     {
-        this.Price = this.Price < other.Price ? this.Price : other.Price;
-        this.Quantity = this.Quantity < other.Quantity ? this.Quantity : other.Quantity;
+        this.Price = Math.Min(this.Price, other.Price);
+        this.Quantity = Math.Min(this.Quantity, other.Quantity);
     }
 
 
