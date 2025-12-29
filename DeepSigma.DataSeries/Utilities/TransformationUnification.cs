@@ -1,6 +1,4 @@
-﻿
-
-using DeepSigma.DataSeries.Interfaces;
+﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General.DateTimeUnification;
 

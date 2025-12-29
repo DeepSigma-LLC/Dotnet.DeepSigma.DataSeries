@@ -2,6 +2,7 @@
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.General.DateTimeUnification;
 using DeepSigma.General.Extensions;
+using OneOf.Types;
 
 namespace DeepSigma.DataSeries.Utilities;
 
@@ -155,28 +156,25 @@ public static class DataModelSeriesTransformationUtilities
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        SortedDictionary<TDate, TValue> results = [];
-
-        // Fill initial values with nulls
-        for (int i = 0; i < ObservationWindowCount - 1; i++)
-        {
-            results.Add(Data.ElementAt(i).Key, TValue.Empty);
-        }
-
-        // Calculate moving averages
-        for (int i_to_skip = 0; i_to_skip <= Data.Count - ObservationWindowCount; i_to_skip++)
-        {
-            var items = Data.Skip(i_to_skip).Take(ObservationWindowCount);
-            IAccumulator<TValue> accumulator = items.FirstOrDefault().Value.GetAccumulator();
-            items.Skip(1).ForEach(x => accumulator.Add(x.Value)); // Skip first as it's already in the accumulator
-
-            accumulator.Scale(1 / ObservationWindowCount.ToDecimal());
-            int index = ObservationWindowCount + i_to_skip - 1;
-            results.Add(Data.ElementAt(index).Key, accumulator.ToRecord());
-        }
-        return results;
+        return Data.GetWindowedSeriesWithMethodApplied(GetAverage, ObservationWindowCount, () => TValue.Empty);
     }
 
+    /// <summary>
+    /// Computes the average for a given data set.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="Data"></param>
+    /// <returns></returns>
+    private static TValue GetAverage<TValue>(IEnumerable<TValue> Data)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        IAccumulator<TValue>? accumulator = Data.FirstOrDefault()?.GetAccumulator();
+        if (accumulator is null) return TValue.Empty;
+
+        Data.Skip(1).ForEach(x => accumulator.Add(x)); // Skip first as it's already in the accumulator
+        accumulator.Scale(1 / Data.Count().ToDecimal());
+        return accumulator.ToRecord();
+    }
 
     /// <summary>
     /// Gets a standard deviation time series calculated using an expanding window.
@@ -188,20 +186,7 @@ public static class DataModelSeriesTransformationUtilities
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        SortedDictionary<TDate, TValue> results = [];
-        if (Data.Count >= 1)
-        {
-            results.Add(Data.FirstOrDefault().Key, TValue.Empty); // First value is always null since there's no variance with one data point.
-        }
-
-        for (int i = 1; i < Data.Count; i++)
-        {
-            int count_of_items = i + 1;
-            var subset = Data.Take(count_of_items);
-            TValue result = ComputeStandardDeviation(subset, SetClassification);
-            results.Add(Data.ElementAt(i).Key, result);
-        }
-        return results;
+        return Data.GetExpandingWindowedSeriesWithMethodApplied((x) => ComputeStandardDeviation(x, SetClassification));
     }
 
     /// <summary>
@@ -215,57 +200,44 @@ public static class DataModelSeriesTransformationUtilities
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        SortedDictionary<TDate, TValue> results = [];
-
-        // Fill initial values with nulls
-        for (int i = 0; i < ObservationWindowCount - 1; i++)
-        {
-            results.Add(Data.FirstOrDefault().Key, TValue.Empty); // Add nulls for initial values where we don't have enough data points
-        }
-
-        // Calculate moving averages
-        for (int i_to_skip = 0; i_to_skip <= Data.Count - ObservationWindowCount; i_to_skip++)
-        {
-            var subset = Data.Skip(i_to_skip).Take(ObservationWindowCount);
-            TValue result = ComputeStandardDeviation(subset, SetClassification);
-            int index = ObservationWindowCount + i_to_skip - 1;
-            results.Add(Data.ElementAt(index).Key, result);
-        }
-        return results;
+        return Data.GetWindowedSeriesWithMethodApplied((x) => ComputeStandardDeviation(x, SetClassification), ObservationWindowCount, () => TValue.Empty);
     }
+
 
     /// <summary>
     /// Computes the standard deviation for a given data set.
     /// </summary>
-    /// <typeparam name="TDate"></typeparam>
     /// <typeparam name="TValue"></typeparam>
     /// <param name="Data"></param>
     /// <param name="SetClassification"></param>
     /// <returns></returns>
-    private static TValue ComputeStandardDeviation<TDate, TValue>(IEnumerable<KeyValuePair<TDate, TValue>> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
-        where TDate : struct, IDateTime<TDate>
-        where TValue : class, IDataModel<TValue>
+    private static TValue ComputeStandardDeviation<TValue>(IEnumerable<TValue> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        IAccumulator<TValue> window_average = Data.FirstOrDefault().Value.GetAccumulator();
-        Data.Skip(1).ForEach(x => window_average.Add(x.Value)); // Skip first as it's already in the accumulator
+        if(Data.Count() >= 1) return TValue.Empty; // Standard deviation is undefined for less than 2 data points
 
-        int window_count = Data.Count();
-        if (SetClassification == StatisticsDataSetClassification.Sample) window_count = window_count - 1;
+        IAccumulator<TValue>? window_average = Data.FirstOrDefault()?.GetAccumulator();
+        if (window_average is null) return TValue.Empty;
 
+        Data.Skip(1).ForEach(x => window_average.Add(x)); // Skip first as it's already in the accumulator
         window_average.Scale(1 / Data.Count().ToDecimal());
 
-        IAccumulator<TValue> sum_squared_diff_accumulator = Data.FirstOrDefault().Value.GetAccumulator();
+        IAccumulator<TValue>? sum_squared_diff_accumulator = Data.FirstOrDefault()?.GetAccumulator();
+        if (sum_squared_diff_accumulator is null) return TValue.Empty;
+
         sum_squared_diff_accumulator.Scale(0); // Reset to zero
 
         foreach (var item in Data)
         {
-            IAccumulator<TValue> diff_accumulator = item.Value.GetAccumulator();
+            IAccumulator<TValue> diff_accumulator = item.GetAccumulator();
             diff_accumulator.Subtract(window_average.ToRecord());
 
             diff_accumulator.Power(2); // Square the difference
             sum_squared_diff_accumulator.Add(diff_accumulator.ToRecord());
         }
 
+        int window_count = Data.Count();
+        if (SetClassification == StatisticsDataSetClassification.Sample) window_count = window_count - 1;
         sum_squared_diff_accumulator.Scale(1 / window_count.ToDecimal()); // Get average of squared differences. Aka variance
         sum_squared_diff_accumulator.Power(0.5m); // Square root
         return sum_squared_diff_accumulator.ToRecord();

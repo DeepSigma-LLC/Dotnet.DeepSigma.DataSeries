@@ -24,7 +24,7 @@ public static class GenericTimeSeriesTransformer
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        SortedDictionary<TDate, TValue> results = GenericTimeSeriesTransformer.TransformedTimeSeriesData(Data, Transformation);
+        SortedDictionary<TDate, TValue> results = TransformedTimeSeriesData(Data, Transformation);
         results = GenericTimeSeriesUtilities.GetScaledSeries(results, Transformation.Scalar);
         results = results.LagByDays(Transformation.ObservationLag, Transformation.DaySelectionTypeForLag);
         return results;

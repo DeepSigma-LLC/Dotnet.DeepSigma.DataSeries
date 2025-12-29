@@ -149,23 +149,7 @@ internal static class TimeSeriesTransformUtilities
     internal static SortedDictionary<TDate, decimal?> GetMovingAverageWindowed<TDate>(SortedDictionary<TDate, decimal?> Data, int ObservationWindowCount = 20)
         where TDate : struct, IDateTime<TDate>
     {
-        SortedDictionary<TDate, decimal?> results = [];
-        TDate windowStartDateTime = Data.Keys.Min();
-
-        int observationIndex = 0;
-        foreach (KeyValuePair<TDate, decimal?> kvp in Data)
-        {
-            if (observationIndex + 1 >= ObservationWindowCount)
-            {
-                int observationWindowStartIndex = observationIndex + 1 - ObservationWindowCount;
-                windowStartDateTime = Data.ElementAt(observationWindowStartIndex).Key;
-
-                decimal? windowAverage = Data.Where(x => x.Key >= windowStartDateTime && x.Key <= kvp.Key && x.Value.HasValue).Average(x => x.Value);
-                results.Add(kvp.Key, windowAverage);
-            }
-            observationIndex++;
-        }
-        return results;
+        return Data.GetWindowedSeriesWithMethodApplied(Average, ObservationWindowCount);
     }
 
     /// <summary>
@@ -177,25 +161,7 @@ internal static class TimeSeriesTransformUtilities
     internal static SortedDictionary<TDate, decimal?> GetStandardDeviationExpandingWindow<TDate>(SortedDictionary<TDate, decimal?> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
         where TDate : struct, IDateTime<TDate>
     {
-        SortedDictionary<TDate, decimal?> results = [];
-        foreach (KeyValuePair<TDate, decimal?> kvp in Data)
-        {
-            decimal windowCount = Data.Where(x => x.Key <= kvp.Key).Count();
-            if (SetClassification == StatisticsDataSetClassification.Sample) windowCount--;
-
-            decimal? windowAverage = Data.Where(x => x.Key <= kvp.Key && x.Value.HasValue).Average(x => x.Value);
-            decimal? sum = Data.Where(x => x.Key <= kvp.Key && x.Value.HasValue).Sum(x => (x.Value - windowAverage).PowerExact(2));
-
-            if (windowCount == 0)
-            {
-                results.Add(kvp.Key, null);
-                continue;
-            }
-  
-             decimal? standardDeviation = Math.Sqrt((sum / windowCount));
-             results.Add(kvp.Key, standardDeviation);
-        }
-        return results;
+        return Data.GetExpandingWindowedSeriesWithMethodApplied(values => StandardDeviation(values, SetClassification));
     }
 
     /// <summary>
@@ -208,33 +174,33 @@ internal static class TimeSeriesTransformUtilities
     internal static SortedDictionary<TDate, decimal?> GetStandardDeviationWindowed<TDate>(SortedDictionary<TDate, decimal?> Data, int ObservationWindowCount = 20, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
         where TDate : struct, IDateTime<TDate>
     {
-        SortedDictionary<TDate, decimal?> results = [];
-        TDate? windowStartDateTime = Data.Keys.Min();
+        return Data.GetWindowedSeriesWithMethodApplied(values => StandardDeviation(values, SetClassification), ObservationWindowCount);
+    }
 
-        int windowCount = ObservationWindowCount;
-        if (SetClassification == StatisticsDataSetClassification.Sample) windowCount--;
+    /// <summary>
+    /// Calculates the standard deviation of a set of decimal values.
+    /// </summary>
+    /// <param name="values"></param>
+    /// <param name="SetClassification"></param>
+    /// <returns></returns>
+    private static decimal? StandardDeviation(IEnumerable<decimal?> values, StatisticsDataSetClassification SetClassification)
+    {
+        if (values.Count() <= 1) return null; // Need at least 2 values to compute standard deviation
 
-        int observationIndex = 0;
-        foreach (KeyValuePair<TDate, decimal?> kvp in Data)
-        {
-            if (observationIndex + 1 >= ObservationWindowCount)
-            {
-                int observationWindowStartIndex = observationIndex + 1 - ObservationWindowCount;
-                windowStartDateTime = Data.ElementAt(observationWindowStartIndex).Key;
+        decimal? average = values.Where(x => x.HasValue).Average(x => x.Value);
+        decimal? sum = values.Where(x => x.HasValue).Sum(x => (x.Value - average).PowerExact(2));
+        decimal count = values.Where(x => x.HasValue).Count();
+        if (SetClassification == StatisticsDataSetClassification.Sample) count--;
+        return Math.Sqrt(sum / count);
+    }
 
-                decimal? windowAverage = Data.Where(x => x.Key >= windowStartDateTime && x.Key <= kvp.Key && x.Value.HasValue).Average(x => x.Value);
-                decimal? sum = Data.Where(x => x.Key >= windowStartDateTime && x.Key <= kvp.Key && x.Value.HasValue).Sum(x => (x.Value - windowAverage).PowerExact(2));
-
-                if (windowCount == 0)
-                {
-                    results.Add(kvp.Key, null);
-                    continue;
-                }
-                decimal? standardDeviation = Math.Sqrt(sum / windowCount);
-                results.Add(kvp.Key, standardDeviation);
-            }
-            observationIndex++;
-        }
-        return results;
+    /// <summary>
+    /// Calculates the average of a set of decimal values.
+    /// </summary>
+    /// <param name="values"></param>
+    /// <returns></returns>
+    private static decimal? Average(IEnumerable<decimal?> values)
+    {
+        return values.Where(x => x.HasValue).Average(x => x.Value);
     }
 }
