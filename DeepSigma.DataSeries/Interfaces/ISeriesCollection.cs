@@ -57,5 +57,5 @@ public interface ISeriesCollection<TKey, TDataType, TTransformation>
     /// Retrieves the transformed data series in the collection.
     /// </summary>
     /// <returns></returns>
-    SortedDictionary<TKey, TDataType>? GetCombinedScaledAndTransformedSeriesData();
+    SortedDictionary<TKey, TDataType> GetCombinedScaledAndTransformedSeriesData();
 }

@@ -66,7 +66,7 @@ public class DataSet<TKeyDataType, TValueDataType>
     /// <returns></returns>
     public SortedDictionary<TKeyDataType, TResult?> GetSingleSeries<TResult>(Expression<Func<TValueDataType, TResult?>> target_property)
     {
-        return Data.GetExtractedPropertyAsSeriesSorted(target_property);
+        return Data.GetExtractedPropertyAsSeries(target_property).ToSortedDictionary();
     }
 
     /// <inheritdoc/>

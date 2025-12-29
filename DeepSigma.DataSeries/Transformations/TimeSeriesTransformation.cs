@@ -28,7 +28,7 @@ public class TimeSeriesTransformation : SeriesTransformation, ISeriesTransformat
     /// If "Anyday" then the lag does not care about weekdays (i.e., Monday data is lagged to Sunday). 
     /// If "Weekdays" are selected then Monday values are lagged to Friday.
     /// </summary>
-    public DaySelectionType DaySelectionTypeForLag { get; set; } = DaySelectionType.AnyDay;
+    public DaySelectionType DaySelectionTypeForLag { get; set; } = DaySelectionType.Any;
 
     /// <summary>
     /// Data transformation of the time series data.

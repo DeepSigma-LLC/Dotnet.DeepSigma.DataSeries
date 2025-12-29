@@ -93,7 +93,7 @@ public class SeriesCollection<TKey, TDataType, TTransformation>
     /// error occurs during the combination process, the method returns null and logs the error.</remarks>
     /// <returns>A sorted dictionary containing the combined and transformed data from all sub-series, or null if the combination
     /// fails or no data is available.</returns>
-    public SortedDictionary<TKey, TDataType>? GetCombinedScaledAndTransformedSeriesData()
+    public SortedDictionary<TKey, TDataType> GetCombinedScaledAndTransformedSeriesData()
     {
         if (GetSubSeriesCount() == 1)
         {

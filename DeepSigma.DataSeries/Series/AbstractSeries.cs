@@ -45,10 +45,10 @@ public abstract class AbstractSeries<TCollectionKey, TCollectionDataType, TTrans
     public TTransformation Transformation { get; set; }
 
     /// <inheritdoc/>
-    public abstract SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataScaled();
+    public abstract SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataScaled();
 
     /// <inheritdoc/>
-    public SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataScaledAndTransformed()
+    public SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataScaledAndTransformed()
     {
         return TransformationUnification.GetTransformedData(GetSeriesDataScaled() ?? [], this.Transformation);
     }

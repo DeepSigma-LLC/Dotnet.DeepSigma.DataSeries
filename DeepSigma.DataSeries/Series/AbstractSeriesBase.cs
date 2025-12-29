@@ -43,9 +43,9 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
     public sealed override int GetSubSeriesCount() => 1;
 
     /// <inheritdoc/>
-    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataScaled()
+    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataScaled()
     {
-        return DataModelSeriesUtilities.GetScaledSeries(Data, Transformation.Scalar);
+        return GenericTimeSeriesUtilities.GetScaledSeries(Data, Transformation.Scalar);
     }
 
     /// <summary>

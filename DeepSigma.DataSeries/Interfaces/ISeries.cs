@@ -32,13 +32,13 @@ public interface ISeries<TCollectionKey, TCollectionDataType, TTransformation>
     /// Gets the data of the series.
     /// </summary>
     /// <returns></returns>
-    SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataScaled();
+    SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataScaled();
 
     /// <summary>
     /// Gets the transformed data of the series.
     /// </summary>
     /// <returns></returns>
-    SortedDictionary<TCollectionKey, TCollectionDataType>? GetSeriesDataScaledAndTransformed();
+    SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataScaledAndTransformed();
 
     /// <summary>
     /// Gets the count of sub-series within the series.
