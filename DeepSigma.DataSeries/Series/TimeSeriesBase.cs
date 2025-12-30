@@ -14,9 +14,14 @@ namespace DeepSigma.DataSeries.Series;
 public class TimeSeriesBase<TDateKey, TValueDataType> : 
     AbstractSeriesBase<TDateKey, TValueDataType, TimeSeriesTransformation>
     where TDateKey : struct, IDateTime<TDateKey>
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueDataType : class, IDataModel<TValueDataType>, IDataModelStatic<TValueDataType>
 {
     /// <inheritdoc cref="TimeSeriesBase{TDateKey, TValueDataType}"/>
-    public TimeSeriesBase(SortedDictionary<TDateKey, TValueDataType> data) : base(data){}
+    public TimeSeriesBase(SortedDictionary<TDateKey, TValueDataType> data) : base(data){ }
 
+    /// <inheritdoc/>
+    public sealed override SortedDictionary<TDateKey, TValueDataType> GetSeriesDataTransformed()
+    {
+        return GenericTimeSeriesTransformer.GetCompleteTransformedTimeSeriesData(Data, Transformation);
+    }
 }

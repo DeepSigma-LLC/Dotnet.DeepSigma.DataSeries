@@ -98,11 +98,11 @@ public class SeriesCollection<TKey, TDataType, TTransformation>
         if (GetSubSeriesCount() == 1)
         {
             var selected_series = SubSeriesCollection.First();
-            return selected_series.Series.GetSeriesDataScaledAndTransformed();
+            return selected_series.Series.GetSeriesDataTransformed();
         }
 
         List<(SortedDictionary<TKey, TDataType>, MathematicalOperation)> Series = [];
-        SubSeriesCollection.ForEach(x => Series.Add((x.Series.GetSeriesDataScaledAndTransformed() ?? [], x.MathematicalOperation)));
+        SubSeriesCollection.ForEach(x => Series.Add((x.Series.GetSeriesDataTransformed() ?? [], x.MathematicalOperation)));
 
         return GenericTimeSeriesUtilities.GetCombinedSeries(Series);
     }

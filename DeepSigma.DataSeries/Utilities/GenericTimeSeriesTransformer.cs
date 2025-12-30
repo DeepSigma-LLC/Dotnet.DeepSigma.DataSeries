@@ -4,15 +4,13 @@ using DeepSigma.DataSeries.Enums;
 using DeepSigma.General.DateTimeUnification;
 using DeepSigma.General.Extensions;
 using DeepSigma.General.Enums;
-using DeepSigma.General.TimeStepper;
-using DeepSigma.General;
 
 namespace DeepSigma.DataSeries.Utilities;
 
 /// <summary>
 /// Utility class for transforming generic time series data.
 /// </summary>
-public static class GenericTimeSeriesTransformer
+internal static class GenericTimeSeriesTransformer
 {
     /// <summary>
     /// Gets transformed time series.
@@ -20,7 +18,7 @@ public static class GenericTimeSeriesTransformer
     /// <param name="Data"></param>
     /// <param name="Transformation"></param>
     /// <returns></returns>
-    public static SortedDictionary<TDate, TValue> GetCompleteTransformedTimeSeriesData<TDate, TValue>(SortedDictionary<TDate, TValue> Data, TimeSeriesTransformation Transformation)
+    internal static SortedDictionary<TDate, TValue> GetCompleteTransformedTimeSeriesData<TDate, TValue>(SortedDictionary<TDate, TValue> Data, TimeSeriesTransformation Transformation)
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -68,6 +66,8 @@ public static class GenericTimeSeriesTransformer
             (TimeSeriesDataTransformation.Return) => DataModelSeriesTransformationUtilities.GetObservationReturns(Data),
             (TimeSeriesDataTransformation.AnnualizedVolatilityExpandingWindow) => GetAnnualizedVolatilityExpandingWindow(Data),
             (TimeSeriesDataTransformation.AnnualizedVolatilityWindow) => GetAnnualizedVolatilityWindowed(Data, ObservationWindowCount),
+            (TimeSeriesDataTransformation.StandardDeviationExpandingWindow) => GetStandardDeviationOfReturnsExpandingWindow(Data),
+            (TimeSeriesDataTransformation.StandardDeviationWindow) => GetStandardDeviationOfReturnsWindowed(Data, ObservationWindowCount: ObservationWindowCount),
             (TimeSeriesDataTransformation.Drawdown) => DataModelSeriesTransformationUtilities.GetDrawdownPercentage(Data),
             (TimeSeriesDataTransformation.SD_1_Positive) => GetStandardDeviationBand(Data, ObservationWindowCount, 1),
             (TimeSeriesDataTransformation.SD_1_Negative) => GetStandardDeviationBand(Data, ObservationWindowCount, -1),
@@ -78,6 +78,24 @@ public static class GenericTimeSeriesTransformer
             _ => throw new NotImplementedException(),
         };
     }
+
+    private static SortedDictionary<TDate, TValue> GetStandardDeviationOfReturnsExpandingWindow<TDate, TValue>(SortedDictionary<TDate, TValue> Data)
+      where TDate : struct, IDateTime<TDate>
+      where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+
+        SortedDictionary<TDate, TValue> TempData = DataModelSeriesTransformationUtilities.GetObservationReturns(Data);
+        return DataModelSeriesTransformationUtilities.GetStandardDeviationExpandingWindow(TempData);
+    }
+
+    private static SortedDictionary<TDate, TValue> GetStandardDeviationOfReturnsWindowed<TDate, TValue>(SortedDictionary<TDate, TValue> Data, int ObservationWindowCount)
+      where TDate : struct, IDateTime<TDate>
+      where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        SortedDictionary<TDate, TValue> TempData = DataModelSeriesTransformationUtilities.GetObservationReturns(Data);
+        return DataModelSeriesTransformationUtilities.GetStandardDeviationWindowed(TempData, ObservationWindowCount);
+    }
+
 
     private static SortedDictionary<TDate, TValue> GetAnnualizedVolatilityExpandingWindow<TDate, TValue>(SortedDictionary<TDate, TValue> Data)
         where TDate : struct, IDateTime<TDate>

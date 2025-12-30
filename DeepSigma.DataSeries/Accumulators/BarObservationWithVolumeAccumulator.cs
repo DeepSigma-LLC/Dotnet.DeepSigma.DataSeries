@@ -95,4 +95,5 @@ public class BarObservationWithVolumeAccumulator(BarObservationWithVolume observ
         this.Close = this.Close.Power(exponent);
         this.Volume = this.Volume.Power(exponent);
     }
+
 }

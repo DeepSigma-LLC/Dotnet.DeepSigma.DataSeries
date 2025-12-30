@@ -69,5 +69,6 @@ public class BidAskSpreadObservationAccumulator(BidAskSpreadObservation BidAskSp
         this.Ask = this.Ask.Power(exponent);
         this.Bid = this.Bid.Power(exponent);
     }
+
 }
 

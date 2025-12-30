@@ -47,6 +47,14 @@ public enum TimeSeriesDataTransformation
     /// </summary>
     AnnualizedVolatilityWindow,
     /// <summary>
+    /// The standard deviation of the time series data calculated using an expanding window.
+    /// </summary>
+    StandardDeviationExpandingWindow,
+    /// <summary>
+    /// The standard deviation of the time series data calculated using a rolling window.
+    /// </summary>
+    StandardDeviationWindow,
+    /// <summary>
     /// The standard deviation of the time series data, which measures the amount of variation or dispersion of a set of values.
     /// </summary>
     SD_1_Positive,

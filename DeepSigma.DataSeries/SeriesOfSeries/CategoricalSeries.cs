@@ -17,5 +17,9 @@ public class CategoricalSeries<TValueDataType>
     /// <inheritdoc cref="CategoricalSeries{TValueDataType}"/>
     public CategoricalSeries(ILogger? logger = null) : base(logger) { }
 
-
+    /// <inheritdoc/>
+    public sealed override SortedDictionary<string, TValueDataType> GetSeriesDataTransformed()
+    {
+        return GenericTimeSeriesUtilities.GetScaledSeries(GetSeriesDataUnscaled(), Transformation.Scalar);
+    }
 }

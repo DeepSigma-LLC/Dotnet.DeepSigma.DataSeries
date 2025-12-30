@@ -9,7 +9,7 @@ namespace DeepSigma.DataSeries.Utilities;
 /// <summary>
 /// Utility class for time series operations.
 /// </summary>
-public static class GenericTimeSeriesUtilities
+internal static class GenericTimeSeriesUtilities
 {
 
     /// <summary>
@@ -18,7 +18,7 @@ public static class GenericTimeSeriesUtilities
     /// <param name="Data"></param>
     /// <param name="Scalar"></param>
     /// <returns></returns>
-    public static SortedDictionary<TKey, TDataModel> GetScaledSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> Data, decimal Scalar)
+    internal static SortedDictionary<TKey, TDataModel> GetScaledSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> Data, decimal Scalar)
         where TKey : notnull, IComparable<TKey>
         where TDataModel : class, IDataModel<TDataModel>
     {
@@ -40,7 +40,7 @@ public static class GenericTimeSeriesUtilities
     /// <param name="Data"></param>
     /// <param name="Scalar"></param>
     /// <returns></returns>
-    public static List<Tuple<TKey, TDataModel>> GetScaledSeries<TKey, TDataModel>(List<Tuple<TKey, TDataModel>> Data, decimal Scalar)
+    internal static List<Tuple<TKey, TDataModel>> GetScaledSeries<TKey, TDataModel>(List<Tuple<TKey, TDataModel>> Data, decimal Scalar)
         where TKey : notnull
         where TDataModel : class, IDataModel<TDataModel>
     {
@@ -61,7 +61,7 @@ public static class GenericTimeSeriesUtilities
     /// Gets series data multiplied by a specified scalar.
     /// </summary>
     /// <returns></returns>
-    public static SortedDictionary<TKey, TDataModel> GetCombinedSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> FirstSeries, SortedDictionary<TKey, TDataModel> OtherSeries, MathematicalOperation mathematicalOperation)
+    internal static SortedDictionary<TKey, TDataModel> GetCombinedSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> FirstSeries, SortedDictionary<TKey, TDataModel> OtherSeries, MathematicalOperation mathematicalOperation)
         where TKey : notnull, IComparable<TKey>
         where TDataModel : class, IDataModel<TDataModel>
     {
@@ -78,7 +78,7 @@ public static class GenericTimeSeriesUtilities
     /// Gets series data multiplied by a specified scalar.
     /// </summary>
     /// <returns></returns>
-    public static SortedDictionary<TKey, TDataModel> GetCombinedSeries<TKey, TDataModel>(List<(SortedDictionary<TKey, TDataModel> Data, MathematicalOperation Operation)> SeriesConfigs)
+    internal static SortedDictionary<TKey, TDataModel> GetCombinedSeries<TKey, TDataModel>(List<(SortedDictionary<TKey, TDataModel> Data, MathematicalOperation Operation)> SeriesConfigs)
         where TKey : notnull, IComparable<TKey>
         where TDataModel : class, IDataModel<TDataModel>
     {

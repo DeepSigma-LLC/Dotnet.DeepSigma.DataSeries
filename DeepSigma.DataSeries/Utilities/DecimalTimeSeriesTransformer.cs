@@ -46,6 +46,8 @@ internal class DecimalTimeSeriesTransformer
             (TimeSeriesDataTransformation.Return) => TimeSeriesTransformUtilities.GetObservationReturns(Data),
             (TimeSeriesDataTransformation.AnnualizedVolatilityExpandingWindow) => AnnualizedVolatilityExpandingWindow(Data),
             (TimeSeriesDataTransformation.AnnualizedVolatilityWindow) => AnnualizedVolatilityWindowed(Data, ObservationWindowCount),
+            (TimeSeriesDataTransformation.StandardDeviationExpandingWindow) => StandardDeviationOfReturnsExpandingWindow(Data),
+            (TimeSeriesDataTransformation.StandardDeviationWindow) => StandardDeviationofReturnsWindowed(Data, ObservationWindowCount),
             (TimeSeriesDataTransformation.Drawdown) => TimeSeriesTransformUtilities.GetDrawdown(Data),
             (TimeSeriesDataTransformation.SD_1_Positive) => GetStandardDeviationBand(Data, ObservationWindowCount, 1),
             (TimeSeriesDataTransformation.SD_1_Negative) => GetStandardDeviationBand(Data, ObservationWindowCount, -1),
@@ -84,6 +86,22 @@ internal class DecimalTimeSeriesTransformer
         return GetScaledSeries(TimeSeriesTransformUtilities.GetStandardDeviationWindowed(observation_returns, ObservationWindowCount: ObservationWindowCount), AnnualizationMultiplier);
     }
 
+    private static SortedDictionary<TDate, decimal?> StandardDeviationOfReturnsExpandingWindow<TDate>(SortedDictionary<TDate, decimal?> Data)
+    where TDate : struct, IDateTime<TDate>
+    {
+        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = Data.FillMissingValuesWithNull(new SelfAligningTimeStepper<TDate>(new(Periodicity.Daily, DaySelectionType.Weekday)));
+        SortedDictionary<TDate, decimal?> observation_returns = TimeSeriesTransformUtilities.GetObservationReturns(data_with_missing_days_filled);
+        return TimeSeriesTransformUtilities.GetStandardDeviationExpandingWindow(observation_returns);
+    }
+
+    private static SortedDictionary<TDate, decimal?> StandardDeviationofReturnsWindowed<TDate>(SortedDictionary<TDate, decimal?> Data, int ObservationWindowCount)
+    where TDate : struct, IDateTime<TDate>
+    {
+        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = Data.FillMissingValuesWithNull(new SelfAligningTimeStepper<TDate>(new(Periodicity.Daily, DaySelectionType.Weekday)));
+        SortedDictionary<TDate, decimal?> observation_returns = TimeSeriesTransformUtilities.GetObservationReturns(data_with_missing_days_filled);
+        return TimeSeriesTransformUtilities.GetStandardDeviationWindowed(observation_returns, ObservationWindowCount: ObservationWindowCount);
+    }
+
     /// <summary>
     /// Get one series by mathmatically combining two series.
     /// </summary>
@@ -93,7 +111,7 @@ internal class DecimalTimeSeriesTransformer
     /// <param name="mathematicalOperation"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public static SortedDictionary<T, decimal?> GetCombinedSeries<T>(SortedDictionary<T, decimal?> Data, SortedDictionary<T, decimal?> Data2, MathematicalOperation mathematicalOperation)
+    internal static SortedDictionary<T, decimal?> GetCombinedSeries<T>(SortedDictionary<T, decimal?> Data, SortedDictionary<T, decimal?> Data2, MathematicalOperation mathematicalOperation)
         where T : notnull, IComparable<T>
     {
         Func<decimal?, decimal?, decimal?>? function = mathematicalOperation switch
@@ -115,7 +133,7 @@ internal class DecimalTimeSeriesTransformer
     /// <param name="Data"></param>
     /// <param name="Scalar"></param>
     /// <returns></returns>
-    public static SortedDictionary<TKey, decimal?> GetScaledSeries<TKey>(SortedDictionary<TKey, decimal?> Data, decimal Scalar)
+    internal static SortedDictionary<TKey, decimal?> GetScaledSeries<TKey>(SortedDictionary<TKey, decimal?> Data, decimal Scalar)
         where TKey : notnull, IComparable<TKey>
     {
         if (Scalar == 1) return Data.CloneDeep();

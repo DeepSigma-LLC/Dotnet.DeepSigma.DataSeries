@@ -29,16 +29,18 @@ public interface ISeries<TCollectionKey, TCollectionDataType, TTransformation>
     void Clear();
 
     /// <summary>
-    /// Gets the data of the series.
+    /// Gets the data of the series unscaled. 
+    /// Note: This data is before any transformations are applied to the current series, however, sub-series transformations will still affect this data.
     /// </summary>
     /// <returns></returns>
-    SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataScaled();
+    SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataUnscaled();
 
     /// <summary>
     /// Gets the transformed data of the series.
+    /// Note: This data reflects current and all sub-series transformations applied to the series.
     /// </summary>
     /// <returns></returns>
-    SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataScaledAndTransformed();
+    SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataTransformed();
 
     /// <summary>
     /// Gets the count of sub-series within the series.

@@ -85,4 +85,5 @@ public class BarObservationAccumulator(BarObservation observation)
         this.High = this.High.Power(exponent);
         this.Low = this.Low.Power(exponent);
     }
+
 }

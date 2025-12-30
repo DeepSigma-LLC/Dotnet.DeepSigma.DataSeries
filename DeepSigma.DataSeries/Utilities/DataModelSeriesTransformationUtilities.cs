@@ -9,7 +9,7 @@ namespace DeepSigma.DataSeries.Utilities;
 /// <summary>
 /// Utilities for transforming data model series.
 /// </summary>
-public static class DataModelSeriesTransformationUtilities
+internal static class DataModelSeriesTransformationUtilities
 {
     /// <summary>
     /// Gets observation returns from series data.
@@ -18,7 +18,7 @@ public static class DataModelSeriesTransformationUtilities
     /// <typeparam name="TValue"></typeparam>
     /// <param name="Data"></param>
     /// <returns></returns>
-    public static SortedDictionary<TDate, TValue> GetObservationReturns<TDate, TValue>(SortedDictionary<TDate, TValue> Data)
+    internal static SortedDictionary<TDate, TValue> GetObservationReturns<TDate, TValue>(SortedDictionary<TDate, TValue> Data)
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -48,7 +48,7 @@ public static class DataModelSeriesTransformationUtilities
     /// </summary>
     /// <param name="Data"></param>
     /// <returns></returns>
-    public static SortedDictionary<TDate, TValue> GetCumulativeReturns<TDate, TValue>(SortedDictionary<TDate, TValue> Data)
+    internal static SortedDictionary<TDate, TValue> GetCumulativeReturns<TDate, TValue>(SortedDictionary<TDate, TValue> Data)
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -80,7 +80,7 @@ public static class DataModelSeriesTransformationUtilities
     /// <param name="Data"></param>
     /// <param name="starting_wealth"></param>
     /// <returns></returns>
-    public static SortedDictionary<TDate, TValue> GetWealth<TDate, TValue>(SortedDictionary<TDate, TValue> Data, decimal starting_wealth = 1000)
+    internal static SortedDictionary<TDate, TValue> GetWealth<TDate, TValue>(SortedDictionary<TDate, TValue> Data, decimal starting_wealth = 1000)
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -103,7 +103,7 @@ public static class DataModelSeriesTransformationUtilities
     /// <param name="Data"></param>
     /// <param name="ending_wealth"></param>
     /// <returns></returns>
-    public static SortedDictionary<TDate, TValue> GetWealthReverse<TDate, TValue>(SortedDictionary<TDate, TValue> Data, decimal ending_wealth = 1000)
+    internal static SortedDictionary<TDate, TValue> GetWealthReverse<TDate, TValue>(SortedDictionary<TDate, TValue> Data, decimal ending_wealth = 1000)
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>
     {
@@ -124,7 +124,7 @@ public static class DataModelSeriesTransformationUtilities
     /// </summary>
     /// <param name="Data"></param>
     /// <returns></returns>
-    public static SortedDictionary<TDate, TValue> GetDrawdownPercentage<TDate, TValue>(SortedDictionary<TDate, TValue> Data)
+    internal static SortedDictionary<TDate, TValue> GetDrawdownPercentage<TDate, TValue>(SortedDictionary<TDate, TValue> Data)
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>
     {
@@ -152,7 +152,7 @@ public static class DataModelSeriesTransformationUtilities
     /// <param name="Data"></param>
     /// <param name="ObservationWindowCount"></param>
     /// <returns></returns>
-    public static SortedDictionary<TDate, TValue> GetMovingAverageWindowed<TDate, TValue>(SortedDictionary<TDate, TValue> Data, int ObservationWindowCount = 20)
+    internal static SortedDictionary<TDate, TValue> GetMovingAverageWindowed<TDate, TValue>(SortedDictionary<TDate, TValue> Data, int ObservationWindowCount = 20)
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -182,7 +182,7 @@ public static class DataModelSeriesTransformationUtilities
     /// <param name="Data"></param>
     /// <param name="SetClassification"></param>
     /// <returns></returns>
-    public static SortedDictionary<TDate, TValue> GetStandardDeviationExpandingWindow<TDate, TValue>(SortedDictionary<TDate, TValue> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
+    internal static SortedDictionary<TDate, TValue> GetStandardDeviationExpandingWindow<TDate, TValue>(SortedDictionary<TDate, TValue> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -196,7 +196,7 @@ public static class DataModelSeriesTransformationUtilities
     /// <param name="SetClassification"></param>
     /// <param name="ObservationWindowCount"></param>
     /// <returns></returns>
-    public static SortedDictionary<TDate, TValue> GetStandardDeviationWindowed<TDate, TValue>(SortedDictionary<TDate, TValue> Data, int ObservationWindowCount = 20, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
+    internal static SortedDictionary<TDate, TValue> GetStandardDeviationWindowed<TDate, TValue>(SortedDictionary<TDate, TValue> Data, int ObservationWindowCount = 20, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -214,20 +214,21 @@ public static class DataModelSeriesTransformationUtilities
     private static TValue ComputeStandardDeviation<TValue>(IEnumerable<TValue> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        if(Data.Count() >= 1) return TValue.Empty; // Standard deviation is undefined for less than 2 data points
+        var sub_set = Data.Where(x => !x.IsEmpty);
+        if (sub_set.Count() <= 1) return TValue.Empty; // Standard deviation is undefined for less than 2 data points
 
-        IAccumulator<TValue>? window_average = Data.FirstOrDefault()?.GetAccumulator();
+        IAccumulator<TValue>? window_average = sub_set.FirstOrDefault()?.GetAccumulator();
         if (window_average is null) return TValue.Empty;
 
-        Data.Skip(1).ForEach(x => window_average.Add(x)); // Skip first as it's already in the accumulator
-        window_average.Scale(1 / Data.Count().ToDecimal());
+        sub_set.Skip(1).ForEach(x => window_average.Add(x)); // Skip first as it's already in the accumulator
+        window_average.Scale(1 / sub_set.Count().ToDecimal());
 
-        IAccumulator<TValue>? sum_squared_diff_accumulator = Data.FirstOrDefault()?.GetAccumulator();
+        IAccumulator<TValue>? sum_squared_diff_accumulator = sub_set.FirstOrDefault()?.GetAccumulator();
         if (sum_squared_diff_accumulator is null) return TValue.Empty;
 
         sum_squared_diff_accumulator.Scale(0); // Reset to zero
 
-        foreach (var item in Data)
+        foreach (var item in sub_set)
         {
             IAccumulator<TValue> diff_accumulator = item.GetAccumulator();
             diff_accumulator.Subtract(window_average.ToRecord());
@@ -236,7 +237,7 @@ public static class DataModelSeriesTransformationUtilities
             sum_squared_diff_accumulator.Add(diff_accumulator.ToRecord());
         }
 
-        int window_count = Data.Count();
+        int window_count = sub_set.Count(); // Or Data.Count() since we skipped empty values earlier
         if (SetClassification == StatisticsDataSetClassification.Sample) window_count = window_count - 1;
         sum_squared_diff_accumulator.Scale(1 / window_count.ToDecimal()); // Get average of squared differences. Aka variance
         sum_squared_diff_accumulator.Power(0.5m); // Square root

@@ -25,7 +25,7 @@ public class TimeSeries_Test
 
         // Assert
         Assert.False(timeSeries.IsEmpty);
-        Assert.Equal(3, timeSeries.GetSeriesDataScaled()?.Count);
+        Assert.Equal(3, timeSeries.GetSeriesDataUnscaled()?.Count);
         Assert.Equal(1, timeSeries.GetSubSeriesCount());
     }
 
@@ -52,9 +52,6 @@ public class TimeSeries_Test
     {
         Test_MultipleSubSeries(MathematicalOperation.Divide, (a, b) => a / b);
     }
-
-
-
 
     private void Test_MultipleSubSeries(MathematicalOperation mathematicalOperation, Func<decimal?, decimal?, decimal?> Operation)
     {
@@ -89,7 +86,7 @@ public class TimeSeries_Test
 
 
         // Validate the results of the sub-series
-        SortedDictionary<DateOnlyCustom, Observation>? seriesData = timeSeries.GetSeriesDataScaledAndTransformed();
+        SortedDictionary<DateOnlyCustom, Observation>? seriesData = timeSeries.GetSeriesDataTransformed();
         Assert.NotNull(seriesData);
         int i = 0;
         foreach (var item in seriesData)
@@ -103,7 +100,7 @@ public class TimeSeries_Test
     [Fact]
     public void Test_TimeSeries_WithDataModel()
     {
-        TimeSeries<DateOnlyCustom, BarObservation> time_Series = new();
+        TimeSeries<DateOnlyCustom, BarObservation> time_Series = [];
         BarObservation bar = new(12, 23, 44, 32);
         BarObservation bar1 = new(12, 23, 44, 32);
 
@@ -114,10 +111,7 @@ public class TimeSeries_Test
         seriesBase.Transformation.Scalar = 1;
         seriesBase.Transformation.DaySelectionTypeForLag = General.Enums.DaySelectionType.Any;   
         seriesBase.Transformation.DataTransformation = Enums.TimeSeriesDataTransformation.Drawdown;
-
     }
-
-
 
     [Fact]
     public void Test_TimeSeries_Scaling()
@@ -127,7 +121,7 @@ public class TimeSeries_Test
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
         time_series.Transformation.Scalar = multiplier;
 
-        SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataScaledAndTransformed();
+        SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataTransformed();
         int i = 0;
         foreach (var point in seriesData)
         {
@@ -147,19 +141,19 @@ public class TimeSeries_Test
         time_series.Transformation.DaySelectionTypeForLag = General.Enums.DaySelectionType.Any;
         time_series.Transformation.ObservationLag = day_lag;
 
-        SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataScaledAndTransformed();
+        SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataTransformed();
         Assert.Equal( new DateTime(2024, 1, 2).AddDays(-day_lag), seriesData.ElementAt(0).Key);
         Assert.Equal(new DateTime(2024, 1, 3).AddDays(-day_lag), seriesData.ElementAt(1).Key);
         Assert.Equal(new DateTime(2024, 1, 4).AddDays(-day_lag), seriesData.ElementAt(2).Key);
     }
 
+
     [Fact]
-    public void Test_TimeSeries_ObservedReturns()
+    public void Test_TimeSeries_ObservedReturns_From_Transformation()
     {
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
-
-        SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataScaledAndTransformed();
-        var results = DataModelSeriesTransformationUtilities.GetObservationReturns(seriesData);
+        time_series.Transformation.DataTransformation = Enums.TimeSeriesDataTransformation.Return;
+        SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
         Assert.NotEmpty(results);
         Assert.Equal(1m, results.ElementAt(1).Value.Close);
         Assert.Equal(-0.25m, results.ElementAt(2).Value.Close);
@@ -169,9 +163,8 @@ public class TimeSeries_Test
     public void Test_TimeSeries_CumulativeReturns()
     {
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
-
-        SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataScaledAndTransformed();
-        var results = DataModelSeriesTransformationUtilities.GetCumulativeReturns(seriesData);
+        time_series.Transformation.DataTransformation = Enums.TimeSeriesDataTransformation.CumulativeReturn;
+        SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
         Assert.NotEmpty(results);
         Assert.Equal(1m, results.ElementAt(1).Value.Close);
         Assert.Equal(0.5m, results.ElementAt(2).Value.Close);
@@ -181,9 +174,9 @@ public class TimeSeries_Test
     public void Test_TimeSeries_Wealth()
     {
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
+        time_series.Transformation.DataTransformation = Enums.TimeSeriesDataTransformation.Wealth;
+        SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
 
-        SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataScaledAndTransformed();
-        var results = DataModelSeriesTransformationUtilities.GetWealth(seriesData);
         Assert.NotEmpty(results);
         Assert.Equal(1000m, results.ElementAt(0).Value.Close);
         Assert.Equal(2000m, results.ElementAt(1).Value.Close);
@@ -194,9 +187,9 @@ public class TimeSeries_Test
     public void Test_TimeSeries_DrawdownPercentage()
     {
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
+        time_series.Transformation.DataTransformation = Enums.TimeSeriesDataTransformation.Drawdown;
+        SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
 
-        SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataScaledAndTransformed();
-        var results = DataModelSeriesTransformationUtilities.GetDrawdownPercentage(seriesData);
         Assert.NotEmpty(results);
         Assert.Equal(0, results.ElementAt(0).Value.Close);
         Assert.Equal(0, results.ElementAt(1).Value.Close);
@@ -208,9 +201,10 @@ public class TimeSeries_Test
     public void Test_TimeSeries_MovingAverageWindowed()
     {
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
+        time_series.Transformation.DataTransformation = Enums.TimeSeriesDataTransformation.MovingAverageWindow;
+        time_series.Transformation.ObservationWindowCount = 2;
+        SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
 
-        SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataScaledAndTransformed();
-        var results = DataModelSeriesTransformationUtilities.GetMovingAverageWindowed(seriesData, 2);
         Assert.NotEmpty(results);
         Assert.Equal(3, results.ElementAt(1).Value.Close);
         Assert.Equal(3.5m, results.ElementAt(2).Value.Close);
@@ -220,13 +214,19 @@ public class TimeSeries_Test
     public void Test_TimeSeries_Std_Dev_ExpandingWindow()
     {
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
+        time_series.Transformation.DataTransformation = Enums.TimeSeriesDataTransformation.AnnualizedVolatilityExpandingWindow;
+        SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
 
-        SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataScaledAndTransformed();
-        var results = DataModelSeriesTransformationUtilities.GetStandardDeviationExpandingWindow(seriesData, Enums.StatisticsDataSetClassification.Sample);
         Assert.NotEmpty(results);
-        
-        Assert.Equal(1.414213562, results.ElementAt(1).Value.Close.ToDouble()!.Value, 8);
-        Assert.Equal(1, results.ElementAt(2).Value.Close.ToDouble()!.Value, 8);
+        Assert.Equal(3, results.Count);
+
+        Assert.Null(results.ElementAt(0).Value.Close);
+        Assert.Null(results.ElementAt(1).Value.Close);
+
+
+        double stdev = 0.883883476;
+        double annualization_multiplier = Math.Sqrt(365);
+        Assert.Equal(stdev * annualization_multiplier, results.ElementAt(2).Value.Close.ToDouble()!.Value, 6);
     }
 
 
@@ -234,14 +234,21 @@ public class TimeSeries_Test
     public void Test_TimeSeries_Std_Dev_Window()
     {
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
+        time_series.Transformation.DataTransformation = Enums.TimeSeriesDataTransformation.AnnualizedVolatilityWindow;
+        time_series.Transformation.ObservationWindowCount = 2;
+        SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
 
-        SortedDictionary<DateOnlyCustom, BarObservation> seriesData = time_series.GetSeriesDataScaledAndTransformed();
-        var results = DataModelSeriesTransformationUtilities.GetStandardDeviationWindowed(seriesData, 2, Enums.StatisticsDataSetClassification.Sample);
         Assert.NotEmpty(results);
+        Assert.Equal(3, results.Count);
 
-        Assert.Equal(1.414213562, results.ElementAt(1).Value.Close.ToDouble()!.Value, 8);
-        Assert.Equal(0.707106781, results.ElementAt(2).Value.Close.ToDouble()!.Value, 8);
+        Assert.Null(results.ElementAt(0).Value.Close);
+        Assert.Null(results.ElementAt(1).Value.Close);
+
+        double stdev = 0.883883476;
+        double annualization_multiplier = Math.Sqrt(365);
+        Assert.Equal(stdev * annualization_multiplier, results.ElementAt(2).Value.Close.ToDouble()!.Value, 6);
     }
+
 
 
     private TimeSeries<DateOnlyCustom, BarObservation> BuildTestSeries()
@@ -256,7 +263,7 @@ public class TimeSeries_Test
         {
             { new DateTime(2024, 1, 2), bar },
             { new DateTime(2024, 1, 3), bar1 },
-             { new DateTime(2024, 1, 4), bar2 }
+            { new DateTime(2024, 1, 4), bar2 }
         };
         TimeSeriesBase<DateOnlyCustom, BarObservation> data_series = new(data);
 
@@ -302,7 +309,7 @@ public class TimeSeries_Test
 
 
         // Validate the results of the sub-series
-        SortedDictionary<DateOnlyCustom, Observation>? seriesData = timeSeries.GetSeriesDataScaledAndTransformed();
+        SortedDictionary<DateOnlyCustom, Observation>? seriesData = timeSeries.GetSeriesDataTransformed();
         Assert.NotNull(seriesData);
         Assert.Equal(3, seriesData.Count());
         int i = 0;

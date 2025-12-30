@@ -50,10 +50,12 @@ public abstract class AbstractSeriesOfSeries<TCollectionKey, TCollectionDataType
     /// Returns the data points in the series.
     /// </summary>
     /// <returns></returns>
-    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataScaled()
+    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataUnscaled()
     {
-        SortedDictionary<TCollectionKey, TCollectionDataType>? series = SubSeriesCollection.GetCombinedScaledAndTransformedSeriesData();
-        return series;
+        // Note: For series of series, we combine the data from all sub-series.
+        // All scaling and transformations are applied at the sub-series level.
+        // No, we do not apply any additional scaling or transformation at this level.
+        return SubSeriesCollection.GetCombinedScaledAndTransformedSeriesData();
     }
 
     /// <inheritdoc/>

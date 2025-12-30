@@ -83,4 +83,5 @@ public interface IAccumulator<T>
     /// </summary>
     /// <returns></returns>
     public T ToRecord();
+
 }

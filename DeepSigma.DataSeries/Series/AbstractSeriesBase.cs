@@ -43,23 +43,8 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
     public sealed override int GetSubSeriesCount() => 1;
 
     /// <inheritdoc/>
-    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataScaled()
-    {
-        return GenericTimeSeriesUtilities.GetScaledSeries(Data, Transformation.Scalar);
-    }
+    public sealed override SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataUnscaled() => Data;
 
-    /// <summary>
-    /// Gets the underlying series data as an unscaled sorted dictionary.
-    /// </summary>
-    /// <returns>A sorted dictionary containing the unscaled series data, where each key represents a collection key and each
-    /// value represents the associated data.</returns>
-    /// <remarks>
-    /// Note: the collection is passed by reference to avoid reallocation of the data structure as a copy in memory.
-    /// Modifying the collection will modify the objects data directly.
-    /// </remarks>
-    public SortedDictionary<TCollectionKey, TCollectionDataType> GetSeriesDataUnscaled() => Data;
-
-    
     /// <inheritdoc/>
     public void Add(TCollectionKey key, TCollectionDataType value)
     {

@@ -20,4 +20,9 @@ public class DataSeries<TKeyDataType, TValueDataType> :
     /// <inheritdoc cref="DataSeries{TKeyDataType, TValueDataType}"/>
     public DataSeries(ILogger? logger = null) : base(logger){}
 
+    /// <inheritdoc/>
+    public sealed override SortedDictionary<TKeyDataType, TValueDataType> GetSeriesDataTransformed()
+    {
+        return GenericTimeSeriesUtilities.GetScaledSeries(GetSeriesDataUnscaled(), Transformation.Scalar);
+    }
 }

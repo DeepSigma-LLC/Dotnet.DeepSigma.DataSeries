@@ -19,4 +19,9 @@ public class DataSeriesBase<TKeyType, TValueDataType>
     /// <inheritdoc cref="DataSeriesBase{TKeyType,TValueDataType}"/>
     public DataSeriesBase(SortedDictionary<TKeyType, TValueDataType> data) : base(data) { }
 
+    /// <inheritdoc/>
+    public sealed override SortedDictionary<TKeyType, TValueDataType> GetSeriesDataTransformed()
+    {
+        return GenericTimeSeriesUtilities.GetScaledSeries(this.Data, Transformation.Scalar);
+    }
 }
