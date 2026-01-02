@@ -9,11 +9,6 @@ namespace DeepSigma.DataSeries.Transformations;
 public class TimeSeriesTransformation : SeriesTransformation, ISeriesTransformation
 {
     /// <summary>
-    /// Default observation window count. Used for moving averages and standard deviation counts.
-    /// </summary>
-    public int ObservationWindowCount { get; set; } = 20;
-
-    /// <summary>
     /// Observations to lage the time series by.
     /// </summary>
     /// <remarks>

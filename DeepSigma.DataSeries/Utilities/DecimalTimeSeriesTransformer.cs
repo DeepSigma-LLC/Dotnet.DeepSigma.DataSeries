@@ -33,7 +33,7 @@ internal class DecimalTimeSeriesTransformer
     /// <param name="Selection"></param>
     /// <param name="ObservationWindowCount"></param>
     /// <returns></returns>
-    private static SortedDictionary<TDate, decimal?> ComputeTransformedTimeSeriesData<TDate>(SortedDictionary<TDate, decimal?> Data, TimeSeriesDataTransformation Selection, int ObservationWindowCount = 20)
+    private static SortedDictionary<TDate, decimal?> ComputeTransformedTimeSeriesData<TDate>(SortedDictionary<TDate, decimal?> Data, TimeSeriesDataTransformation Selection, int? ObservationWindowCount = null)
         where TDate : struct, IDateTime<TDate>
     {
         return Selection switch

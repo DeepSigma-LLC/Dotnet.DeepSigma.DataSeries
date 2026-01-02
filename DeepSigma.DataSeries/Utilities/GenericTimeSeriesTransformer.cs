@@ -52,7 +52,7 @@ internal static class GenericTimeSeriesTransformer
     /// <param name="Selection"></param>
     /// <param name="ObservationWindowCount"></param>
     /// <returns></returns>
-    private static SortedDictionary<TDate, TValue> TransformedTimeSeriesData<TDate, TValue>(SortedDictionary<TDate, TValue> Data, TimeSeriesDataTransformation Selection, int ObservationWindowCount = 20)
+    private static SortedDictionary<TDate, TValue> TransformedTimeSeriesData<TDate, TValue>(SortedDictionary<TDate, TValue> Data, TimeSeriesDataTransformation Selection, int? ObservationWindowCount = null)
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
