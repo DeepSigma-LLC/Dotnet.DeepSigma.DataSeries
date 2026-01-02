@@ -82,11 +82,37 @@ public interface IAccumulator<T>
     public void SquareRoot();
 
     /// <summary>
+    /// Applies the exponential function to the accumulator.
+    /// </summary>
+    public void Exponential();
+
+
+    /// <summary>
     /// Divides the accumulator by another record of type T.
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
     public Exception? Divide(T other);
+
+    /// <summary>
+    /// Applies the sine function to the accumulator.
+    /// </summary>
+    public void Sin();
+
+    /// <summary>
+    /// Applies the cosine function to the accumulator.
+    /// </summary>
+    public void Cos();
+
+    /// <summary>
+    /// Applies the tangent function to the accumulator.
+    /// </summary>
+    public void Tan();
+
+    /// <summary>
+    /// Applies the absolute value function to the accumulator.
+    /// </summary>
+    public void Abs();  
 
     /// <summary>
     /// Converts the accumulated values to a record of type T.

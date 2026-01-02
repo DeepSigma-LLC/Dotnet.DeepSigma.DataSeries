@@ -74,6 +74,9 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     public void Min(T other) => ApplyFunction(other, Math.Min);
 
     /// <inheritdoc/>
+    public void Abs() => ApplyFunction(Math.Abs);
+
+    /// <inheritdoc/>
     public void Power(decimal exponent) => ApplyFunctionWithScalar(exponent, Math.Pow);
 
     /// <inheritdoc/>
@@ -85,6 +88,17 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     /// <inheritdoc/>
     public void Logarithm() => ApplyFunction(Math.Log);
 
+    /// <inheritdoc/>
+    public void Exponential() => ApplyFunction(Math.Exp);
+
+    /// <inheritdoc/>
+    public void Sin() => ApplyFunction(Math.Sin);
+
+    /// <inheritdoc/>
+    public void Cos() => ApplyFunction(Math.Cos);
+
+    /// <inheritdoc/>
+    public void Tan() => ApplyFunction(Math.Tan);
 
     /// <inheritdoc/>
     public abstract T ToRecord();

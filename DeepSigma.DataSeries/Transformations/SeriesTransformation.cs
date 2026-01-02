@@ -1,13 +1,27 @@
 ﻿using DeepSigma.DataSeries.Enums;
+using System;
 
 namespace DeepSigma.DataSeries.Transformations;
 
 /// <summary>
 /// Represents a transformation applied to a data series.
 /// </summary>
-public class SeriesTransformation : ISeriesTransformation
+public class SeriesTransformation<T> : ISeriesTransformation<T> 
+    where T : Enum
 {
-  
+    /// <inheritdoc cref="SeriesTransformation{T}"/>
+    public SeriesTransformation()
+    {
+        // Runtime check to ensure T is a valid enum type for transformations.
+        Type[] allowed =
+        [
+            typeof(PointTransformation),
+            typeof(SetTransformation)
+        ];
+
+        if (!allowed.Contains(typeof(T))) throw new NotSupportedException($"{typeof(T).Name} is not allowed");
+    }
+
     /// <inheritdoc/>
     public decimal Scalar { get; set; } = 1;
 
@@ -15,8 +29,14 @@ public class SeriesTransformation : ISeriesTransformation
     public int? ObservationWindowCount { get; set; }
 
     /// <inheritdoc/>
-    public TransformationDataInclusionType DataInclusionType { get; set; } = TransformationDataInclusionType.All;
+    public TransformationDataInclusionType DataInclusionType { get; set; } = TransformationDataInclusionType.Point;
+
+    /// <inheritdoc/>
+    public required T Transformation { get; set; }
 
     /// <Inheritdoc/>
-    public Transformation Transformation { get; set; } = Transformation.None;
+    public SetTransformation SetTransformation { get; set; } = SetTransformation.None;
+
+    /// <Inheritdoc/>
+    public PointTransformation PointTransformation { get; set; } = PointTransformation.None;
 }

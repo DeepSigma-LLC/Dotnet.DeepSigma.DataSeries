@@ -6,7 +6,8 @@ namespace DeepSigma.DataSeries.Transformations;
 /// <summary>
 /// Represents a transformation applied to time series.
 /// </summary>
-public class TimeSeriesTransformation : SeriesTransformation, ISeriesTransformation
+public class TimeSeriesTransformation<T> : SeriesTransformation<T>, ISeriesTransformation<T> 
+    where T : Enum
 {
     /// <summary>
     /// Observations to lage the time series by.

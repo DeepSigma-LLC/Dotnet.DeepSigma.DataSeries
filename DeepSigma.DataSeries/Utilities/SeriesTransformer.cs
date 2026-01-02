@@ -2,27 +2,65 @@
 using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
+using DeepSigma.General;
 using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Utilities;
 
 internal class SeriesTransformer
 {
-    internal SortedDictionary<TKey, TValue> Transform<TKey,TValue(SortedDictionary<TKey, TValue> Data, SeriesTransformation transformation)
+    internal SortedDictionary<TKey, TValue> Transform<TKey,TValue, T>(SortedDictionary<TKey, TValue> Data, SeriesTransformation<T> transformation)
+        where T : Enum
         where TKey : notnull, IComparable<TKey>
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        switch(transformation.Transformation)
+        {
+            case PointTransformation pointTransformation:
+                return Data.GetSeriesWithMethodApplied(GetPointOperationMethod<TValue>(pointTransformation, transformation.Scalar));
+            case SetTransformation setTransformation:
+                if (transformation.ObservationWindowCount is not null)
+                {
+                    return Data.GetWindowedSeriesWithMethodApplied(GetSetOperationMethod<TValue>(setTransformation), transformation.ObservationWindowCount.Value, () => TValue.Empty);
+                }
+                return Data.GetExpandingWindowedSeriesWithMethodApplied(GetSetOperationMethod<TValue>(setTransformation));
+            default:
+                throw new NotImplementedException();
+        }
+    }
+
+    private static Func<TValue, TValue> GetPointOperationMethod<TValue>(PointTransformation transformation, decimal scalar)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         return transformation switch
         {
-            transformation.DataInclusionType == Enums.TransformationDataInclusionType.Point => Data.GetSeriesWithMethodApplied((x) => Compute(x.Value)),
-            transformation.DataInclusionType == Enums.TransformationDataInclusionType.Window =>
-            (           
-                if(transformation.ObservationWindowCount is null)
-                    {
-            return Data.GetExpandingWindowedSeriesWithMethodApplied((x) => Compute(x));
-                    }
-        return Data.GetWindowedSeriesWithMethodApplied((x) => ComputeStandardDeviation(x, SetClassification), transformation.ObservationWindowCount, () => TValue.Empty);
-            )            
+            PointTransformation.None => (x) => x,// No operation needed for none
+            PointTransformation.Scaled => (x) => Scale(x, scalar),
+            PointTransformation.AbsoluteValue => (x) => AbsoluteValue(x),
+            PointTransformation.Sin => (x) => Sin(x),
+            PointTransformation.Cos => (x) => Cos(x),
+            PointTransformation.Tan => (x) => Tan(x),
+            PointTransformation.SquareRoot => SquareRoot,
+            PointTransformation.Logarithm => Logarithm,
+            _ => throw new NotImplementedException(),
+        };
+    }
+
+    private static Func<IEnumerable<TValue>, TValue> GetSetOperationMethod<TValue>(SetTransformation transformation)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        return transformation switch
+        {
+            SetTransformation.None => (x) => x.LastOrDefault() ?? TValue.Empty, // Return last value for none
+            SetTransformation.Average => Average,
+            SetTransformation.Max => Max,
+            SetTransformation.Min => Min,
+            SetTransformation.Sum => Sum,
+            SetTransformation.Return => CumulativeReturn,
+            SetTransformation.Variance => (x) => Variance(x, StatisticsDataSetClassification.Sample),
+            SetTransformation.StandardDeviation => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
+            SetTransformation.Difference => Difference,
+            SetTransformation.EWMA => EWMA,
             _ => throw new NotImplementedException(),
         };
     }
@@ -81,7 +119,6 @@ internal class SeriesTransformer
         return PerformActionOnEachElement(values, (accumulator, value) => accumulator.Add(value));
     }
 
-
     internal static TValue Min<TValue>(IEnumerable<TValue> values)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -138,28 +175,85 @@ internal class SeriesTransformer
         TValue variance_record = Variance(Data, SetClassification);
         if(variance_record.IsEmptyOrInvalid()) return variance_record;
 
-        IAccumulator<TValue> variance = variance_record.GetAccumulator();
-        variance.SquareRoot();
-        return variance.ToRecord();
+        return TryApplyTransformationMethod(variance_record, (data) => data.SquareRoot());
     }
 
     private static TValue SquareRoot<TValue>(TValue Data)
     where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        if (Data.IsEmptyOrInvalid()) return Data;
+        return TryApplyTransformationMethod(Data, (data) => data.SquareRoot());
+    }
 
-        IAccumulator<TValue> data_point = Data.GetAccumulator();
-        data_point.SquareRoot();
-        return data_point.ToRecord();
+    private static TValue AbsoluteValue<TValue>(TValue Data)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        return TryApplyTransformationMethod(Data, (data) => data.Abs());
+    }
+
+    private static TValue Sin<TValue>(TValue Data)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        return TryApplyTransformationMethod(Data, (data) => data.Sin());
+    }
+
+    private static TValue Cos<TValue>(TValue Data)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        return TryApplyTransformationMethod(Data, (data) => data.Cos());
+    }
+
+    private static TValue Tan<TValue>(TValue Data)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        return TryApplyTransformationMethod(Data, (data) => data.Tan());
+    }
+
+
+
+    private static TValue Scale<TValue>(TValue Data, decimal scalar)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        return TryApplyTransformationMethod(Data, (data) => data.Scale(scalar));
     }
 
     private static TValue Logarithm<TValue>(TValue Data)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
+        return TryApplyTransformationMethod(Data, (accumulator) => accumulator.Logarithm());
+    }
+
+    /// <summary>
+    /// EWMAₜ = α * Xₜ + (1 - α) * EWMAₜ₋₁, where EWMAₜ is the current average,
+    /// Xₜ is the current value, α (alpha) is the smoothing factor (0-α-1)
+    /// and EWMAₜ₋₁ is the previous average.
+    /// </summary>
+    /// <remarks>
+    /// Note: The first EWMA value (EWMA₀) is typically set to the first data point (X₀).
+    /// For a time series of n data points, a common choice for alpha is:
+    /// alpha = 2 / (n + 1)
+    /// Where the 20-day EWMA would have an alpha of 0.0952 (2 / (20 + 1))
+    /// </remarks>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="Data"></param>
+    /// <returns></returns>
+    private static TValue EWMA<TValue>(IEnumerable<TValue> Data)
+    {
+        throw new NotImplementedException();
+    }
+
+    private static TValue TryApplyTransformationMethod<TValue>(TValue Data, Action<IAccumulator<TValue>> Method)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
         if (Data.IsEmptyOrInvalid()) return Data;
 
+        return ApplyMethodToValue(Data, Method);
+    }
+
+    private static TValue ApplyMethodToValue<TValue>(TValue Data, Action<IAccumulator<TValue>> Method)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
         IAccumulator<TValue> data_point = Data.GetAccumulator();
-        data_point.Logarithm();
+        Method(data_point);
         return data_point.ToRecord();
     }
 
