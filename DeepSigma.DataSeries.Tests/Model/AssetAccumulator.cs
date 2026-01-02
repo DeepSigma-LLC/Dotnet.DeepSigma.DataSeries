@@ -8,15 +8,6 @@ public class AssetAccumulator(Assets assets) : AbstractAccumulator<Assets>(asset
 {
     private decimal? Price { get; set; } = assets.Value;
 
-    public override void Scale(decimal scalar)
-    {
-        Price = Price * scalar;
-    }
-
-    public override void Add(decimal value)
-    {
-        Price += value;
-    }
 
     /// <inheritdoc/>
     public override Assets ToRecord()
@@ -31,23 +22,21 @@ public class AssetAccumulator(Assets assets) : AbstractAccumulator<Assets>(asset
     }
 
     /// <inheritdoc/>
+    protected override void ApplyFunction(Func<decimal?, decimal?> Method)
+    {
+        this.Price = Method(this.Price);
+    }
+
+    /// <inheritdoc/>
+    protected override void ApplyFunctionWithScalar(decimal scalar, Func<decimal?, decimal?, decimal?> operation)
+    {
+        this.Price = operation(this.Price, scalar);
+    }
+
+    /// <inheritdoc/>
     protected override bool IsAboutToDivideByZero(Assets other)
     {
         return other.Value == 0;
     }
 
-    public override void Max(Assets other)
-    {
-        Price = Price > other.Value ? Price : other.Value;
-    }
-
-    public override void Min(Assets other)
-    {
-        Price = Price < other.Value ? Price : other.Value;
-    }
-
-    public override void Power(decimal exponent)
-    {
-        Price = Price.Power(exponent);
-    }
 }

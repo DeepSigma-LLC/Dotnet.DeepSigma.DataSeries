@@ -39,6 +39,12 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     }
 
     /// <inheritdoc/>
+    public Exception? Subtract(T other)
+    {
+        return ComputeWithError(other, (a, b) => a - b);
+    }
+
+    /// <inheritdoc/>
     public Exception? Divide(T other)
     {
         if (IsAboutToDivideByZeroWithLogging(other))
@@ -56,19 +62,19 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     }
 
     /// <inheritdoc/>
-    public abstract void Scale(decimal scalar);
+    public void Scale(decimal scalar) => ApplyFunctionWithScalar(scalar, (a, b) => a * b);
 
     /// <inheritdoc/>
-    public abstract void Add(decimal value);
+    public void Add(decimal value) => ApplyFunctionWithScalar(value, (a, b) => a + b);
 
     /// <inheritdoc/>
-    public abstract void Max(T other);
+    public void Max(T other) => ApplyFunction(other, Math.Max);
 
     /// <inheritdoc/>
-    public abstract void Min(T other);
+    public void Min(T other) => ApplyFunction(other, Math.Min);
 
     /// <inheritdoc/>
-    public abstract void Power(decimal exponent);
+    public void Power(decimal exponent) => ApplyFunctionWithScalar(exponent, Math.Pow);
 
     /// <inheritdoc/>
     public void SquareRoot()
@@ -77,13 +83,8 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     }
 
     /// <inheritdoc/>
-    public abstract void Logarithm();
+    public void Logarithm() => ApplyFunction(Math.Log);
 
-    /// <inheritdoc/>
-    public Exception? Subtract(T other)
-    {
-        return ComputeWithError(other, (a, b) => a - b);
-    }
 
     /// <inheritdoc/>
     public abstract T ToRecord();
@@ -94,6 +95,19 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     /// <param name="other"></param>
     /// <param name="operation"></param>
     protected abstract void ApplyFunction(T other, Func<decimal?, decimal?, decimal?> operation);
+
+    /// <summary>
+    /// Applies the provided operation on the current record value.
+    /// </summary>
+    /// <param name="Method"></param>
+    protected abstract void ApplyFunction(Func<decimal?, decimal?> Method);
+
+    /// <summary>
+    /// Applies the provided operation on the current record value and a given scalar.
+    /// </summary>
+    /// <param name="scalar"></param>
+    /// <param name="operation"></param>
+    protected abstract void ApplyFunctionWithScalar(decimal scalar, Func<decimal?, decimal?, decimal?> operation);
 
     /// <summary>
     /// Determines if the operation is about to divide by zero.

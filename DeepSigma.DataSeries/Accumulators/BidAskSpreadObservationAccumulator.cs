@@ -18,20 +18,6 @@ public class BidAskSpreadObservationAccumulator(BidAskSpreadObservation BidAskSp
     private decimal? Bid { get; set; } = BidAskSpreadObservation.Bid;
     private decimal? Ask { get; set; } = BidAskSpreadObservation.Ask;
 
-    /// <inheritdoc/>
-    public sealed override void Scale(decimal scalar)
-    {
-        this.Ask = this.Ask * scalar;
-        this.Bid = this.Bid * scalar;
-    }
-
-    /// <inheritdoc/>
-    public sealed override void Add(decimal value)
-    {
-        this.Ask = this.Ask + value;
-        this.Bid = this.Bid + value;
-    }
-
 
     /// <inheritdoc/>
     public sealed override BidAskSpreadObservation ToRecord()
@@ -47,35 +33,22 @@ public class BidAskSpreadObservationAccumulator(BidAskSpreadObservation BidAskSp
     }
 
     /// <inheritdoc/>
+    protected override void ApplyFunction(Func<decimal?, decimal?> Method)
+    {
+        this.Bid = Method(this.Bid);
+        this.Ask = Method(this.Ask);
+    }
+
+    /// <inheritdoc/>
+    protected override void ApplyFunctionWithScalar(decimal scalar, Func<decimal?, decimal?, decimal?> operation)
+    {
+        this.Bid = operation(this.Bid, scalar);
+        this.Ask = operation(this.Ask, scalar);
+    }
+
+    /// <inheritdoc/>
     protected sealed override bool IsAboutToDivideByZero(BidAskSpreadObservation other) => other.Bid == 0m || other.Ask == 0m;
 
-    /// <inheritdoc/>
-    public sealed override void Max(BidAskSpreadObservation other)
-    {
-        this.Ask = Math.Max(this.Ask, other.Ask);
-        this.Bid = Math.Max(this.Bid, other.Bid);
-    }
-
-    /// <inheritdoc/>
-    public sealed override void Min(BidAskSpreadObservation other)
-    {
-        this.Ask = Math.Min(this.Ask, other.Ask);
-        this.Bid = Math.Min(this.Bid, other.Bid);
-    }
-
-    /// <inheritdoc/>
-    public sealed override void Power(decimal exponent)
-    {
-        this.Ask = this.Ask.Power(exponent);
-        this.Bid = this.Bid.Power(exponent);
-    }
-
-    /// <inheritdoc/>
-    public sealed override void Logarithm()
-    {
-        this.Ask = Math.Log(this.Ask);
-        this.Bid = Math.Log(this.Bid);
-    }
 
 }
 

@@ -153,6 +153,16 @@ internal class SeriesTransformer
         return data_point.ToRecord();
     }
 
+    private static TValue Logarithm<TValue>(TValue Data)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        if (Data.IsEmptyOrInvalid()) return Data;
+
+        IAccumulator<TValue> data_point = Data.GetAccumulator();
+        data_point.Logarithm();
+        return data_point.ToRecord();
+    }
+
     private static TValue PerformActionOnEachElement<TValue>(IEnumerable<TValue> values, Action<IAccumulator<TValue>, TValue> action)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {

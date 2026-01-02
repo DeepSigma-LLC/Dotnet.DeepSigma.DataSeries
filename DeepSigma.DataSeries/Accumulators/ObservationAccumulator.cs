@@ -33,42 +33,18 @@ public class ObservationAccumulator(Observation observation)
     }
 
     /// <inheritdoc/>
+    protected override void ApplyFunction(Func<decimal?, decimal?> Method)
+    {
+        this.Value = Method(this.Value);
+    }
+
+    /// <inheritdoc/>
+    protected override void ApplyFunctionWithScalar(decimal scalar, Func<decimal?, decimal?, decimal?> operation)
+    {
+        this.Value = operation(this.Value, scalar);
+    }
+
+    /// <inheritdoc/>
     protected sealed override bool IsAboutToDivideByZero(Observation other) => other.Value == 0;
     
-
-    /// <inheritdoc/>
-    public sealed override void Scale(decimal scalar)
-    {
-        Value = Value * scalar;
-    }
-
-    /// <inheritdoc/>
-    public sealed override void Add(decimal value)
-    {
-        Value = Value + value;
-    }
-
-    /// <inheritdoc/>
-    public sealed override void Max(Observation other)
-    {
-        Value = Math.Max(Value, other.Value);
-    }
-
-    /// <inheritdoc/>
-    public sealed override void Min(Observation other)
-    {
-        Value = Math.Min(Value, other.Value);
-    }
-
-    /// <inheritdoc/>
-    public sealed override void Power(decimal exponent)
-    {
-        Value = Value.Power(exponent);
-    }
-
-    /// <inheritdoc/>
-    public sealed override void Logarithm()
-    {
-        Value = Math.Log(Value);
-    }
 }

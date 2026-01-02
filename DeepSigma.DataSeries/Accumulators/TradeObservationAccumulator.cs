@@ -18,12 +18,6 @@ public class TradeObservationAccumulator(TradeObservation TradeObservation)
     private decimal? Price { get; set; } = TradeObservation.Price;
     private decimal? Quantity { get; set; } = TradeObservation.Quantity;
 
-    /// <inheritdoc/>
-    public sealed override void Scale(decimal scalar)
-    {
-        this.Price = this.Price * scalar;
-        this.Quantity = this.Quantity * scalar;
-    }
 
     /// <inheritdoc/>
     public sealed override TradeObservation ToRecord()
@@ -39,41 +33,20 @@ public class TradeObservationAccumulator(TradeObservation TradeObservation)
     }
 
     /// <inheritdoc/>
+    protected override void ApplyFunction(Func<decimal?, decimal?> Method)
+    {
+        this.Price = Method(this.Price);
+        this.Quantity = Method(this.Quantity);
+    }
+
+    /// <inheritdoc/>
+    protected override void ApplyFunctionWithScalar(decimal scalar, Func<decimal?, decimal?, decimal?> operation)
+    {
+        this.Price = operation(this.Price, scalar);
+        this.Quantity = operation(this.Quantity, scalar);
+    }
+
+    /// <inheritdoc/>
     protected sealed override bool IsAboutToDivideByZero(TradeObservation other) => other.Price == 0 || other.Quantity == 0;
 
-    /// <inheritdoc/>
-    public sealed override void Add(decimal value)
-    {
-        this.Price = this.Price + value;
-        this.Quantity = this.Quantity + value;
-    }
-
-    /// <inheritdoc/>
-    public sealed override void Max(TradeObservation other)
-    {
-        this.Price = Math.Max(this.Price, other.Price);
-        this.Quantity = Math.Max(this.Quantity, other.Quantity);
-    }
-
-    /// <inheritdoc/>
-    public override void Min(TradeObservation other)
-    {
-        this.Price = Math.Min(this.Price, other.Price);
-        this.Quantity = Math.Min(this.Quantity, other.Quantity);
-    }
-
-
-    /// <inheritdoc/>
-    public sealed override void Power(decimal exponent)
-    {
-        this.Price = this.Price.Power(exponent);
-        this.Quantity = this.Quantity.Power(exponent);
-    }
-
-    /// <inheritdoc/>
-    public sealed override void Logarithm()
-    {
-        this.Price = Math.Log(this.Price);
-        this.Quantity = Math.Log(this.Quantity);
-    }
 }

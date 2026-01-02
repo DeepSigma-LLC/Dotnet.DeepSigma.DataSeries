@@ -71,7 +71,6 @@ public interface IAccumulator<T>
     /// <param name="exponent"></param>
     public void Power(decimal exponent);
 
-
     /// <summary>
     /// Applies the natural logarithm to the accumulator.
     /// </summary>
