@@ -14,8 +14,15 @@ internal class SeriesTransformer
     {
         return transformation switch
         {
-            transformation.DataInclusionType == Enums.TransformationDataInclusionType.StaticWindow => Data.GetWindowedSeriesWithMethodApplied((x) => ComputeStandardDeviation(x, SetClassification), transformation.ObservationWindowCount, () => TValue.Empty),
-            transformation.DataInclusionType == Enums.TransformationDataInclusionType.ExpandingWindow => Data.GetExpandingWindowedSeriesWithMethodApplied((x) => Compute(x)),
+            transformation.DataInclusionType == Enums.TransformationDataInclusionType.Point => Data.GetSeriesWithMethodApplied((x) => Compute(x.Value)),
+            transformation.DataInclusionType == Enums.TransformationDataInclusionType.Window =>
+            (           
+                if(transformation.ObservationWindowCount is null)
+                    {
+            return Data.GetExpandingWindowedSeriesWithMethodApplied((x) => Compute(x));
+                    }
+        return Data.GetWindowedSeriesWithMethodApplied((x) => ComputeStandardDeviation(x, SetClassification), transformation.ObservationWindowCount, () => TValue.Empty);
+            )            
             _ => throw new NotImplementedException(),
         };
     }
@@ -132,10 +139,9 @@ internal class SeriesTransformer
         if(variance_record.IsEmptyOrInvalid()) return variance_record;
 
         IAccumulator<TValue> variance = variance_record.GetAccumulator();
-        variance.Power(0.5m); // Square root
+        variance.SquareRoot();
         return variance.ToRecord();
     }
-
 
     private static TValue SquareRoot<TValue>(TValue Data)
     where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
@@ -143,7 +149,7 @@ internal class SeriesTransformer
         if (Data.IsEmptyOrInvalid()) return Data;
 
         IAccumulator<TValue> data_point = Data.GetAccumulator();
-        data_point.Power(0.5m); // Square root
+        data_point.SquareRoot();
         return data_point.ToRecord();
     }
 
@@ -161,7 +167,4 @@ internal class SeriesTransformer
         return accumulator.ToRecord();
     }
 
-
-    Logarithm,
-    EWMA,
 }

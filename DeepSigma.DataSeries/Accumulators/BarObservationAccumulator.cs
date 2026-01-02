@@ -1,7 +1,6 @@
 ﻿using DeepSigma.DataSeries.DataModels;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.General.Extensions;
-using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Accumulators;
 
@@ -86,4 +85,12 @@ public class BarObservationAccumulator(BarObservation observation)
         this.Low = this.Low.Power(exponent);
     }
 
+    /// <inheritdoc/>
+    public sealed override void Logarithm()
+    {
+        this.Open = Math.Log(this.Open);
+        this.Close = Math.Log(this.Close);
+        this.High = Math.Log(this.High);
+        this.Low = Math.Log(this.Low);
+    }
 }

@@ -69,4 +69,11 @@ public class TradeObservationAccumulator(TradeObservation TradeObservation)
         this.Price = this.Price.Power(exponent);
         this.Quantity = this.Quantity.Power(exponent);
     }
+
+    /// <inheritdoc/>
+    public sealed override void Logarithm()
+    {
+        this.Price = Math.Log(this.Price);
+        this.Quantity = Math.Log(this.Quantity);
+    }
 }

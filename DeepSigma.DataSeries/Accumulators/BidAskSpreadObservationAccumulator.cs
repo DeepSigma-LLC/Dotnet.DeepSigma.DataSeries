@@ -70,5 +70,12 @@ public class BidAskSpreadObservationAccumulator(BidAskSpreadObservation BidAskSp
         this.Bid = this.Bid.Power(exponent);
     }
 
+    /// <inheritdoc/>
+    public sealed override void Logarithm()
+    {
+        this.Ask = Math.Log(this.Ask);
+        this.Bid = Math.Log(this.Bid);
+    }
+
 }
 

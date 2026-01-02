@@ -60,8 +60,15 @@ public class ObservationAccumulator(Observation observation)
         Value = Math.Min(Value, other.Value);
     }
 
+    /// <inheritdoc/>
     public sealed override void Power(decimal exponent)
     {
         Value = Value.Power(exponent);
+    }
+
+    /// <inheritdoc/>
+    public sealed override void Logarithm()
+    {
+        Value = Math.Log(Value);
     }
 }

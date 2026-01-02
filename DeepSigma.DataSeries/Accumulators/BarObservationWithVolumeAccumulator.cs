@@ -96,4 +96,13 @@ public class BarObservationWithVolumeAccumulator(BarObservationWithVolume observ
         this.Volume = this.Volume.Power(exponent);
     }
 
+    /// <inheritdoc/>
+    public sealed override void Logarithm()
+    {
+        this.Open = Math.Log(this.Open);
+        this.Close = Math.Log(this.Close);
+        this.High = Math.Log(this.High);
+        this.Low = Math.Log(this.Low);
+        this.Volume = Math.Log(this.Volume);
+    }
 }

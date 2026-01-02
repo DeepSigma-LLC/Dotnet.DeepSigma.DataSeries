@@ -71,6 +71,15 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     public abstract void Power(decimal exponent);
 
     /// <inheritdoc/>
+    public void SquareRoot()
+    {
+        Power(0.5m);
+    }
+
+    /// <inheritdoc/>
+    public abstract void Logarithm();
+
+    /// <inheritdoc/>
     public Exception? Subtract(T other)
     {
         return ComputeWithError(other, (a, b) => a - b);

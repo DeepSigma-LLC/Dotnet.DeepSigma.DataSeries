@@ -71,6 +71,17 @@ public interface IAccumulator<T>
     /// <param name="exponent"></param>
     public void Power(decimal exponent);
 
+
+    /// <summary>
+    /// Applies the natural logarithm to the accumulator.
+    /// </summary>
+    public void Logarithm();
+
+    /// <summary>
+    /// Calculates the square root of the accumulator.
+    /// </summary>
+    public void SquareRoot();
+
     /// <summary>
     /// Divides the accumulator by another record of type T.
     /// </summary>
