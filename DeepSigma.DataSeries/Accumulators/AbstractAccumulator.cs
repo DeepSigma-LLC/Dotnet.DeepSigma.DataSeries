@@ -76,6 +76,11 @@ public abstract class AbstractAccumulator<T>(T Observation) : IAccumulator<T>
     /// <inheritdoc/>
     public void Abs() => ApplyFunction(Math.Abs);
 
+    /// <summary>
+    /// Sets the accumulator value to one.
+    /// </summary>
+    public void One() => ApplyFunction(_ => 1m);
+
     /// <inheritdoc/>
     public void Power(decimal exponent) => ApplyFunctionWithScalar(exponent, Math.Pow);
 

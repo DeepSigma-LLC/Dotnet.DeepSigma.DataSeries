@@ -2,7 +2,6 @@
 using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
-using DeepSigma.General;
 using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Utilities;
@@ -21,9 +20,11 @@ internal class SeriesTransformer
             case SetTransformation setTransformation:
                 if (transformation.ObservationWindowCount is not null)
                 {
-                    return Data.GetWindowedSeriesWithMethodApplied(GetSetOperationMethod<TValue>(setTransformation), transformation.ObservationWindowCount.Value, () => TValue.Empty);
+                    return Data.GetWindowedSeriesWithMethodApplied(GetSetOperationMethod<TValue>(setTransformation, transformation.Scalar), transformation.ObservationWindowCount.Value, () => TValue.Empty);
                 }
-                return Data.GetExpandingWindowedSeriesWithMethodApplied(GetSetOperationMethod<TValue>(setTransformation));
+                return Data.GetExpandingWindowedSeriesWithMethodApplied(GetSetOperationMethod<TValue>(setTransformation, transformation.Scalar));
+            case PointTransformationWithReference pointTransformationWithReference:
+                return Data.GetExpandingWindowedSeriesWithMethodApplied(GetPointReferenceOperationMethod<TValue>(pointTransformationWithReference, transformation.Scalar));
             default:
                 throw new NotImplementedException();
         }
@@ -32,37 +33,54 @@ internal class SeriesTransformer
     private static Func<TValue, TValue> GetPointOperationMethod<TValue>(PointTransformation transformation, decimal scalar)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        return transformation switch
+        Func<TValue, TValue> transformation_method = transformation switch
         {
             PointTransformation.None => (x) => x,// No operation needed for none
-            PointTransformation.Scaled => (x) => Scale(x, scalar),
-            PointTransformation.AbsoluteValue => (x) => AbsoluteValue(x),
-            PointTransformation.Sin => (x) => Sin(x),
-            PointTransformation.Cos => (x) => Cos(x),
-            PointTransformation.Tan => (x) => Tan(x),
+            PointTransformation.AbsoluteValue => AbsoluteValue,
+            PointTransformation.Sin => Sin,
+            PointTransformation.Cos => Cos,
+            PointTransformation.Tan => Tan,
             PointTransformation.SquareRoot => SquareRoot,
             PointTransformation.Logarithm => Logarithm,
             _ => throw new NotImplementedException(),
         };
+        return (x) => Scale(transformation_method(x), scalar);
     }
 
-    private static Func<IEnumerable<TValue>, TValue> GetSetOperationMethod<TValue>(SetTransformation transformation)
+    private static Func<IEnumerable<TValue>, TValue> GetPointReferenceOperationMethod<TValue>(PointTransformationWithReference transformation, decimal scalar)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        return transformation switch
+        Func<TValue, TValue, TValue> point_transform_method = transformation switch
+        {
+            PointTransformationWithReference.None => (x) => x, // No operation needed for none
+            PointTransformationWithReference.Return => CumulativeReturn,
+            PointTransformationWithReference.Difference => Difference,
+            PointTransformationWithReference.Drawdown => DrawdownAmount, // need to pass max value
+            PointTransformationWithReference.DrawdownPercentage => DrawdownPercentage, // need to pass max value
+            PointTransformationWithReference.Wealth => , // pass starting refernece
+            PointTransformationWithReference.WealthReverse => , // pass ending reference 
+            _ => throw new NotImplementedException(),
+        };
+        return (x) => Scale(ComputePointTransformationWithReference(x, point_transform_method), scalar);
+    }
+
+    private static Func<IEnumerable<TValue>, TValue> GetSetOperationMethod<TValue>(SetTransformation transformation, decimal scalar)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        Func<IEnumerable<TValue>, TValue> transformation_method = transformation switch
         {
             SetTransformation.None => (x) => x.LastOrDefault() ?? TValue.Empty, // Return last value for none
             SetTransformation.Average => Average,
-            SetTransformation.Max => Max,
+            SetTransformation.Max =>  Max,
             SetTransformation.Min => Min,
             SetTransformation.Sum => Sum,
-            SetTransformation.Return => CumulativeReturn,
             SetTransformation.Variance => (x) => Variance(x, StatisticsDataSetClassification.Sample),
             SetTransformation.StandardDeviation => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
-            SetTransformation.Difference => Difference,
             SetTransformation.EWMA => EWMA,
+            SetTransformation.StandardDeviation_1_Band => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
             _ => throw new NotImplementedException(),
         };
+        return (x) => Scale(transformation_method(x), scalar);
     }
 
     internal static TValue Average<TValue>(IEnumerable<TValue> values)
@@ -75,10 +93,10 @@ internal class SeriesTransformer
         return sum.ToRecord();
     }
 
-    internal static TValue CumulativeReturn<TValue>(IEnumerable<TValue> values)
+    internal static TValue ComputePointTransformationWithReference<TValue>(IEnumerable<TValue> values, Func<TValue, TValue, TValue> Transform)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        if (values.Count() > 2) return TValue.Empty;
+        if (values.Count() < 2) return TValue.Empty;
 
         TValue? first = values.FirstOrDefault();
         if (first is null) return TValue.Empty;
@@ -86,30 +104,40 @@ internal class SeriesTransformer
         TValue? last = values.LastOrDefault();
         if (last is null) return TValue.Empty;
 
-        IAccumulator<TValue> one = last.GetAccumulator();
-        one.Divide(last); // Divide by itself to get "1"
+        return Transform(last, first);
+    }
 
-        IAccumulator<TValue> accumulator = last.GetAccumulator();
-        accumulator.Divide(first);
-        accumulator.Subtract(one.ToRecord());
-
+    internal static TValue CumulativeReturn<TValue>(TValue current, TValue previous)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        IAccumulator<TValue> accumulator = current.GetAccumulator();
+        accumulator.Divide(previous);
+        accumulator.Subtract(TValue.One);
         return accumulator.ToRecord();
     }
 
-    internal static TValue Difference<TValue>(IEnumerable<TValue> values)
+    internal static TValue Difference<TValue>(TValue current, TValue previous)
       where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        if (values.Count() > 2) return TValue.Empty;
+        IAccumulator<TValue> accumulator = current.GetAccumulator();
+        accumulator.Subtract(previous);
+        return accumulator.ToRecord();
+    }
 
-        TValue? first = values.FirstOrDefault();
-        if (first is null) return TValue.Empty;
+    internal static TValue DrawdownAmount<TValue>(TValue current, TValue max)
+       where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        IAccumulator<TValue> accumulator = max.GetAccumulator();
+        accumulator.Subtract(current);
+        return accumulator.ToRecord();
+    }
 
-        TValue? last = values.LastOrDefault();
-        if (last is null) return TValue.Empty;
-
-        IAccumulator<TValue> accumulator = last.GetAccumulator();
-        accumulator.Subtract(first);
-
+    internal static TValue DrawdownPercentage<TValue>(TValue current, TValue max)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        IAccumulator<TValue> accumulator = current.GetAccumulator();
+        accumulator.Divide(max);
+        accumulator.Subtract(TValue.One);
         return accumulator.ToRecord();
     }
 
@@ -208,8 +236,6 @@ internal class SeriesTransformer
         return TryApplyTransformationMethod(Data, (data) => data.Tan());
     }
 
-
-
     private static TValue Scale<TValue>(TValue Data, decimal scalar)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -230,15 +256,32 @@ internal class SeriesTransformer
     /// <remarks>
     /// Note: The first EWMA value (EWMA₀) is typically set to the first data point (X₀).
     /// For a time series of n data points, a common choice for alpha is:
-    /// alpha = 2 / (n + 1)
-    /// Where the 20-day EWMA would have an alpha of 0.0952 (2 / (20 + 1))
+    /// alpha = 2 / (n + 1) or alpha = 1 / (n + 1)
+    /// Where the 20-day EWMA would have an alpha of 0.0952 (2 / (20 + 1)). 
+    /// Half-life refers to the time it takes for the weight of a data point to reduce to half its original value.
     /// </remarks>
     /// <typeparam name="TValue"></typeparam>
     /// <param name="Data"></param>
     /// <returns></returns>
     private static TValue EWMA<TValue>(IEnumerable<TValue> Data)
+        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        throw new NotImplementedException();
+        decimal alpha = 2 / (Data.Count() + 1).ToDecimal();
+        decimal alpha_complement = alpha.Complement();
+
+        IAccumulator<TValue>? ewma = Data.FirstOrDefault()?.GetAccumulator();
+        if (ewma is null) return TValue.Empty;
+
+        foreach (TValue value in Data.Skip(1)) // Skip first as it's already in the accumulator
+        {
+            ewma.Scale(alpha_complement); // (1 - α) * EWMAₜ₋₁
+
+            IAccumulator<TValue> current_value = value.GetAccumulator();
+            current_value.Scale(alpha); // α * Xₜ
+
+            ewma.Add(current_value.ToRecord());
+        }
+        return ewma.ToRecord();
     }
 
     private static TValue TryApplyTransformationMethod<TValue>(TValue Data, Action<IAccumulator<TValue>> Method)

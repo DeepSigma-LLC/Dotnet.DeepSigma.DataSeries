@@ -35,5 +35,8 @@ public record class BarObservation(decimal? Open, decimal? Close, decimal? High,
     public static BarObservation Empty => new(null, null, null, null, false, false, IsInvalid: true);
 
     /// <inheritdoc/>
+    public static BarObservation One => new(1,1,1,1);
+
+    /// <inheritdoc/>
     public sealed override bool IsEmpty => Open is null && Close is null && High is null && Low is null;
 }

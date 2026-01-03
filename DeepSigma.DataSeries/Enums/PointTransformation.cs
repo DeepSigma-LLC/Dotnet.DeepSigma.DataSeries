@@ -13,10 +13,6 @@ public enum PointTransformation
     /// </summary>
     None,
     /// <summary>
-    /// Each data point is multiplied by a specified scalar factor.
-    /// </summary>
-    Scaled,
-    /// <summary>
     /// Absolute value of the data series values.
     /// </summary>
     AbsoluteValue,

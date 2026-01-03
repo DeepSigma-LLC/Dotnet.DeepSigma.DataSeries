@@ -24,4 +24,7 @@ public record class TradeObservation(decimal? Price, decimal? Quantity, bool IsR
 
     /// <inheritdoc/>
     public static TradeObservation Empty => new(null, null, false, false, IsInvalid: true);
+
+    /// <inheritdoc/>
+    public static TradeObservation One => new(1m, 1m);
 }

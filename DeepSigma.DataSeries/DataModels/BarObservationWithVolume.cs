@@ -37,4 +37,7 @@ public record class BarObservationWithVolume(decimal? Open, decimal? Close, deci
 
     /// <inheritdoc/>
     public static BarObservationWithVolume Empty => new(null, null, null, null, null, false, false, IsInvalid: true);
+
+    /// <inheritdoc/>
+    public static BarObservationWithVolume One => new(1m, 1m, 1m, 1m, 1m);
 }

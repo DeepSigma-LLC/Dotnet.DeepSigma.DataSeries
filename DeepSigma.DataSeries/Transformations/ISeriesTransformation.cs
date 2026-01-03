@@ -17,6 +17,9 @@ public interface ISeriesTransformation<T> where T : Enum
     /// If null, the transformation will treat the entire data series as a single window (aka an expanding window).
     /// Note: This property is ignored for point transformations.
     /// </summary>
+    /// <remarks>
+    /// Window count determines the number of observations to include in the window. For time-based windowing, you should downsample the data set to the desired periodicity.
+    /// </remarks>
     int? ObservationWindowCount { get; set; }
 
     /// <summary>

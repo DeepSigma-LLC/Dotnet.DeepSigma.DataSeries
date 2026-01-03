@@ -15,14 +15,6 @@ public enum SetTransformation
     /// </summary>
     Sum,
     /// <summary>
-    /// Difference between consecutive data series values.
-    /// </summary>
-    Difference,
-    /// <summary>
-    /// Return between consecutive data series values.
-    /// </summary>
-    Return,
-    /// <summary>
     /// Minimum value in the data series.
     /// </summary>
     Min,
@@ -55,22 +47,27 @@ public enum SetTransformation
     /// </summary>
     EWMA,
     /// <summary>
-    /// Computes the cumulative return from data series and assumes a initial investment achieves the underlying return from a starting value.
+    /// Standard Deviation Bands - 1 Standard Deviation
     /// </summary>
-    Wealth,
-    WealthReverse,
+    StandardDeviation_1_Band,
     /// <summary>
-    /// Drawdown from observed peaks in the data series (no-look-ahead). Drawdown is computed as the decline from the historical peak to the current value (not as a percentage).
+    /// Standard Deviation Bands - 2 Standard Deviations
     /// </summary>
-    Drawdown,
+    StandardDeviation_2_Band,
     /// <summary>
-    /// Drawdown percentage from observed peaks in the data series (no-look-ahead). Drawdown percentage is computed as the decline from the historical peak to the current value expressed as a percentage of the peak value.
+    /// Standard Deviation Bands - 3 Standard Deviations
     /// </summary>
-    DrawdownPercentage,
-    StdDev_1_Band,
-    StdDev_2_Band,
-    StdDev_3_Band,
-    StdDev_Negative_1_Band,
-    StdDev_Negative_2_Band,
-    StdDeV_Negative_3_Band,
+    StandardDeviation_3_Band,
+    /// <summary>
+    /// Standard Deviation Bands - Negative 1 Standard Deviation
+    /// </summary>
+    StandardDeviation_Negative_1_Band,
+    /// <summary>
+    /// Standard Deviation Bands - Negative 2 Standard Deviations
+    /// </summary>
+    StandardDeviation_Negative_2_Band,
+    /// <summary>
+    /// Standard Deviation Bands - Negative 3 Standard Deviations
+    /// </summary>
+    StandardDeviation_Negative_3_Band,
 }

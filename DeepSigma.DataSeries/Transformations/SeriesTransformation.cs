@@ -16,7 +16,8 @@ public class SeriesTransformation<T> : ISeriesTransformation<T>
         Type[] allowed =
         [
             typeof(PointTransformation),
-            typeof(SetTransformation)
+            typeof(SetTransformation),
+            typeof(PointTransformationWithReference),
         ];
 
         if (!allowed.Contains(typeof(T))) throw new NotSupportedException($"{typeof(T).Name} is not allowed");

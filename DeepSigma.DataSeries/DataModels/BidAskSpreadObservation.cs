@@ -32,4 +32,7 @@ public record class BidAskSpreadObservation(decimal? Bid, decimal? Ask, bool IsR
 
     /// <inheritdoc/>
     public static BidAskSpreadObservation Empty => new(null, null, false, false, IsInvalid: true);
+
+    /// <inheritdoc/>
+    public static BidAskSpreadObservation One => new(1m, 1m);
 }

@@ -23,4 +23,7 @@ public record class Observation(decimal? Value, bool IsRolled = false, bool IsSy
 
     /// <inheritdoc/>
     public static Observation Empty => new(null, false, false, IsInvalid: true);
+
+    /// <inheritdoc/>
+    public static Observation One => new(1m);
 }

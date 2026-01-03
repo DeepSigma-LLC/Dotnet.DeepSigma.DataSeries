@@ -3,8 +3,11 @@ using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
+using DeepSigma.General;
 using DeepSigma.General.DateTimeUnification;
+using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
+using DeepSigma.General.TimeStepper;
 using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Series;
@@ -31,5 +34,26 @@ public class TimeSeries<TDate, TValueDataType> :
     public sealed override SortedDictionary<TDate, TValueDataType> GetSeriesDataTransformed()
     {
         return GenericTimeSeriesTransformer.GetCompleteTransformedTimeSeriesData(GetSeriesDataUnscaled(), Transformation);
+    }
+
+    /// <summary>
+    /// Gets the transformed time series data downsampled according to the specified periodicity configuration.
+    /// </summary>
+    /// <param name="configuration"></param>
+    /// <returns></returns>
+    public SortedDictionary<TDate, TValueDataType> GetSeriesDataTransformedDownsampled(TimeStepperConfiguration configuration)
+    {
+        SortedDictionary<TDate, TValueDataType> final_results = [];
+        SelfAligningTimeStepper<TDate> timeStepper = new(configuration);
+        SortedDictionary<TDate, TValueDataType> results = GenericTimeSeriesTransformer.GetCompleteTransformedTimeSeriesData(GetSeriesDataUnscaled(), Transformation);
+        foreach (var result in results)
+        {
+            if (timeStepper.IsTimeStepAligned(result.Key))
+            {
+                final_results.Add(result.Key, result.Value);
+            }
+            timeStepper.GetNextTimeStep(result.Key);
+        }
+        return final_results;
     }
 }
