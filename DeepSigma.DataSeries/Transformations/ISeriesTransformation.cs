@@ -35,7 +35,7 @@ public interface ISeriesTransformation<T> where T : Enum
     /// <summary>
     /// Type of transformation applied to the data series.
     /// </summary>
-    SetTransformation SetTransformation { get; set; } // Remove? Inject via T?
+    VectorTransformation SetTransformation { get; set; } // Remove? Inject via T?
 
     /// <summary>
     /// Point transformation applied to the data series.

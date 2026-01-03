@@ -1,6 +1,4 @@
 ﻿
-using DeepSigma.DataSeries.Interfaces;
-
 namespace DeepSigma.DataSeries.Enums;
 
 /// <summary>
@@ -16,6 +14,10 @@ public enum PointTransformation
     /// Absolute value of the data series values.
     /// </summary>
     AbsoluteValue,
+    /// <summary>
+    /// Negation of the data series values.
+    /// </summary>
+    Negate,
     /// <summary>
     /// Square root of the data series values.
     /// </summary>

@@ -4,7 +4,7 @@ namespace DeepSigma.DataSeries.Enums;
 /// <summary>
 /// Represents the type of transformation applied to a set of data series values.
 /// </summary>
-public enum SetTransformation
+public enum VectorTransformation
 {
     /// <summary>
     /// No transformation is applied.
@@ -42,6 +42,13 @@ public enum SetTransformation
     /// Variance of the percentage changes between consecutive data series values.
     /// </summary>
     VarianceOfPercentageChange,
+    /// <summary>
+    /// Z-Score of the data series values. Z-Score indicates how many standard deviations a data point is from the mean.
+    /// </summary>
+    /// <remarks>
+    /// Defined as (X - μ) / σ, where X is the data point, μ is the mean, and σ is the standard deviation.
+    /// </remarks>
+    ZScore,
     /// <summary>
     /// Exponentially Weighted Moving Average of the data series values.
     /// </summary>

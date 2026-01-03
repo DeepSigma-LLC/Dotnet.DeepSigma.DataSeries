@@ -4,7 +4,7 @@ namespace DeepSigma.DataSeries.Enums;
 /// <summary>
 /// Specifies the type of transformation applied to data points with reference to other points in the series.
 /// </summary>
-public enum PointTransformationWithReference
+public enum ReferencePointTransformation
 {
     /// <summary>
     /// No transformation applied.

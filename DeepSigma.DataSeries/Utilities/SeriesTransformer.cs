@@ -17,13 +17,13 @@ internal class SeriesTransformer
         {
             case PointTransformation pointTransformation:
                 return Data.GetSeriesWithMethodApplied(GetPointOperationMethod<TValue>(pointTransformation, transformation.Scalar));
-            case SetTransformation setTransformation:
+            case VectorTransformation setTransformation:
                 if (transformation.ObservationWindowCount is not null)
                 {
                     return Data.GetWindowedSeriesWithMethodApplied(GetSetOperationMethod<TValue>(setTransformation, transformation.Scalar), transformation.ObservationWindowCount.Value, () => TValue.Empty);
                 }
                 return Data.GetExpandingWindowedSeriesWithMethodApplied(GetSetOperationMethod<TValue>(setTransformation, transformation.Scalar));
-            case PointTransformationWithReference pointTransformationWithReference:
+            case ReferencePointTransformation pointTransformationWithReference:
                 return Data.GetExpandingWindowedSeriesWithMethodApplied(GetPointReferenceOperationMethod<TValue>(pointTransformationWithReference, transformation.Scalar));
             default:
                 throw new NotImplementedException();
@@ -37,6 +37,7 @@ internal class SeriesTransformer
         {
             PointTransformation.None => (x) => x,// No operation needed for none
             PointTransformation.AbsoluteValue => AbsoluteValue,
+            PointTransformation.Negate => (x) => Scale(x, -1),
             PointTransformation.Sin => Sin,
             PointTransformation.Cos => Cos,
             PointTransformation.Tan => Tan,
@@ -47,42 +48,68 @@ internal class SeriesTransformer
         return (x) => Scale(transformation_method(x), scalar);
     }
 
-    private static Func<IEnumerable<TValue>, TValue> GetPointReferenceOperationMethod<TValue>(PointTransformationWithReference transformation, decimal scalar)
+    private static Func<IEnumerable<TValue>, TValue> GetPointReferenceOperationMethod<TValue>(ReferencePointTransformation transformation, decimal scalar)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         Func<TValue, TValue, TValue> point_transform_method = transformation switch
         {
-            PointTransformationWithReference.None => (x) => x, // No operation needed for none
-            PointTransformationWithReference.Return => CumulativeReturn,
-            PointTransformationWithReference.Difference => Difference,
-            PointTransformationWithReference.Drawdown => DrawdownAmount, // need to pass max value
-            PointTransformationWithReference.DrawdownPercentage => DrawdownPercentage, // need to pass max value
-            PointTransformationWithReference.Wealth => , // pass starting refernece
-            PointTransformationWithReference.WealthReverse => , // pass ending reference 
+            ReferencePointTransformation.None => (x) => x, // No operation needed for none
+            ReferencePointTransformation.Return => CumulativeReturn,
+            ReferencePointTransformation.Difference => Difference,
+            ReferencePointTransformation.Drawdown => DrawdownAmount, // need to pass max value
+            ReferencePointTransformation.DrawdownPercentage => DrawdownPercentage, // need to pass max value
+            ReferencePointTransformation.Wealth => , // pass starting refernece
+            ReferencePointTransformation.WealthReverse => , // pass ending reference 
             _ => throw new NotImplementedException(),
         };
         return (x) => Scale(ComputePointTransformationWithReference(x, point_transform_method), scalar);
     }
 
-    private static Func<IEnumerable<TValue>, TValue> GetSetOperationMethod<TValue>(SetTransformation transformation, decimal scalar)
+    private static Func<IEnumerable<TValue>, TValue> GetSetOperationMethod<TValue>(VectorTransformation transformation, decimal scalar)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         Func<IEnumerable<TValue>, TValue> transformation_method = transformation switch
         {
-            SetTransformation.None => (x) => x.LastOrDefault() ?? TValue.Empty, // Return last value for none
-            SetTransformation.Average => Average,
-            SetTransformation.Max =>  Max,
-            SetTransformation.Min => Min,
-            SetTransformation.Sum => Sum,
-            SetTransformation.Variance => (x) => Variance(x, StatisticsDataSetClassification.Sample),
-            SetTransformation.StandardDeviation => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
-            SetTransformation.EWMA => EWMA,
-            SetTransformation.StandardDeviation_1_Band => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
+            VectorTransformation.None => (x) => x.LastOrDefault() ?? TValue.Empty, // Return last value for none
+            VectorTransformation.Average => Average,
+            VectorTransformation.Max =>  Max,
+            VectorTransformation.Min => Min,
+            VectorTransformation.Sum => Sum,
+            VectorTransformation.Variance => (x) => Variance(x, StatisticsDataSetClassification.Sample),
+            VectorTransformation.StandardDeviation => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
+            VectorTransformation.EWMA => EWMA,
+            VectorTransformation.ZScore => ZScore,
+            VectorTransformation.StandardDeviation_1_Band => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
             _ => throw new NotImplementedException(),
         };
         return (x) => Scale(transformation_method(x), scalar);
     }
 
+    /// <summary>
+    /// Computes the z-score for a given data set.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="values"></param>
+    /// <returns></returns>
+    internal static TValue ZScore<TValue>(IEnumerable<TValue> values)
+    where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        if (!values.Any()) return TValue.Empty;
+
+        TValue mean = Average(values);
+        TValue stddev = StandardDeviation(values, StatisticsDataSetClassification.Sample);
+        IAccumulator<TValue> zscore_accumulator = values.Last().GetAccumulator();
+        zscore_accumulator.Subtract(mean);
+        zscore_accumulator.Divide(stddev);
+        return zscore_accumulator.ToRecord();
+    }
+
+    /// <summary>
+    /// Computes the average for a given data set.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="values"></param>
+    /// <returns></returns>
     internal static TValue Average<TValue>(IEnumerable<TValue> values)
     where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -107,6 +134,13 @@ internal class SeriesTransformer
         return Transform(last, first);
     }
 
+    /// <summary>
+    /// Computes the cumulative return between two data points.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="current"></param>
+    /// <param name="previous"></param>
+    /// <returns></returns>
     internal static TValue CumulativeReturn<TValue>(TValue current, TValue previous)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -116,6 +150,13 @@ internal class SeriesTransformer
         return accumulator.ToRecord();
     }
 
+    /// <summary>
+    /// Computes the difference between two data points.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="current"></param>
+    /// <param name="previous"></param>
+    /// <returns></returns>
     internal static TValue Difference<TValue>(TValue current, TValue previous)
       where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -124,6 +165,13 @@ internal class SeriesTransformer
         return accumulator.ToRecord();
     }
 
+    /// <summary>
+    /// Computes the drawdown amount between the current and maximum data points.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="current"></param>
+    /// <param name="max"></param>
+    /// <returns></returns>
     internal static TValue DrawdownAmount<TValue>(TValue current, TValue max)
        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -132,6 +180,13 @@ internal class SeriesTransformer
         return accumulator.ToRecord();
     }
 
+    /// <summary>
+    /// Computes the drawdown percentage between the current and maximum data points.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="current"></param>
+    /// <param name="max"></param>
+    /// <returns></returns>
     internal static TValue DrawdownPercentage<TValue>(TValue current, TValue max)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -141,25 +196,49 @@ internal class SeriesTransformer
         return accumulator.ToRecord();
     }
 
+    /// <summary>
+    /// Computes the sum for a given data set.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="values"></param>
+    /// <returns></returns>
     internal static TValue Sum<TValue>(IEnumerable<TValue> values)
     where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         return PerformActionOnEachElement(values, (accumulator, value) => accumulator.Add(value));
     }
 
+    /// <summary>
+    /// Computes the minimum for a given data set.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="values"></param>
+    /// <returns></returns>
     internal static TValue Min<TValue>(IEnumerable<TValue> values)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         return PerformActionOnEachElement(values, (accumulator, value) => accumulator.Min(value));
     }
 
-
+    /// <summary>
+    /// Computes the maximum for a given data set.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="values"></param>
+    /// <returns></returns>
     internal static TValue Max<TValue>(IEnumerable<TValue> values)
     where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         return PerformActionOnEachElement(values, (accumulator, value) => accumulator.Max(value));
     }
 
+    /// <summary>
+    /// Computes the variance for a given data set.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="Data"></param>
+    /// <param name="SetClassification"></param>
+    /// <returns></returns>
     private static TValue Variance<TValue>(IEnumerable<TValue> Data, StatisticsDataSetClassification SetClassification = StatisticsDataSetClassification.Sample)
     where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
@@ -313,5 +392,4 @@ internal class SeriesTransformer
         }
         return accumulator.ToRecord();
     }
-
 }
