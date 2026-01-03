@@ -29,14 +29,14 @@ public enum PointTransformation
     /// <summary>
     /// Sine of the data series values.
     /// </summary>
-    Sin,
+    Sine,
     /// <summary>
     /// Cosine of the data series values.
     /// </summary>
-    Cos,
+    Cosine,
     /// <summary>
     /// Tangent of the data series values.
     /// </summary>
-    Tan
+    Tangent
 
 }

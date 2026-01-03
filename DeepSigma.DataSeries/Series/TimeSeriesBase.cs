@@ -13,11 +13,18 @@ namespace DeepSigma.DataSeries.Series;
 /// <typeparam name="TValueDataType"></typeparam>
 public class TimeSeriesBase<TDateKey, TValueDataType> : 
     AbstractSeriesBase<TDateKey, TValueDataType, TimeSeriesTransformation>
+     ISeriesBase<TimeSeriesBase<TDateKey, TValueDataType>, TDateKey, TValueDataType>
     where TDateKey : struct, IDateTime<TDateKey>
     where TValueDataType : class, IDataModel<TValueDataType>, IDataModelStatic<TValueDataType>
 {
     /// <inheritdoc cref="TimeSeriesBase{TDateKey, TValueDataType}"/>
     public TimeSeriesBase(SortedDictionary<TDateKey, TValueDataType> data) : base(data){ }
+
+    /// <summary>
+    /// Implicitly converts a SortedDictionary to a TimeSeriesBase.
+    /// </summary>
+    /// <param name="data"></param>
+    public static implicit operator TimeSeriesBase<TDateKey, TValueDataType>(SortedDictionary<TDateKey, TValueDataType> data) => new(data);
 
     /// <inheritdoc/>
     public sealed override SortedDictionary<TDateKey, TValueDataType> GetSeriesDataTransformed()
