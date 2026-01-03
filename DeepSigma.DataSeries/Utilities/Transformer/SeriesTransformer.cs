@@ -7,12 +7,12 @@ namespace DeepSigma.DataSeries.Utilities.Transformer;
 
 internal class SeriesTransformer
 {
-    internal SortedDictionary<TKey, TValue> Transform<TKey,TValue, T>(SortedDictionary<TKey, TValue> Data, SeriesTransformation<T> transformation)
+    internal SortedDictionary<TKey, TValue> Transform<TKey,TValue, T>(SortedDictionary<TKey, TValue> Data, SeriesTransformation transformation)
         where T : Enum
         where TKey : notnull, IComparable<TKey>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        switch(transformation.Transformation)
+        switch(transformation.Transformation.DataTransformationType)
         {
             case PointTransformation pointTransformation:
                 return Data.GetSeriesWithMethodApplied(PointTransformer.GetPointOperationMethod<TValue>(pointTransformation, transformation.Scalar));

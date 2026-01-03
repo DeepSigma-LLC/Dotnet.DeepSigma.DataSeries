@@ -5,7 +5,7 @@ namespace DeepSigma.DataSeries.Transformations;
 /// <summary>
 /// Interface transformation applied to a data series.
 /// </summary>
-public interface ISeriesTransformation<T> where T : Enum
+public interface ISeriesTransformation
 {  
     /// <summary>
     /// Data series scalar multiplier.
@@ -25,20 +25,11 @@ public interface ISeriesTransformation<T> where T : Enum
     /// <summary>
     /// Type of transformation applied to the data series.
     /// </summary>
-    T Transformation { get; set; }
+    Transformation Transformation { get; set; }
 
     /// <summary>
     /// Type of data inclusion for the transformation.
     /// </summary>
     TransformationDataInclusionType DataInclusionType { get; set; }
 
-    /// <summary>
-    /// Type of transformation applied to the data series.
-    /// </summary>
-    VectorTransformation SetTransformation { get; set; } // Remove? Inject via T?
-
-    /// <summary>
-    /// Point transformation applied to the data series.
-    /// </summary>
-    PointTransformation PointTransformation { get; set; } // Remove? Inject via T?
 }

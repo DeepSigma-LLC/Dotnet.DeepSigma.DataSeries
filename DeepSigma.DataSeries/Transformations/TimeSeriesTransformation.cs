@@ -6,8 +6,7 @@ namespace DeepSigma.DataSeries.Transformations;
 /// <summary>
 /// Represents a transformation applied to time series.
 /// </summary>
-public class TimeSeriesTransformation<T> : SeriesTransformation<T>, ISeriesTransformation<T> 
-    where T : Enum
+public class TimeSeriesTransformation : SeriesTransformation, ISeriesTransformation
 {
     /// <summary>
     /// Observations to lage the time series by.
@@ -25,10 +24,4 @@ public class TimeSeriesTransformation<T> : SeriesTransformation<T>, ISeriesTrans
     /// If "Weekdays" are selected then Monday values are lagged to Friday.
     /// </summary>
     public DaySelectionType DaySelectionTypeForLag { get; set; } = DaySelectionType.Any;
-
-    /// <summary>
-    /// Data transformation of the time series data.
-    /// </summary>
-    public TimeSeriesDataTransformation DataTransformation { get; set; } = TimeSeriesDataTransformation.None;
-
 }
