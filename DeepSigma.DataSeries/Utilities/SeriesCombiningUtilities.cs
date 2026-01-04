@@ -9,54 +9,8 @@ namespace DeepSigma.DataSeries.Utilities;
 /// <summary>
 /// Utility class for time series operations.
 /// </summary>
-internal static class GenericTimeSeriesUtilities
+internal static class SeriesCombiningUtilities
 {
-
-    /// <summary>
-    /// Gets series data multiplied by a specified scalar.
-    /// </summary>
-    /// <param name="Data"></param>
-    /// <param name="Scalar"></param>
-    /// <returns></returns>
-    internal static SortedDictionary<TKey, TDataModel> GetScaledSeries<TKey, TDataModel>(SortedDictionary<TKey, TDataModel> Data, decimal Scalar)
-        where TKey : notnull, IComparable<TKey>
-        where TDataModel : class, IDataModel<TDataModel>
-    {
-        if (Scalar == 1) return Data.CloneDeep();
-
-        SortedDictionary<TKey, TDataModel> NewData = [];
-        foreach (KeyValuePair<TKey, TDataModel> x in Data)
-        {
-            IAccumulator<TDataModel> mutable_record = x.Value.GetAccumulator();
-            mutable_record.Scale(Scalar);
-            NewData.Add(x.Key, mutable_record.ToRecord());
-        }
-        return NewData;
-    }
-
-    /// <summary>
-    /// Gets series data multiplied by a specified scalar.
-    /// </summary>
-    /// <param name="Data"></param>
-    /// <param name="Scalar"></param>
-    /// <returns></returns>
-    internal static List<Tuple<TKey, TDataModel>> GetScaledSeries<TKey, TDataModel>(List<Tuple<TKey, TDataModel>> Data, decimal Scalar)
-        where TKey : notnull
-        where TDataModel : class, IDataModel<TDataModel>
-    {
-        if (Scalar == 1) return Data.CloneDeep();
-
-        List<Tuple<TKey, TDataModel>> NewData = [];
-        foreach (var x in Data)
-        {
-            IAccumulator<TDataModel> mutable_record = x.Item2.GetAccumulator();
-            mutable_record.Scale(Scalar);
-            NewData.Add(new Tuple<TKey, TDataModel>(x.Item1, mutable_record.ToRecord()));
-        }
-        return NewData;
-    }
-
-
     /// <summary>
     /// Gets series data multiplied by a specified scalar.
     /// </summary>

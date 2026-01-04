@@ -7,7 +7,7 @@ namespace DeepSigma.DataSeries.Utilities;
 /// <summary>
 /// Utility class for transforming decimal time series data.
 /// </summary>
-internal static class TimeSeriesTransformUtilities
+internal static class DecimalSeriesTransformUtilities
 {
     /// <summary>
     /// Gets observation return time series.

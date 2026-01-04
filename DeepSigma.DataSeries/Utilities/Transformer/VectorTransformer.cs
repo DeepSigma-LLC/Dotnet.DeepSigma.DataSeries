@@ -1,6 +1,8 @@
 ﻿using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DeepSigma.DataSeries.Utilities.Transformer;
 
@@ -21,6 +23,14 @@ internal static class VectorTransformer
             Transformation.VarianceOfPercentageChange => (x) => Variance(GetComputedReturns(x), StatisticsDataSetClassification.Sample),
             Transformation.StandardDeviation => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
             Transformation.StandardDeviationOfPercentageChange => (x) => StandardDeviation(GetComputedReturns(x), StatisticsDataSetClassification.Sample),
+            Transformation.AnnualizedVolatility => (x) =>
+            {
+                TValue stddev = StandardDeviation(GetComputedReturns(x), StatisticsDataSetClassification.Sample);
+                decimal multiplier = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.Select(x => x.DateTime).ToArray());
+                IAccumulator<TValue> annualized_volatility = stddev.GetAccumulator();
+                annualized_volatility.Scale(multiplier);
+                return annualized_volatility.ToRecord();
+            },
             Transformation.EWMA => EWMA,
             Transformation.ZScore => ZScore,
             Transformation.StandardDeviation_1_Band => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
@@ -207,7 +217,7 @@ internal static class VectorTransformer
         return accumulator.ToRecord();
     }
 
-    private static IEnumerable<TValue> GetComputedReturns<TValue>(IEnumerable<TValue> values)
+    private static List<TValue> GetComputedReturns<TValue>(IEnumerable<TValue> values)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         if(!values.Any()) return [];
@@ -228,7 +238,7 @@ internal static class VectorTransformer
         return results;
     }
 
-    private static IEnumerable<TValue> GetComputedDifferences<TValue>(IEnumerable<TValue> values)
+    private static List<TValue> GetComputedDifferences<TValue>(IEnumerable<TValue> values)
              where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         if (!values.Any()) return [];

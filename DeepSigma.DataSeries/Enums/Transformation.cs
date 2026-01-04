@@ -105,6 +105,10 @@ public enum Transformation
     /// </summary>
     StandardDeviationOfPercentageChange,
     /// <summary>
+    /// Annualized volatility of the data series values. Standard deviation of returns scaled to an annual basis.
+    /// </summary>
+    AnnualizedVolatility,
+    /// <summary>
     /// Variance of the data series values.
     /// </summary>
     Variance,
@@ -224,6 +228,7 @@ public static class TransformationExtensions
                 Transformation.Sum or
                 Transformation.StandardDeviation or
                 Transformation.StandardDeviationOfPercentageChange or
+                Transformation.AnnualizedVolatility or
                 Transformation.Variance or
                 Transformation.VarianceOfPercentageChange or
                 Transformation.ZScore or

@@ -104,7 +104,7 @@ public class SeriesCollection<TKey, TDataType, TTransformation>
         List<(SortedDictionary<TKey, TDataType>, MathematicalOperation)> Series = [];
         SubSeriesCollection.ForEach(x => Series.Add((x.Series.GetSeriesDataTransformed() ?? [], x.MathematicalOperation)));
 
-        return GenericTimeSeriesUtilities.GetCombinedSeries(Series);
+        return SeriesCombiningUtilities.GetCombinedSeries(Series);
     }
 
     /// <inheritdoc/>

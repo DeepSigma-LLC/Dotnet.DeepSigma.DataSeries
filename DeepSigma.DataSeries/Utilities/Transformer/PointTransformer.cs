@@ -83,5 +83,4 @@ internal static class PointTransformer
         Method(data_point);
         return data_point.ToRecord();
     }
-
 }

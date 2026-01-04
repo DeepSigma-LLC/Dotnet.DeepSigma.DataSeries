@@ -14,7 +14,7 @@ namespace DeepSigma.DataSeries.Series;
 public class CategoricalSeriesBase<TValueDataType> 
     : AbstractSeriesBase<string, TValueDataType, SeriesTransformation>, 
     ISeriesBase<CategoricalSeriesBase<TValueDataType>, string, TValueDataType>
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueDataType : class, IDataModel<TValueDataType>, IDataModelStatic<TValueDataType>
 {
 
     /// <inheritdoc cref="CategoricalSeriesBase{TValueDataType}"/>
@@ -29,6 +29,6 @@ public class CategoricalSeriesBase<TValueDataType>
     /// <inheritdoc/>
     public sealed override SortedDictionary<string, TValueDataType> GetSeriesDataTransformed()
     {
-        return GenericTimeSeriesUtilities.GetScaledSeries(this.Data, Transformation.Scalar);
+        return Utilities.Transformer.SeriesTransformer.Transform(Data, Transformation);
     }
 }

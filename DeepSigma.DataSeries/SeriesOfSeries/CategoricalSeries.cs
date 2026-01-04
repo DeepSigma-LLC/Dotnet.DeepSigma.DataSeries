@@ -1,6 +1,7 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
+using DeepSigma.DataSeries.Utilities.Transformer;
 using DeepSigma.General.Extensions;
 using Microsoft.Extensions.Logging;
 
@@ -11,7 +12,7 @@ namespace DeepSigma.DataSeries.Series;
 /// </summary>
 public class CategoricalSeries<TValueDataType> 
     :  AbstractSeriesOfSeries<string, TValueDataType, SeriesTransformation>
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueDataType : class, IDataModel<TValueDataType>, IDataModelStatic<TValueDataType>
 {
 
     /// <inheritdoc cref="CategoricalSeries{TValueDataType}"/>
@@ -20,6 +21,6 @@ public class CategoricalSeries<TValueDataType>
     /// <inheritdoc/>
     public sealed override SortedDictionary<string, TValueDataType> GetSeriesDataTransformed()
     {
-        return GenericTimeSeriesUtilities.GetScaledSeries(GetSeriesDataUnscaled(), Transformation.Scalar);
+        return SeriesTransformer.Transform(GetSeriesDataUnscaled(), Transformation);
     }
 }

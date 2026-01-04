@@ -15,7 +15,7 @@ public class DataSeriesBase<TKeyType, TValueDataType>
     : AbstractSeriesBase<TKeyType, TValueDataType, SeriesTransformation>,
      ISeriesBase<DataSeriesBase<TKeyType, TValueDataType>, TKeyType, TValueDataType>
     where TKeyType : notnull, IComparable<TKeyType>, INumber<TKeyType>
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueDataType : class, IDataModel<TValueDataType>, IDataModelStatic<TValueDataType>
 {
     /// <inheritdoc cref="DataSeriesBase{TKeyType,TValueDataType}"/>
     public DataSeriesBase(SortedDictionary<TKeyType, TValueDataType> data) : base(data) { }
@@ -29,6 +29,6 @@ public class DataSeriesBase<TKeyType, TValueDataType>
     /// <inheritdoc/>
     public sealed override SortedDictionary<TKeyType, TValueDataType> GetSeriesDataTransformed()
     {
-        return GenericTimeSeriesUtilities.GetScaledSeries(this.Data, Transformation.Scalar);
+        return Utilities.Transformer.SeriesTransformer.Transform(Data, Transformation);
     }
 }

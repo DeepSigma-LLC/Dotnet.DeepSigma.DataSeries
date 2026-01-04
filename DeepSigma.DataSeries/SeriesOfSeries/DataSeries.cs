@@ -1,6 +1,7 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
+using DeepSigma.DataSeries.Utilities.Transformer;
 using DeepSigma.General.Extensions;
 using Microsoft.Extensions.Logging;
 using System.Numerics;
@@ -15,7 +16,7 @@ namespace DeepSigma.DataSeries.Series;
 public class DataSeries<TKeyDataType, TValueDataType> :
     AbstractSeriesOfSeries<TKeyDataType, TValueDataType, SeriesTransformation>
     where TKeyDataType : INumber<TKeyDataType>
-    where TValueDataType : class, IDataModel<TValueDataType>
+    where TValueDataType : class, IDataModel<TValueDataType>, IDataModelStatic<TValueDataType>
 {
     /// <inheritdoc cref="DataSeries{TKeyDataType, TValueDataType}"/>
     public DataSeries(ILogger? logger = null) : base(logger){}
@@ -23,6 +24,6 @@ public class DataSeries<TKeyDataType, TValueDataType> :
     /// <inheritdoc/>
     public sealed override SortedDictionary<TKeyDataType, TValueDataType> GetSeriesDataTransformed()
     {
-        return GenericTimeSeriesUtilities.GetScaledSeries(GetSeriesDataUnscaled(), Transformation.Scalar);
+        return SeriesTransformer.Transform(GetSeriesDataUnscaled(), Transformation);
     }
 }
