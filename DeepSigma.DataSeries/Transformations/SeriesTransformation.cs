@@ -21,9 +21,6 @@ public class SeriesTransformation<TData> : ISeriesTransformation<TData>
     public int? ObservationWindowCount { get; set; }
 
     /// <inheritdoc/>
-    public TransformationDataInclusionType DataInclusionType { get; set; } = TransformationDataInclusionType.Point;
-
-    /// <inheritdoc/>
     public Transformation Transformation { get; set; } = Transformation.None;
 
     /// <inheritdoc/>

@@ -30,11 +30,6 @@ public interface ISeriesTransformation<TData>
     Transformation Transformation { get; set; }
 
     /// <summary>
-    /// Type of data inclusion for the transformation.
-    /// </summary>
-    TransformationDataInclusionType DataInclusionType { get; set; }
-
-    /// <summary>
     /// Custom point transformation function.
     /// </summary>
     Func<TData, TData>? CustomPointTransformationMethod { get; set; }
