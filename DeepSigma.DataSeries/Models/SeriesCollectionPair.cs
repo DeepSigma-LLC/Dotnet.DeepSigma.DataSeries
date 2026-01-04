@@ -12,8 +12,8 @@ namespace DeepSigma.DataSeries.Models;
 /// <typeparam name="TTransformation">Transformation class</typeparam>
 public class SeriesCollectionPair<TKey, TDataType, TTransformation>(MathematicalOperation mathematical_operation, ISeries<TKey, TDataType, TTransformation> series)
     where TKey : notnull, IComparable<TKey>
-    where TDataType : notnull 
-    where TTransformation : class, ISeriesTransformation
+    where TDataType : class, IDataModel<TDataType>
+    where TTransformation : class, ISeriesTransformation<TDataType>
 {
     /// <summary>
     /// The mathematical operation to be applied to the series.

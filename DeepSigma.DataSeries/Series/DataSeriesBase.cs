@@ -12,7 +12,7 @@ namespace DeepSigma.DataSeries.Series;
 /// <typeparam name="TKeyType"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
 public class DataSeriesBase<TKeyType, TValueDataType> 
-    : AbstractSeriesBase<TKeyType, TValueDataType, SeriesTransformation>,
+    : AbstractSeriesBase<TKeyType, TValueDataType, SeriesTransformation<TValueDataType>>,
      ISeriesBase<DataSeriesBase<TKeyType, TValueDataType>, TKeyType, TValueDataType>
     where TKeyType : notnull, IComparable<TKeyType>, INumber<TKeyType>
     where TValueDataType : class, IDataModel<TValueDataType>, IDataModelStatic<TValueDataType>

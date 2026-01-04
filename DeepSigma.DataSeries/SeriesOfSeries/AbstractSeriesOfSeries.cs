@@ -21,7 +21,7 @@ public abstract class AbstractSeriesOfSeries<TCollectionKey, TCollectionDataType
     IEnumerable<SeriesCollectionPair<TCollectionKey, TCollectionDataType, TTransformation>>
     where TCollectionKey : notnull, IComparable<TCollectionKey>
     where TCollectionDataType : class, IDataModel<TCollectionDataType>
-    where TTransformation : class, ISeriesTransformation, new()
+    where TTransformation : class, ISeriesTransformation<TCollectionDataType>, new()
 {
     /// <inheritdoc cref="AbstractSeriesOfSeries{TCollectionKey, TValue, TTransformation}"/>
     protected AbstractSeriesOfSeries(ILogger? logger = null) : base()

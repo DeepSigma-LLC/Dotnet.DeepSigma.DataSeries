@@ -19,7 +19,7 @@ namespace DeepSigma.DataSeries.Series;
 /// <typeparam name="TDate"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
 public class TimeSeries<TDate, TValueDataType> :
-    AbstractSeriesOfSeries<TDate, TValueDataType, TimeSeriesTransformation>
+    AbstractSeriesOfSeries<TDate, TValueDataType, TimeSeriesTransformation<TValueDataType>>
     where TDate : struct, IDateTime<TDate>
     where TValueDataType : class, IDataModel<TValueDataType>, IDataModelStatic<TValueDataType>
 {

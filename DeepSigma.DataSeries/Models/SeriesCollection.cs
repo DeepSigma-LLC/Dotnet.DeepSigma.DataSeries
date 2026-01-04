@@ -18,7 +18,7 @@ public class SeriesCollection<TKey, TDataType, TTransformation>
     : ISeriesCollection<TKey, TDataType, TTransformation>, IEnumerable<SeriesCollectionPair<TKey, TDataType, TTransformation>>
     where TKey : notnull, IComparable<TKey>
     where TDataType : class, IDataModel<TDataType>
-    where TTransformation : class, ISeriesTransformation, new()
+    where TTransformation : class, ISeriesTransformation<TDataType>, new()
 {
 
     /// <inheritdoc/>

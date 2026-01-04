@@ -12,7 +12,7 @@ namespace DeepSigma.DataSeries.Series;
 /// </summary>
 /// <typeparam name="TValueDataType"></typeparam>
 public class CategoricalSeriesBase<TValueDataType> 
-    : AbstractSeriesBase<string, TValueDataType, SeriesTransformation>, 
+    : AbstractSeriesBase<string, TValueDataType, SeriesTransformation<TValueDataType>>, 
     ISeriesBase<CategoricalSeriesBase<TValueDataType>, string, TValueDataType>
     where TValueDataType : class, IDataModel<TValueDataType>, IDataModelStatic<TValueDataType>
 {

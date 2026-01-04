@@ -10,8 +10,8 @@ namespace DeepSigma.DataSeries.Interfaces;
 /// <typeparam name="TTransformation">Transformation type.</typeparam>
 public interface ISeries<TCollectionKey, TCollectionDataType, TTransformation>
     where TCollectionKey: notnull, IComparable<TCollectionKey>
-    where TCollectionDataType: notnull 
-    where TTransformation : class, ISeriesTransformation
+    where TCollectionDataType: class, IDataModel<TCollectionDataType>
+    where TTransformation : class, ISeriesTransformation<TCollectionDataType>
 {
     /// <summary>
     /// The name of the series.
