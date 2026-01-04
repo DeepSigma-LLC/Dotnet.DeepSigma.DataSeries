@@ -47,6 +47,10 @@ public interface ISeriesTransformation<TData>
     /// <summary>
     /// Minimum number of observations required for custom reference point transformations.
     /// </summary>
+    /// <remarks>
+    /// When this property is set to 1, the current and reference points will be the same value.
+    /// When set to 2, at least two data points are needed to perform the transformation otherwise an empty value is returned in order to keep the data series length consistent.
+    /// </remarks>
     int RequiredPointsForReferencePointSelection { get; set; }
 
     /// <summary>
