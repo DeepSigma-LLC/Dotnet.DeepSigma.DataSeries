@@ -3,6 +3,7 @@ using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
+using DeepSigma.DataSeries.Utilities.Transformer;
 using DeepSigma.General;
 using DeepSigma.General.DateTimeUnification;
 using DeepSigma.General.Enums;
@@ -33,7 +34,7 @@ public class TimeSeries<TDate, TValueDataType> :
     /// <inheritdoc/>
     public sealed override SortedDictionary<TDate, TValueDataType> GetSeriesDataTransformed()
     {
-        return GenericTimeSeriesTransformer.GetCompleteTransformedTimeSeriesData(GetSeriesDataUnscaled(), Transformation);
+        return SeriesTransformer.Transform(GetSeriesDataUnscaled(), Transformation);
     }
 
     /// <summary>
@@ -45,7 +46,7 @@ public class TimeSeries<TDate, TValueDataType> :
     {
         SortedDictionary<TDate, TValueDataType> final_results = [];
         SelfAligningTimeStepper<TDate> timeStepper = new(configuration);
-        SortedDictionary<TDate, TValueDataType> results = GenericTimeSeriesTransformer.GetCompleteTransformedTimeSeriesData(GetSeriesDataUnscaled(), Transformation);
+        SortedDictionary<TDate, TValueDataType> results = SeriesTransformer.Transform(GetSeriesDataUnscaled(), Transformation);
         foreach (var result in results)
         {
             if (timeStepper.IsTimeStepAligned(result.Key))

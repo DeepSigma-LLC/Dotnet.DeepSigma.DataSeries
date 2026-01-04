@@ -23,6 +23,8 @@ public record class Assets(int Id, string Name, decimal? Value, bool IsRolled = 
 
     public static Assets Empty => new(0, string.Empty, null, false, false, IsInvalid: true);
 
+    public static Assets One => new(0, string.Empty, 1);
+
     public override bool IsEmpty => Value is null;
 
     /// <inheritdoc/>

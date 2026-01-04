@@ -1,7 +1,9 @@
 ﻿
 namespace DeepSigma.DataSeries.Enums;
 
-
+/// <summary>
+/// Enumeration of data series transformations.
+/// </summary>
 public enum Transformation
 {
     //////////////////////////////
@@ -150,12 +152,23 @@ public enum Transformation
 
 }
 
-public static class Extensions
+/// <summary>
+/// Extension methods for the Transformation enum.
+/// </summary>
+public static class TransformationExtensions
 {
     extension(Transformation transformation)
     {
+        /// <summary>
+        /// Gets the data transformation type of the transformation.
+        /// </summary>
         public DataTransformationType DataTransformationType => transformation.GetDataTransformationType();
 
+        /// <summary>
+        /// Gets the data transformation type of the transformation.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         private DataTransformationType GetDataTransformationType()
         {
             if(transformation.IsPointTransformation) return DataTransformationType.PointTransformation;
@@ -164,9 +177,13 @@ public static class Extensions
             throw new NotImplementedException(); // Must be classified.
         }
 
+        /// <summary>
+        /// Indicates whether the transformation is a point transformation.
+        /// </summary>
         public bool IsPointTransformation => 
             transformation switch
             {
+                Transformation.None or
                 Transformation.AbsoluteValue or
                 Transformation.Negate or
                 Transformation.SquareRoot or
@@ -176,8 +193,11 @@ public static class Extensions
                 Transformation.Tangent => true,
                 _ => false,
             };
-        
 
+
+        /// <summary>
+        /// Indicates whether the transformation is a reference point transformation.
+        /// </summary>
         public bool IsReferencePointTransformation =>
             transformation switch
             {
@@ -192,6 +212,9 @@ public static class Extensions
             };
 
 
+        /// <summary>
+        /// Indicates whether the transformation is a vector transformation.
+        /// </summary>
         public bool IsVectorTransformation =>
             transformation switch
             {
@@ -215,8 +238,8 @@ public static class Extensions
             };
         }
 
-    }
 }
+
     
  
 

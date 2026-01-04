@@ -12,36 +12,36 @@ namespace DeepSigma.DataSeries.Utilities;
 /// </summary>
 internal static class GenericTimeSeriesTransformer
 {
-    /// <summary>
-    /// Gets transformed time series.
-    /// </summary>
-    /// <param name="Data"></param>
-    /// <param name="Transformation"></param>
-    /// <returns></returns>
-    internal static SortedDictionary<TDate, TValue> GetCompleteTransformedTimeSeriesData<TDate, TValue>(SortedDictionary<TDate, TValue> Data, TimeSeriesTransformation Transformation)
-        where TDate : struct, IDateTime<TDate>
-        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
-    {
-        SortedDictionary<TDate, TValue> results = TransformedTimeSeriesData(Data, Transformation);
-        results = GenericTimeSeriesUtilities.GetScaledSeries(results, Transformation.Scalar);
-        results = results.LagByDays(Transformation.ObservationLag, Transformation.DaySelectionTypeForLag);
-        return results;
-    }
+    ///// <summary>
+    ///// Gets transformed time series.
+    ///// </summary>
+    ///// <param name="Data"></param>
+    ///// <param name="Transformation"></param>
+    ///// <returns></returns>
+    //internal static SortedDictionary<TDate, TValue> GetCompleteTransformedTimeSeriesData<TDate, TValue>(SortedDictionary<TDate, TValue> Data, TimeSeriesTransformation Transformation)
+    //    where TDate : struct, IDateTime<TDate>
+    //    where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    //{
+    //    SortedDictionary<TDate, TValue> results = TransformedTimeSeriesData(Data, Transformation);
+    //    results = GenericTimeSeriesUtilities.GetScaledSeries(results, Transformation.Scalar);
+    //    results = results.LagByDays(Transformation.ObservationLag, Transformation.DaySelectionTypeForLag);
+    //    return results;
+    //}
 
-    /// <summary>
-    /// Gets transformed time series data.
-    /// </summary>
-    /// <typeparam name="TDate"></typeparam>
-    /// <typeparam name="TValue"></typeparam>
-    /// <param name="Data"></param>
-    /// <param name="transformation"></param>
-    /// <returns></returns>
-    private static SortedDictionary<TDate, TValue> TransformedTimeSeriesData<TDate, TValue>(SortedDictionary<TDate, TValue> Data, TimeSeriesTransformation transformation)
-      where TDate : struct, IDateTime<TDate>
-      where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
-    {
-        return TransformedTimeSeriesData(Data, transformation.DataTransformation, transformation.ObservationWindowCount);
-    }
+    ///// <summary>
+    ///// Gets transformed time series data.
+    ///// </summary>
+    ///// <typeparam name="TDate"></typeparam>
+    ///// <typeparam name="TValue"></typeparam>
+    ///// <param name="Data"></param>
+    ///// <param name="transformation"></param>
+    ///// <returns></returns>
+    //private static SortedDictionary<TDate, TValue> TransformedTimeSeriesData<TDate, TValue>(SortedDictionary<TDate, TValue> Data, TimeSeriesTransformation transformation)
+    //  where TDate : struct, IDateTime<TDate>
+    //  where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    //{
+    //    return TransformedTimeSeriesData(Data, transformation.Transformation, transformation.ObservationWindowCount);
+    //}
 
     /// <summary>
     /// Gets transformed time series data.
@@ -56,25 +56,27 @@ internal static class GenericTimeSeriesTransformer
         where TDate : struct, IDateTime<TDate>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
+        ObservationWindowCount ??= 20;
+
         return Selection switch
         {
             (TimeSeriesDataTransformation.None) => Data,
-            (TimeSeriesDataTransformation.MovingAverageWindow) => DataModelSeriesTransformationUtilities.GetMovingAverageWindowed(Data, ObservationWindowCount),
+            (TimeSeriesDataTransformation.MovingAverageWindow) => DataModelSeriesTransformationUtilities.GetMovingAverageWindowed(Data, ObservationWindowCount.Value),
             (TimeSeriesDataTransformation.CumulativeReturn) => DataModelSeriesTransformationUtilities.GetCumulativeReturns(Data),
             (TimeSeriesDataTransformation.Wealth) => DataModelSeriesTransformationUtilities.GetWealth(Data),
             (TimeSeriesDataTransformation.WealthReverse) => DataModelSeriesTransformationUtilities.GetWealthReverse(Data),
             (TimeSeriesDataTransformation.Return) => DataModelSeriesTransformationUtilities.GetObservationReturns(Data),
             (TimeSeriesDataTransformation.AnnualizedVolatilityExpandingWindow) => GetAnnualizedVolatilityExpandingWindow(Data),
-            (TimeSeriesDataTransformation.AnnualizedVolatilityWindow) => GetAnnualizedVolatilityWindowed(Data, ObservationWindowCount),
+            (TimeSeriesDataTransformation.AnnualizedVolatilityWindow) => GetAnnualizedVolatilityWindowed(Data, ObservationWindowCount.Value),
             (TimeSeriesDataTransformation.StandardDeviationExpandingWindow) => GetStandardDeviationOfReturnsExpandingWindow(Data),
-            (TimeSeriesDataTransformation.StandardDeviationWindow) => GetStandardDeviationOfReturnsWindowed(Data, ObservationWindowCount: ObservationWindowCount),
+            (TimeSeriesDataTransformation.StandardDeviationWindow) => GetStandardDeviationOfReturnsWindowed(Data, ObservationWindowCount: ObservationWindowCount.Value),
             (TimeSeriesDataTransformation.Drawdown) => DataModelSeriesTransformationUtilities.GetDrawdownPercentage(Data),
-            (TimeSeriesDataTransformation.SD_1_Positive) => GetStandardDeviationBand(Data, ObservationWindowCount, 1),
-            (TimeSeriesDataTransformation.SD_1_Negative) => GetStandardDeviationBand(Data, ObservationWindowCount, -1),
-            (TimeSeriesDataTransformation.SD_2_Positive) => GetStandardDeviationBand(Data, ObservationWindowCount, 2),
-            (TimeSeriesDataTransformation.SD_2_Negative) => GetStandardDeviationBand(Data, ObservationWindowCount, -2),
-            (TimeSeriesDataTransformation.SD_3_Positive) => GetStandardDeviationBand(Data, ObservationWindowCount, 3),
-            (TimeSeriesDataTransformation.SD_3_Negative) => GetStandardDeviationBand(Data, ObservationWindowCount, -3),
+            (TimeSeriesDataTransformation.SD_1_Positive) => GetStandardDeviationBand(Data, ObservationWindowCount.Value, 1),
+            (TimeSeriesDataTransformation.SD_1_Negative) => GetStandardDeviationBand(Data, ObservationWindowCount.Value, -1),
+            (TimeSeriesDataTransformation.SD_2_Positive) => GetStandardDeviationBand(Data, ObservationWindowCount.Value, 2),
+            (TimeSeriesDataTransformation.SD_2_Negative) => GetStandardDeviationBand(Data, ObservationWindowCount.Value, -2),
+            (TimeSeriesDataTransformation.SD_3_Positive) => GetStandardDeviationBand(Data, ObservationWindowCount.Value, 3),
+            (TimeSeriesDataTransformation.SD_3_Negative) => GetStandardDeviationBand(Data, ObservationWindowCount.Value, -3),
             _ => throw new NotImplementedException(),
         };
     }

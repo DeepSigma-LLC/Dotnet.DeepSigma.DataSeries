@@ -1,6 +1,7 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
+using DeepSigma.DataSeries.Utilities.Transformer;
 using DeepSigma.General.DateTimeUnification;
 using DeepSigma.General.Extensions;
 
@@ -12,7 +13,7 @@ namespace DeepSigma.DataSeries.Series;
 /// <typeparam name="TDateKey"></typeparam>
 /// <typeparam name="TValueDataType"></typeparam>
 public class TimeSeriesBase<TDateKey, TValueDataType> : 
-    AbstractSeriesBase<TDateKey, TValueDataType, TimeSeriesTransformation>
+    AbstractSeriesBase<TDateKey, TValueDataType, TimeSeriesTransformation>,
      ISeriesBase<TimeSeriesBase<TDateKey, TValueDataType>, TDateKey, TValueDataType>
     where TDateKey : struct, IDateTime<TDateKey>
     where TValueDataType : class, IDataModel<TValueDataType>, IDataModelStatic<TValueDataType>
@@ -29,6 +30,6 @@ public class TimeSeriesBase<TDateKey, TValueDataType> :
     /// <inheritdoc/>
     public sealed override SortedDictionary<TDateKey, TValueDataType> GetSeriesDataTransformed()
     {
-        return GenericTimeSeriesTransformer.GetCompleteTransformedTimeSeriesData(Data, Transformation);
+        return SeriesTransformer.Transform(Data, Transformation);
     }
 }

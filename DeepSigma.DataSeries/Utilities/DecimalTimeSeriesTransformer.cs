@@ -4,6 +4,7 @@ using DeepSigma.General.DateTimeUnification;
 using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
 using DeepSigma.General.TimeStepper;
+using DeepSigma.General;
 
 namespace DeepSigma.DataSeries.Utilities;
 
@@ -12,18 +13,18 @@ namespace DeepSigma.DataSeries.Utilities;
 /// </summary>
 internal class DecimalTimeSeriesTransformer
 {
-    /// <summary>
-    /// Gets transformed time series data.
-    /// </summary>
-    /// <typeparam name="TDate"></typeparam>
-    /// <param name="Data"></param>
-    /// <param name="Transformation"></param>
-    /// <returns></returns>
-    internal static SortedDictionary<TDate, decimal?> TransformedTimeSeriesData<TDate>(SortedDictionary<TDate, decimal?> Data, TimeSeriesTransformation Transformation)
-        where TDate : struct, IDateTime<TDate>
-    {
-        return ComputeTransformedTimeSeriesData(Data, Transformation.DataTransformation, Transformation.ObservationWindowCount);
-    }
+    ///// <summary>
+    ///// Gets transformed time series data.
+    ///// </summary>
+    ///// <typeparam name="TDate"></typeparam>
+    ///// <param name="Data"></param>
+    ///// <param name="Transformation"></param>
+    ///// <returns></returns>
+    //internal static SortedDictionary<TDate, decimal?> TransformedTimeSeriesData<TDate>(SortedDictionary<TDate, decimal?> Data, TimeSeriesTransformation Transformation)
+    //    where TDate : struct, IDateTime<TDate>
+    //{
+    //    return ComputeTransformedTimeSeriesData(Data, Transformation, Transformation.ObservationWindowCount);
+    //}
 
     /// <summary>
     /// Gets transformed time series data.
@@ -36,25 +37,27 @@ internal class DecimalTimeSeriesTransformer
     private static SortedDictionary<TDate, decimal?> ComputeTransformedTimeSeriesData<TDate>(SortedDictionary<TDate, decimal?> Data, TimeSeriesDataTransformation Selection, int? ObservationWindowCount = null)
         where TDate : struct, IDateTime<TDate>
     {
+        ObservationWindowCount ??= 20;
+
         return Selection switch
         {
             (TimeSeriesDataTransformation.None) => Data,
-            (TimeSeriesDataTransformation.MovingAverageWindow) => TimeSeriesTransformUtilities.GetMovingAverageWindowed(Data, ObservationWindowCount),
+            (TimeSeriesDataTransformation.MovingAverageWindow) => TimeSeriesTransformUtilities.GetMovingAverageWindowed(Data, ObservationWindowCount.Value),
             (TimeSeriesDataTransformation.CumulativeReturn) => TimeSeriesTransformUtilities.GetCumulativeReturns(Data),
             (TimeSeriesDataTransformation.Wealth) => TimeSeriesTransformUtilities.GetWealth(Data),
             (TimeSeriesDataTransformation.WealthReverse) => TimeSeriesTransformUtilities.GetWealthReverse(Data),
             (TimeSeriesDataTransformation.Return) => TimeSeriesTransformUtilities.GetObservationReturns(Data),
             (TimeSeriesDataTransformation.AnnualizedVolatilityExpandingWindow) => AnnualizedVolatilityExpandingWindow(Data),
-            (TimeSeriesDataTransformation.AnnualizedVolatilityWindow) => AnnualizedVolatilityWindowed(Data, ObservationWindowCount),
+            (TimeSeriesDataTransformation.AnnualizedVolatilityWindow) => AnnualizedVolatilityWindowed(Data, ObservationWindowCount.Value),
             (TimeSeriesDataTransformation.StandardDeviationExpandingWindow) => StandardDeviationOfReturnsExpandingWindow(Data),
-            (TimeSeriesDataTransformation.StandardDeviationWindow) => StandardDeviationofReturnsWindowed(Data, ObservationWindowCount),
+            (TimeSeriesDataTransformation.StandardDeviationWindow) => StandardDeviationofReturnsWindowed(Data, ObservationWindowCount.Value),
             (TimeSeriesDataTransformation.Drawdown) => TimeSeriesTransformUtilities.GetDrawdown(Data),
-            (TimeSeriesDataTransformation.SD_1_Positive) => GetStandardDeviationBand(Data, ObservationWindowCount, 1),
-            (TimeSeriesDataTransformation.SD_1_Negative) => GetStandardDeviationBand(Data, ObservationWindowCount, -1),
-            (TimeSeriesDataTransformation.SD_2_Positive) => GetStandardDeviationBand(Data, ObservationWindowCount, 2),
-            (TimeSeriesDataTransformation.SD_2_Negative) => GetStandardDeviationBand(Data, ObservationWindowCount, -2),
-            (TimeSeriesDataTransformation.SD_3_Positive) => GetStandardDeviationBand(Data, ObservationWindowCount, 3),
-            (TimeSeriesDataTransformation.SD_3_Negative) => GetStandardDeviationBand(Data, ObservationWindowCount, -3),
+            (TimeSeriesDataTransformation.SD_1_Positive) => GetStandardDeviationBand(Data, ObservationWindowCount.Value, 1),
+            (TimeSeriesDataTransformation.SD_1_Negative) => GetStandardDeviationBand(Data, ObservationWindowCount.Value, -1),
+            (TimeSeriesDataTransformation.SD_2_Positive) => GetStandardDeviationBand(Data, ObservationWindowCount.Value, 2),
+            (TimeSeriesDataTransformation.SD_2_Negative) => GetStandardDeviationBand(Data, ObservationWindowCount.Value, -2),
+            (TimeSeriesDataTransformation.SD_3_Positive) => GetStandardDeviationBand(Data, ObservationWindowCount.Value, 3),
+            (TimeSeriesDataTransformation.SD_3_Negative) => GetStandardDeviationBand(Data, ObservationWindowCount.Value, -3),
             _ => throw new NotImplementedException(),
         };
     }
@@ -71,7 +74,8 @@ internal class DecimalTimeSeriesTransformer
     private static SortedDictionary<TDate, decimal?> AnnualizedVolatilityExpandingWindow<TDate>(SortedDictionary<TDate, decimal?> Data)
         where TDate : struct, IDateTime<TDate>
     {
-        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = Data.FillMissingValuesWithNull(new SelfAligningTimeStepper<TDate>(new(Periodicity.Daily, DaySelectionType.Weekday)));
+        TimeStepperConfiguration time_stepper_configuration = new(new PeriodicityConfiguration(Periodicity.Daily, DaySelectionType.Weekday));
+        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = Data.FillMissingValuesWithNull(new SelfAligningTimeStepper<TDate>(time_stepper_configuration));
         SortedDictionary<TDate, decimal?> observation_returns = TimeSeriesTransformUtilities.GetObservationReturns(data_with_missing_days_filled);
         decimal AnnualizationMultiplier = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.Select(x => x.DateTime).ToArray());
         return GetScaledSeries(TimeSeriesTransformUtilities.GetStandardDeviationExpandingWindow(observation_returns), AnnualizationMultiplier);
@@ -80,7 +84,8 @@ internal class DecimalTimeSeriesTransformer
     private static SortedDictionary<TDate, decimal?> AnnualizedVolatilityWindowed<TDate>(SortedDictionary<TDate, decimal?> Data, int ObservationWindowCount)
     where TDate : struct, IDateTime<TDate>
     {
-        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = Data.FillMissingValuesWithNull(new SelfAligningTimeStepper<TDate>(new(Periodicity.Daily, DaySelectionType.Weekday)));
+        TimeStepperConfiguration time_stepper_configuration = new(new PeriodicityConfiguration(Periodicity.Daily, DaySelectionType.Weekday));
+        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = Data.FillMissingValuesWithNull(new SelfAligningTimeStepper<TDate>(time_stepper_configuration));
         SortedDictionary<TDate, decimal?> observation_returns = TimeSeriesTransformUtilities.GetObservationReturns(data_with_missing_days_filled);
         decimal AnnualizationMultiplier = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.Select(x => x.DateTime).ToArray());
         return GetScaledSeries(TimeSeriesTransformUtilities.GetStandardDeviationWindowed(observation_returns, ObservationWindowCount: ObservationWindowCount), AnnualizationMultiplier);
@@ -89,7 +94,8 @@ internal class DecimalTimeSeriesTransformer
     private static SortedDictionary<TDate, decimal?> StandardDeviationOfReturnsExpandingWindow<TDate>(SortedDictionary<TDate, decimal?> Data)
     where TDate : struct, IDateTime<TDate>
     {
-        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = Data.FillMissingValuesWithNull(new SelfAligningTimeStepper<TDate>(new(Periodicity.Daily, DaySelectionType.Weekday)));
+        TimeStepperConfiguration time_stepper_configuration = new(new PeriodicityConfiguration(Periodicity.Daily, DaySelectionType.Weekday));
+        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = Data.FillMissingValuesWithNull(new SelfAligningTimeStepper<TDate>(time_stepper_configuration));
         SortedDictionary<TDate, decimal?> observation_returns = TimeSeriesTransformUtilities.GetObservationReturns(data_with_missing_days_filled);
         return TimeSeriesTransformUtilities.GetStandardDeviationExpandingWindow(observation_returns);
     }
@@ -97,7 +103,8 @@ internal class DecimalTimeSeriesTransformer
     private static SortedDictionary<TDate, decimal?> StandardDeviationofReturnsWindowed<TDate>(SortedDictionary<TDate, decimal?> Data, int ObservationWindowCount)
     where TDate : struct, IDateTime<TDate>
     {
-        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = Data.FillMissingValuesWithNull(new SelfAligningTimeStepper<TDate>(new(Periodicity.Daily, DaySelectionType.Weekday)));
+        TimeStepperConfiguration time_stepper_configuration = new(new PeriodicityConfiguration(Periodicity.Daily, DaySelectionType.Weekday));
+        SortedDictionary<TDate, decimal?> data_with_missing_days_filled = Data.FillMissingValuesWithNull(new SelfAligningTimeStepper<TDate>(time_stepper_configuration));
         SortedDictionary<TDate, decimal?> observation_returns = TimeSeriesTransformUtilities.GetObservationReturns(data_with_missing_days_filled);
         return TimeSeriesTransformUtilities.GetStandardDeviationWindowed(observation_returns, ObservationWindowCount: ObservationWindowCount);
     }

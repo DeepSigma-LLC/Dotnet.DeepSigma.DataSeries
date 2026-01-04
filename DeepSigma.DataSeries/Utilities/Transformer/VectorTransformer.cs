@@ -6,28 +6,29 @@ namespace DeepSigma.DataSeries.Utilities.Transformer;
 
 internal static class VectorTransformer
 {
-    internal static Func<IEnumerable<TValue>, TValue> GetVectorOperationMethod<TValue>(VectorTransformation transformation, decimal scalar)
+    internal static Func<IEnumerable<TValue>, TValue> GetVectorOperationMethod<TValue>(Transformation transformation, decimal scalar)
     where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
+        if (!transformation.IsVectorTransformation) throw new ArgumentException("Only vector transformations are supported.");
+
         Func<IEnumerable<TValue>, TValue> transformation_method = transformation switch
         {
-            VectorTransformation.None => (x) => x.LastOrDefault() ?? TValue.Empty, // Return last value for none
-            VectorTransformation.Average => Average,
-            VectorTransformation.Max => Max,
-            VectorTransformation.Min => Min,
-            VectorTransformation.Sum => Sum,
-            VectorTransformation.Variance => (x) => Variance(x, StatisticsDataSetClassification.Sample),
-            VectorTransformation.VarianceOfPercentageChange => (x) => Variance(GetComputedReturns(x), StatisticsDataSetClassification.Sample),
-            VectorTransformation.StandardDeviation => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
-            VectorTransformation.StandardDeviationOfPercentageChange => (x) => StandardDeviation(GetComputedReturns(x), StatisticsDataSetClassification.Sample),
-            VectorTransformation.EWMA => EWMA,
-            VectorTransformation.ZScore => ZScore,
-            VectorTransformation.StandardDeviation_1_Band => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
-            VectorTransformation.StandardDeviation_2_Band => (x) => PointTransformer.Scale(StandardDeviation(x, StatisticsDataSetClassification.Sample),2),
-            VectorTransformation.StandardDeviation_3_Band => (x) => PointTransformer.Scale(StandardDeviation(x, StatisticsDataSetClassification.Sample), 3),
-            VectorTransformation.StandardDeviation_Negative_1_Band => (x) => PointTransformer.Scale(StandardDeviation(x, StatisticsDataSetClassification.Sample), -1),
-            VectorTransformation.StandardDeviation_Negative_2_Band => (x) => PointTransformer.Scale(StandardDeviation(x, StatisticsDataSetClassification.Sample), -2),
-            VectorTransformation.StandardDeviation_Negative_3_Band => (x) => PointTransformer.Scale(StandardDeviation(x, StatisticsDataSetClassification.Sample), -3),
+            Transformation.Average => Average,
+            Transformation.Max => Max,
+            Transformation.Min => Min,
+            Transformation.Sum => Sum,
+            Transformation.Variance => (x) => Variance(x, StatisticsDataSetClassification.Sample),
+            Transformation.VarianceOfPercentageChange => (x) => Variance(GetComputedReturns(x), StatisticsDataSetClassification.Sample),
+            Transformation.StandardDeviation => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
+            Transformation.StandardDeviationOfPercentageChange => (x) => StandardDeviation(GetComputedReturns(x), StatisticsDataSetClassification.Sample),
+            Transformation.EWMA => EWMA,
+            Transformation.ZScore => ZScore,
+            Transformation.StandardDeviation_1_Band => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
+            Transformation.StandardDeviation_2_Band => (x) => PointTransformer.Scale(StandardDeviation(x, StatisticsDataSetClassification.Sample),2),
+            Transformation.StandardDeviation_3_Band => (x) => PointTransformer.Scale(StandardDeviation(x, StatisticsDataSetClassification.Sample), 3),
+            Transformation.StandardDeviation_Negative_1_Band => (x) => PointTransformer.Scale(StandardDeviation(x, StatisticsDataSetClassification.Sample), -1),
+            Transformation.StandardDeviation_Negative_2_Band => (x) => PointTransformer.Scale(StandardDeviation(x, StatisticsDataSetClassification.Sample), -2),
+            Transformation.StandardDeviation_Negative_3_Band => (x) => PointTransformer.Scale(StandardDeviation(x, StatisticsDataSetClassification.Sample), -3),
             _ => throw new NotImplementedException(),
         };
         return (x) => PointTransformer.Scale(transformation_method(x), scalar);

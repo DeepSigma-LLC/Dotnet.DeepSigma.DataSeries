@@ -6,19 +6,21 @@ namespace DeepSigma.DataSeries.Utilities.Transformer;
 
 internal static class PointTransformer
 {
-    internal static Func<TValue, TValue> GetPointOperationMethod<TValue>(PointTransformation transformation, decimal scalar)
+    internal static Func<TValue, TValue> GetPointOperationMethod<TValue>(Transformation transformation, decimal scalar)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
+        if (!transformation.IsPointTransformation) throw new ArgumentException("Only point transformations are supported.");
+
         Func<TValue, TValue> transformation_method = transformation switch
         {
-            PointTransformation.None => (x) => x,// No operation needed for none
-            PointTransformation.AbsoluteValue => AbsoluteValue,
-            PointTransformation.Negate => (x) => Scale(x, -1),
-            PointTransformation.Sine => Sine,
-            PointTransformation.Cosine => Cosine,
-            PointTransformation.Tangent => Tangent,
-            PointTransformation.SquareRoot => SquareRoot,
-            PointTransformation.Logarithm => Logarithm,
+            Transformation.None => (x) => x,// No operation needed for none
+            Transformation.AbsoluteValue => AbsoluteValue,
+            Transformation.Negate => (x) => Scale(x, -1),
+            Transformation.Sine => Sine,
+            Transformation.Cosine => Cosine,
+            Transformation.Tangent => Tangent,
+            Transformation.SquareRoot => SquareRoot,
+            Transformation.Logarithm => Logarithm,
             _ => throw new NotImplementedException(),
         };
         return (x) => Scale(transformation_method(x), scalar);

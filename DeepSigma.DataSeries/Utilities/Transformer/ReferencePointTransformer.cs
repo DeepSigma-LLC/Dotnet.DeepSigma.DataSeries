@@ -6,34 +6,32 @@ namespace DeepSigma.DataSeries.Utilities.Transformer;
 
 internal class ReferencePointTransformer
 {
-    internal static Func<IEnumerable<TValue>, TValue> GetReferencePointOperationMethod<TValue>(ReferencePointTransformation transformation, decimal scalar)
+    internal static Func<IEnumerable<TValue>, TValue> GetReferencePointOperationMethod<TValue>(Transformation transformation, decimal scalar)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
+        if(!transformation.IsReferencePointTransformation) throw new ArgumentException("Only reference point transformations are supported.");
+
         Func<TValue, TValue, TValue> point_transform_method = transformation switch
         {
-            ReferencePointTransformation.None => (x, y) => x, // No operation needed for none. Just return the current point. Discard the reference point
-            ReferencePointTransformation.Return => CumulativeReturn,
-            ReferencePointTransformation.Difference => Difference,
-            ReferencePointTransformation.Drawdown => DrawdownAmount, // need to pass max value
-            ReferencePointTransformation.DrawdownPercentage => DrawdownPercentage, // need to pass max value
-            ReferencePointTransformation.Wealth => (x, y) => Wealth(x,y), // pass starting refernece
-            ReferencePointTransformation.WealthReverse => (x, y) => WealthReverse(x,y), // pass ending reference 
+            Transformation.Return => CumulativeReturn,
+            Transformation.Difference => Difference,
+            Transformation.Drawdown => DrawdownAmount, // need to pass max value
+            Transformation.DrawdownPercentage => DrawdownPercentage, // need to pass max value
+            Transformation.Wealth => (x, y) => Wealth(x,y), // pass starting refernece
+            Transformation.WealthReverse => (x, y) => WealthReverse(x,y), // pass ending reference 
             _ => throw new NotImplementedException(),
         };
 
         Func<IEnumerable<TValue>, TValue?>? reference_point_selection = transformation switch
         { 
-            ReferencePointTransformation.None =>  null,
-            ReferencePointTransformation.Return => GetFirstValidValue,
-            ReferencePointTransformation.Difference => GetFirstValidValue,
-            ReferencePointTransformation.Wealth => GetFirstValidValue,
-            ReferencePointTransformation.WealthReverse => GetLastValidValue,
-            ReferencePointTransformation.Drawdown => GetMaxValue,
-            ReferencePointTransformation.DrawdownPercentage => GetMaxValue,
+            Transformation.Return => GetFirstValidValue,
+            Transformation.Difference => GetFirstValidValue,
+            Transformation.Wealth => GetFirstValidValue,
+            Transformation.WealthReverse => GetLastValidValue,
+            Transformation.Drawdown => GetMaxValue,
+            Transformation.DrawdownPercentage => GetMaxValue,
             _ => throw new NotImplementedException(),
         };
-
-        reference_point_selection ??= null; // update to pass-through method
 
         return (x) => PointTransformer.Scale(ComputeReferencePointTransformation(x, reference_point_selection, point_transform_method), scalar);
     }

@@ -5,10 +5,10 @@ using DeepSigma.DataSeries.Accumulators;
 
 namespace DeepSigma.DataSeries.Tests.Tests.DataSets;
 
-public class FunctionalDataSet_Tests
+public class DataSet_Tests
 {
     [Fact]
-    public void FunctionalDataSet_Add_MultipleValues()
+    public void DataSet_Add_MultipleValues()
     {
         DataSet<int, Observation> dataSet = [];
         SortedDictionary<int, Observation> dataToAdd = new()
@@ -29,7 +29,7 @@ public class FunctionalDataSet_Tests
     }
 
     [Fact]
-    public async Task FunctionalDataSet_Add_DuplicateKey_ThrowsException()
+    public async Task DataSet_Add_DuplicateKey_ThrowsException()
     {
         DataSet<int, Observation> dataSet = [];
         dataSet.Add(1, new Observation(11m));

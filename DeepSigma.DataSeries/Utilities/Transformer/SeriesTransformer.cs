@@ -5,25 +5,24 @@ using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Utilities.Transformer;
 
-internal class SeriesTransformer
+internal static class SeriesTransformer
 {
-    internal SortedDictionary<TKey, TValue> Transform<TKey,TValue, T>(SortedDictionary<TKey, TValue> Data, SeriesTransformation transformation)
-        where T : Enum
+    internal static SortedDictionary<TKey, TValue> Transform<TKey,TValue>(SortedDictionary<TKey, TValue> Data, SeriesTransformation transformation)
         where TKey : notnull, IComparable<TKey>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
         switch(transformation.Transformation.DataTransformationType)
         {
-            case PointTransformation pointTransformation:
-                return Data.GetSeriesWithMethodApplied(PointTransformer.GetPointOperationMethod<TValue>(pointTransformation, transformation.Scalar));
-            case VectorTransformation setTransformation:
+            case DataTransformationType.PointTransformation:
+                return Data.GetSeriesWithMethodApplied(PointTransformer.GetPointOperationMethod<TValue>(transformation.Transformation, transformation.Scalar));
+            case DataTransformationType.VectorTransformation:
                 if (transformation.ObservationWindowCount is not null)
                 {
-                    return Data.GetWindowedSeriesWithMethodApplied(VectorTransformer.GetVectorOperationMethod<TValue>(setTransformation, transformation.Scalar), transformation.ObservationWindowCount.Value, () => TValue.Empty);
+                    return Data.GetWindowedSeriesWithMethodApplied(VectorTransformer.GetVectorOperationMethod<TValue>(transformation.Transformation, transformation.Scalar), transformation.ObservationWindowCount.Value, () => TValue.Empty);
                 }
-                return Data.GetExpandingWindowedSeriesWithMethodApplied(VectorTransformer.GetVectorOperationMethod<TValue>(setTransformation, transformation.Scalar));
-            case ReferencePointTransformation pointTransformationWithReference:
-                return Data.GetExpandingWindowedSeriesWithMethodApplied(ReferencePointTransformer.GetReferencePointOperationMethod<TValue>(pointTransformationWithReference, transformation.Scalar));
+                return Data.GetExpandingWindowedSeriesWithMethodApplied(VectorTransformer.GetVectorOperationMethod<TValue>(transformation.Transformation, transformation.Scalar));
+            case DataTransformationType.ReferencePointTransformation:
+                return Data.GetExpandingWindowedSeriesWithMethodApplied(ReferencePointTransformer.GetReferencePointOperationMethod<TValue>(transformation.Transformation, transformation.Scalar));
             default:
                 throw new NotImplementedException();
         }

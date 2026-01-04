@@ -22,6 +22,6 @@ public class SeriesTransformation : ISeriesTransformation
     public TransformationDataInclusionType DataInclusionType { get; set; } = TransformationDataInclusionType.Point;
 
     /// <inheritdoc/>
-    public required Transformation Transformation { get; set; } = Transformation.None;
+    public Transformation Transformation { get; set; } = Transformation.None;
 
 }

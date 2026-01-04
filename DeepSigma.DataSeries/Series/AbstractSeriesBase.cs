@@ -20,7 +20,7 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
     ISeries<TCollectionKey, TCollectionDataType, TTransformation>, IEnumerable<KeyValuePair<TCollectionKey, TCollectionDataType>>
     where TCollectionKey : notnull, IComparable<TCollectionKey>
     where TCollectionDataType : class, IDataModel<TCollectionDataType>
-    where TTransformation : class, ISeriesTransformation<VectorTransformation>, new()
+    where TTransformation : class, ISeriesTransformation, new()
 {
     /// <summary>
     /// The collection of data points in the series.
