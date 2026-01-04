@@ -15,7 +15,7 @@ internal static class SeriesTransformer
         return Transform(Data, transformation).LagByDays(transformation.ObservationLag, transformation.DaySelectionTypeForLag);
     }
 
-    internal static SortedDictionary<TKey, TValue> Transform<TKey,TValue>(SortedDictionary<TKey, TValue> Data, SeriesTransformation transformation)
+    internal static SortedDictionary<TKey, TValue> Transform<TKey, TValue>(SortedDictionary<TKey, TValue> Data, SeriesTransformation transformation)
         where TKey : notnull, IComparable<TKey>
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {

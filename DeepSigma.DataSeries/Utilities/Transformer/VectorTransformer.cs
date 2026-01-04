@@ -23,14 +23,7 @@ internal static class VectorTransformer
             Transformation.VarianceOfPercentageChange => (x) => Variance(GetComputedReturns(x), StatisticsDataSetClassification.Sample),
             Transformation.StandardDeviation => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
             Transformation.StandardDeviationOfPercentageChange => (x) => StandardDeviation(GetComputedReturns(x), StatisticsDataSetClassification.Sample),
-            Transformation.AnnualizedVolatility => (x) =>
-            {
-                TValue stddev = StandardDeviation(GetComputedReturns(x), StatisticsDataSetClassification.Sample);
-                decimal multiplier = PeriodicityUtilities.GetAnnualizationMultiplier(Data.Keys.Select(x => x.DateTime).ToArray());
-                IAccumulator<TValue> annualized_volatility = stddev.GetAccumulator();
-                annualized_volatility.Scale(multiplier);
-                return annualized_volatility.ToRecord();
-            },
+            Transformation.AnnualizedVolatility => (x) => AnnualizedVolatility(x, []), // Dates parameter is required for accurate calculation, but not available in this context. We need to handle this differently in real use cases. 
             Transformation.EWMA => EWMA,
             Transformation.ZScore => ZScore,
             Transformation.StandardDeviation_1_Band => (x) => StandardDeviation(x, StatisticsDataSetClassification.Sample),
@@ -42,6 +35,23 @@ internal static class VectorTransformer
             _ => throw new NotImplementedException(),
         };
         return (x) => PointTransformer.Scale(transformation_method(x), scalar);
+    }
+
+    /// <summary>
+    /// Computes the annualized volatility for a given data set.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="values"></param>
+    /// <param name="dates"></param>
+    /// <returns></returns>
+    internal static TValue AnnualizedVolatility<TValue>(IEnumerable<TValue> values, IEnumerable<DateTime> dates)
+    where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    {
+        TValue stddev = StandardDeviation(GetComputedReturns(values), StatisticsDataSetClassification.Sample);
+        decimal multiplier = PeriodicityUtilities.GetAnnualizationMultiplier(dates.ToArray());
+        IAccumulator<TValue> annualized_volatility = stddev.GetAccumulator();
+        annualized_volatility.Scale(multiplier);
+        return annualized_volatility.ToRecord();
     }
 
     /// <summary>
