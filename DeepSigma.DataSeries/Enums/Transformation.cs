@@ -152,8 +152,18 @@ public enum Transformation
     /// </summary>
     StandardDeviation_Negative_3_Band,
 
-
-
+    /// <summary>
+    /// Custom point transformation defined by user-provided function.
+    /// </summary>
+    CustomPointTransformation,
+    /// <summary>
+    /// Custom reference point transformation defined by user-provided function.
+    /// </summary>
+    CustomReferencePointTransformation,
+    /// <summary>
+    /// Custom vector transformation defined by user-provided function.
+    /// </summary>
+    CustomVectorTransformation,
 }
 
 /// <summary>
@@ -194,7 +204,8 @@ public static class TransformationExtensions
                 Transformation.Logarithm or
                 Transformation.Cosine or
                 Transformation.Sine or
-                Transformation.Tangent => true,
+                Transformation.Tangent or
+                Transformation.CustomPointTransformation => true,
                 _ => false,
             };
 
@@ -210,7 +221,8 @@ public static class TransformationExtensions
                 Transformation.Wealth or
                 Transformation.WealthReverse or
                 Transformation.Drawdown or
-                Transformation.DrawdownPercentage
+                Transformation.DrawdownPercentage or
+                Transformation.CustomReferencePointTransformation
                 => true,
                 _ => false,
             };
@@ -238,7 +250,9 @@ public static class TransformationExtensions
                 Transformation.StandardDeviation_3_Band or
                 Transformation.StandardDeviation_Negative_1_Band or
                 Transformation.StandardDeviation_Negative_2_Band or
-                Transformation.StandardDeviation_Negative_3_Band => true,
+                Transformation.StandardDeviation_Negative_3_Band or
+                Transformation.CustomVectorTransformation
+                => true,
                 _ => false,
             };
         }

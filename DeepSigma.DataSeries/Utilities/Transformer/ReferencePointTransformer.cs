@@ -1,28 +1,36 @@
 ﻿using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General.Extensions;
 
 namespace DeepSigma.DataSeries.Utilities.Transformer;
 
+/// <summary>
+/// Provides methods to perform reference point transformations on data series.
+/// </summary>
 internal class ReferencePointTransformer
 {
-    internal static Func<IEnumerable<TValue>, TValue> GetReferencePointOperationMethod<TValue>(Transformation transformation, decimal scalar)
+
+    internal static Func<IEnumerable<TValue>, TValue> GetReferencePointOperationMethod<TValue>(SeriesTransformation<TValue> transformation)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        if(!transformation.IsReferencePointTransformation) throw new ArgumentException("Only reference point transformations are supported.");
+        if(!transformation.Transformation.IsReferencePointTransformation) throw new ArgumentException("Only reference point transformations are supported.");
 
-        Func<TValue, TValue, TValue> point_transform_method = transformation switch
+        Func<TValue, TValue, TValue> point_transform_method = transformation.Transformation switch
         {
             Transformation.Return => CumulativeReturn,
             Transformation.Difference => Difference,
             Transformation.Drawdown => DrawdownAmount, // need to pass max value
             Transformation.DrawdownPercentage => DrawdownPercentage, // need to pass max value
             Transformation.Wealth => (x, y) => Wealth(x,y), // pass starting refernece
-            Transformation.WealthReverse => (x, y) => WealthReverse(x,y), // pass ending reference 
+            Transformation.WealthReverse => (x, y) => WealthReverse(x, y), // pass ending reference 
+            Transformation.CustomReferencePointTransformation => transformation.CustomReferencePointTransformationMethod is not null
+            ? (x, y) => transformation.CustomReferencePointTransformationMethod(x, y)
+            : throw new Exception(nameof(transformation.CustomReferencePointTransformationMethod) + " method is null."),
             _ => throw new NotImplementedException(),
         };
-
-        Func<IEnumerable<TValue>, TValue?>? reference_point_selection = transformation switch
+        
+        Func<IEnumerable<TValue>, TValue?>? reference_point_selection = transformation.Transformation switch
         { 
             Transformation.Return => GetFirstValidValue,
             Transformation.Difference => GetFirstValidValue,
@@ -30,19 +38,23 @@ internal class ReferencePointTransformer
             Transformation.WealthReverse => GetLastValidValue,
             Transformation.Drawdown => GetMaxValue,
             Transformation.DrawdownPercentage => GetMaxValue,
+            Transformation.CustomReferencePointTransformation => transformation.CustomReferencePointSelectionMethod is not null
+            ? (x) => transformation.CustomReferencePointSelectionMethod(x) 
+            : throw new Exception(nameof(transformation.CustomReferencePointSelectionMethod) + " method is null.") ,
             _ => throw new NotImplementedException(),
         };
 
-        int required_points = transformation switch
+        int required_points = transformation.Transformation switch
         {
             Transformation.Wealth => 1,
             Transformation.WealthReverse => 1,
             Transformation.Drawdown => 1,
             Transformation.DrawdownPercentage => 1,
+            Transformation.CustomReferencePointTransformation => transformation.RequiredPointsForReferencePointSelection,
             _ => 2,
         };
 
-        return (x) => PointTransformer.Scale(ComputeReferencePointTransformation(x, reference_point_selection, point_transform_method, required_points), scalar);
+        return (x) => PointTransformer.Scale(ComputeReferencePointTransformation(x, reference_point_selection, point_transform_method, required_points), transformation.Scalar);
     }
 
     /// <summary>

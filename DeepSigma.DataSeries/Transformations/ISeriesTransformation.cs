@@ -1,11 +1,13 @@
 ﻿using DeepSigma.DataSeries.Enums;
+using DeepSigma.DataSeries.Interfaces;
 
 namespace DeepSigma.DataSeries.Transformations;
 
 /// <summary>
 /// Interface transformation applied to a data series.
 /// </summary>
-public interface ISeriesTransformation
+public interface ISeriesTransformation<TData>
+    where TData : class, IDataModel<TData>
 {  
     /// <summary>
     /// Data series scalar multiplier.
@@ -31,5 +33,30 @@ public interface ISeriesTransformation
     /// Type of data inclusion for the transformation.
     /// </summary>
     TransformationDataInclusionType DataInclusionType { get; set; }
+
+    /// <summary>
+    /// Custom point transformation function.
+    /// </summary>
+    Func<TData, TData>? CustomPointTransformationMethod { get; set; }
+
+    /// <summary>
+    /// Custom reference point transformation function.
+    /// </summary>
+    Func<TData, TData, TData>? CustomReferencePointTransformationMethod { get; set; }
+
+    /// <summary>
+    /// Custom reference point selection function.
+    /// </summary>
+    Func<IEnumerable<TData>, TData?>? CustomReferencePointSelectionMethod { get; set; }
+
+    /// <summary>
+    /// Minimum number of observations required for custom reference point transformations.
+    /// </summary>
+    int RequiredPointsForReferencePointSelection { get; set; }
+
+    /// <summary>
+    /// Custom vector transformation function.
+    /// </summary>
+    Func<IEnumerable<TData>, TData>? CustomVectorTransformationMethod { get; set; }
 
 }

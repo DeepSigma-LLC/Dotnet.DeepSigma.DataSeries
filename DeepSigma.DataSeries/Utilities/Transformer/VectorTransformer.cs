@@ -1,5 +1,6 @@
 ﻿using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General.Enums;
 using DeepSigma.General.Extensions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -8,12 +9,12 @@ namespace DeepSigma.DataSeries.Utilities.Transformer;
 
 internal static class VectorTransformer
 {
-    internal static Func<IEnumerable<TValue>, TValue> GetVectorOperationMethod<TValue>(Transformation transformation, decimal scalar)
+    internal static Func<IEnumerable<TValue>, TValue> GetVectorOperationMethod<TValue>(SeriesTransformation<TValue> transformation)
     where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        if (!transformation.IsVectorTransformation) throw new ArgumentException("Only vector transformations are supported.");
+        if (!transformation.Transformation.IsVectorTransformation) throw new ArgumentException("Only vector transformations are supported.");
 
-        Func<IEnumerable<TValue>, TValue> transformation_method = transformation switch
+        Func<IEnumerable<TValue>, TValue> transformation_method = transformation.Transformation switch
         {
             Transformation.Average => Average,
             Transformation.Max => Max,
@@ -32,9 +33,12 @@ internal static class VectorTransformer
             Transformation.StandardDeviation_Negative_1_Band => (x) => PointTransformer.Scale(StandardDeviation(x, StatisticsDataSetClassification.Sample), -1),
             Transformation.StandardDeviation_Negative_2_Band => (x) => PointTransformer.Scale(StandardDeviation(x, StatisticsDataSetClassification.Sample), -2),
             Transformation.StandardDeviation_Negative_3_Band => (x) => PointTransformer.Scale(StandardDeviation(x, StatisticsDataSetClassification.Sample), -3),
+            Transformation.CustomVectorTransformation => transformation.CustomVectorTransformationMethod is not null 
+            ?  (x) => transformation.CustomVectorTransformationMethod(x) 
+            : throw new Exception(nameof(transformation.CustomVectorTransformationMethod) + " method is null."),
             _ => throw new NotImplementedException(),
         };
-        return (x) => PointTransformer.Scale(transformation_method(x), scalar);
+        return (x) => PointTransformer.Scale(transformation_method(x), transformation.Scalar);
     }
 
     /// <summary>

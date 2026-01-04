@@ -1,17 +1,18 @@
 ﻿using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
+using DeepSigma.DataSeries.Transformations;
 using DeepSigma.General;
 
 namespace DeepSigma.DataSeries.Utilities.Transformer;
 
 internal static class PointTransformer
 {
-    internal static Func<TValue, TValue> GetPointOperationMethod<TValue>(Transformation transformation, decimal scalar)
+    internal static Func<TValue, TValue> GetPointOperationMethod<TValue>(SeriesTransformation<TValue> transformation)
         where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        if (!transformation.IsPointTransformation) throw new ArgumentException("Only point transformations are supported.");
+        if (!transformation.Transformation.IsPointTransformation) throw new ArgumentException("Only point transformations are supported.");
 
-        Func<TValue, TValue> transformation_method = transformation switch
+        Func<TValue, TValue> transformation_method = transformation.Transformation switch
         {
             Transformation.None => (x) => x,// No operation needed for none
             Transformation.AbsoluteValue => AbsoluteValue,
@@ -21,9 +22,12 @@ internal static class PointTransformer
             Transformation.Tangent => Tangent,
             Transformation.SquareRoot => SquareRoot,
             Transformation.Logarithm => Logarithm,
+            Transformation.CustomPointTransformation => transformation.CustomPointTransformationMethod is not null 
+            ? (x) => transformation.CustomPointTransformationMethod(x)
+            : throw new Exception(nameof(transformation.CustomPointTransformationMethod) + " method is null"),
             _ => throw new NotImplementedException(),
         };
-        return (x) => Scale(transformation_method(x), scalar);
+        return (x) => Scale(transformation_method(x), transformation.Scalar);
     }
 
     internal static TValue SquareRoot<TValue>(TValue Data)

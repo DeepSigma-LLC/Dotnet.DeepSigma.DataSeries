@@ -1,4 +1,5 @@
 ﻿using DeepSigma.DataSeries.Enums;
+using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.General.Enums;
 
 namespace DeepSigma.DataSeries.Transformations;
@@ -6,7 +7,8 @@ namespace DeepSigma.DataSeries.Transformations;
 /// <summary>
 /// Represents a transformation applied to time series.
 /// </summary>
-public class TimeSeriesTransformation : SeriesTransformation, ISeriesTransformation
+public class TimeSeriesTransformation<TData> : SeriesTransformation<TData>, ISeriesTransformation<TData>
+    where TData : class, IDataModel<TData>
 {
     /// <summary>
     /// Observations to lage the time series by.
