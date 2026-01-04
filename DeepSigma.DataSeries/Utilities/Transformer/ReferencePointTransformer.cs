@@ -33,14 +33,33 @@ internal class ReferencePointTransformer
             _ => throw new NotImplementedException(),
         };
 
-        return (x) => PointTransformer.Scale(ComputeReferencePointTransformation(x, reference_point_selection, point_transform_method), scalar);
+        int required_points = transformation switch
+        {
+            Transformation.Wealth => 1,
+            Transformation.WealthReverse => 1,
+            Transformation.Drawdown => 1,
+            Transformation.DrawdownPercentage => 1,
+            _ => 2,
+        };
+
+        return (x) => PointTransformer.Scale(ComputeReferencePointTransformation(x, reference_point_selection, point_transform_method, required_points), scalar);
     }
 
-
-    internal static TValue ComputeReferencePointTransformation<TValue>(IEnumerable<TValue> values, Func<IEnumerable<TValue>, TValue?> select_reference_point_method, Func<TValue, TValue, TValue> Transform)
-        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
+    /// <summary>
+    /// Computes a transformation based on a reference point selected from the data series.
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="values"></param>
+    /// <param name="select_reference_point_method"></param>
+    /// <param name="Transform"></param>
+    /// <param name="required_points">Required number of points to perform the transformation. Default is 2. If less points are available, returns an empty value. 
+    /// If set to 1, the current and reference point will be set to the same value.</param>
+    /// <returns></returns>
+    internal static TValue ComputeReferencePointTransformation<TValue>(IEnumerable<TValue> values,
+    Func<IEnumerable<TValue>, TValue?> select_reference_point_method, Func<TValue, TValue, TValue> Transform, int required_points = 2)
+    where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        if (values.Count() < 2) return TValue.Empty;
+        if (values.Count() < required_points) return TValue.Empty;
 
         TValue? reference_point = select_reference_point_method(values);
         if (reference_point is null) return TValue.Empty;
@@ -50,6 +69,7 @@ internal class ReferencePointTransformer
 
         return Transform(current, reference_point);
     }
+
 
     /// <summary>
     /// Computes the cumulative return between two data points.
@@ -119,7 +139,6 @@ internal class ReferencePointTransformer
     {
         IAccumulator<TValue> accumulator = current.GetAccumulator();
         accumulator.Divide(starting_value);
-        accumulator.Subtract(TValue.One);
         accumulator.Scale(starting_wealth);
         return accumulator.ToRecord();
     }

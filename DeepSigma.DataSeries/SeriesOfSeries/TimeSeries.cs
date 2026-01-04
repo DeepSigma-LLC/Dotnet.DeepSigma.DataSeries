@@ -34,7 +34,7 @@ public class TimeSeries<TDate, TValueDataType> :
     /// <inheritdoc/>
     public sealed override SortedDictionary<TDate, TValueDataType> GetSeriesDataTransformed()
     {
-        return SeriesTransformer.Transform(GetSeriesDataUnscaled(), Transformation);
+        return SeriesTransformer.TransformTimeSeries(GetSeriesDataUnscaled(), Transformation);
     }
 
     /// <summary>

@@ -207,6 +207,20 @@ public class TimeSeries_Test
     }
 
     [Fact]
+    public void Test_TimeSeries_WealthReverse()
+    {
+        TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
+        time_series.Transformation.Transformation = Enums.Transformation.WealthReverse;
+        SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
+
+        Assert.NotEmpty(results);
+        Assert.Equal((2/3m)*1000, results.ElementAt(0).Value.Close);
+        Assert.Equal((4/3m)*1000, results.ElementAt(1).Value.Close);
+        Assert.Equal(1000m, results.ElementAt(2).Value.Close);
+    }
+
+
+    [Fact]
     public void Test_TimeSeries_DrawdownPercentage()
     {
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
@@ -214,7 +228,7 @@ public class TimeSeries_Test
         SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
 
         Assert.NotEmpty(results);
-        Assert.True(results.ElementAt(0).Value.IsEmptyOrInvalid());
+        Assert.Equal(0, results.ElementAt(0).Value.Close);
         Assert.Equal(0, results.ElementAt(1).Value.Close);
         Assert.Equal(-0.25m, results.ElementAt(2).Value.Close);
     }
@@ -227,7 +241,7 @@ public class TimeSeries_Test
         SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
 
         Assert.NotEmpty(results);
-        Assert.True(results.ElementAt(0).Value.IsEmptyOrInvalid());
+        Assert.Equal(0, results.ElementAt(0).Value.Close);
         Assert.Equal(0, results.ElementAt(1).Value.Close);
         Assert.Equal(-1m, results.ElementAt(2).Value.Close);
     }
@@ -257,13 +271,9 @@ public class TimeSeries_Test
         Assert.NotEmpty(results);
         Assert.Equal(3, results.Count);
 
-        Assert.Null(results.ElementAt(0).Value.Close);
-        Assert.Null(results.ElementAt(1).Value.Close);
-
-
-        double stdev = 0.883883476;
-        double annualization_multiplier = Math.Sqrt(365);
-        Assert.Equal(stdev * annualization_multiplier, results.ElementAt(2).Value.Close.ToDouble()!.Value, 6);
+        Assert.True(results.ElementAt(0).Value.IsEmptyOrInvalid());
+        Assert.Equal(1.414213562, results.ElementAt(1).Value.Close.ToDouble()!.Value, 6);
+        Assert.Equal(1, results.ElementAt(2).Value.Close.ToDouble()!.Value, 6);
     }
 
 
@@ -278,12 +288,9 @@ public class TimeSeries_Test
         Assert.NotEmpty(results);
         Assert.Equal(3, results.Count);
 
-        Assert.Null(results.ElementAt(0).Value.Close);
-        Assert.Null(results.ElementAt(1).Value.Close);
-
-        double stdev = 0.883883476;
-        double annualization_multiplier = Math.Sqrt(365);
-        Assert.Equal(stdev * annualization_multiplier, results.ElementAt(2).Value.Close.ToDouble()!.Value, 6);
+        Assert.True(results.ElementAt(0).Value.IsEmptyOrInvalid());
+        Assert.Equal(1.414213562, results.ElementAt(1).Value.Close.ToDouble()!.Value, 6);
+        Assert.Equal(0.707106781, results.ElementAt(2).Value.Close.ToDouble()!.Value, 6);
     }
 
 

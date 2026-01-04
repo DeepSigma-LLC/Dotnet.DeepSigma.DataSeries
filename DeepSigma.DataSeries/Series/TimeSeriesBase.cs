@@ -30,6 +30,6 @@ public class TimeSeriesBase<TDateKey, TValueDataType> :
     /// <inheritdoc/>
     public sealed override SortedDictionary<TDateKey, TValueDataType> GetSeriesDataTransformed()
     {
-        return SeriesTransformer.Transform(Data, Transformation);
+        return SeriesTransformer.TransformTimeSeries(Data, Transformation);
     }
 }
