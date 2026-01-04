@@ -46,7 +46,7 @@ internal static class VectorTransformer
         if (!values.Any()) return TValue.Empty;
 
         IAccumulator<TValue> sum = Sum(values).GetAccumulator();
-        sum.Scale(1 / values.Count());
+        sum.Scale(1 / values.Count().ToDecimal());
         return sum.ToRecord();
     }
 
@@ -200,7 +200,7 @@ internal static class VectorTransformer
         if (first is null) return TValue.Empty;
 
         IAccumulator<TValue> accumulator = first.GetAccumulator();
-        foreach (TValue value in values)
+        foreach (TValue value in values.Skip(1)) // Skip first as it's already in the accumulator
         {
             action(accumulator, value);
         }

@@ -173,8 +173,10 @@ public class TimeSeries_Test
     {
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
         time_series.Transformation.Transformation = Enums.Transformation.Return;
+        time_series.Transformation.ObservationWindowCount = 2;
         SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
         Assert.NotEmpty(results);
+        Assert.True(results.ElementAt(0).Value.IsEmptyOrInvalid());
         Assert.Equal(1m, results.ElementAt(1).Value.Close);
         Assert.Equal(-0.25m, results.ElementAt(2).Value.Close);
     }
@@ -186,6 +188,7 @@ public class TimeSeries_Test
         time_series.Transformation.Transformation = Enums.Transformation.Return; // cumulative return uses return transformation
         SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
         Assert.NotEmpty(results);
+        Assert.True(results.ElementAt(0).Value.IsEmptyOrInvalid());
         Assert.Equal(1m, results.ElementAt(1).Value.Close);
         Assert.Equal(0.5m, results.ElementAt(2).Value.Close);
     }
@@ -207,13 +210,26 @@ public class TimeSeries_Test
     public void Test_TimeSeries_DrawdownPercentage()
     {
         TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
+        time_series.Transformation.Transformation = Enums.Transformation.DrawdownPercentage;
+        SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
+
+        Assert.NotEmpty(results);
+        Assert.True(results.ElementAt(0).Value.IsEmptyOrInvalid());
+        Assert.Equal(0, results.ElementAt(1).Value.Close);
+        Assert.Equal(-0.25m, results.ElementAt(2).Value.Close);
+    }
+
+    [Fact]
+    public void Test_TimeSeries_DrawdownAmount()
+    {
+        TimeSeries<DateOnlyCustom, BarObservation> time_series = BuildTestSeries();
         time_series.Transformation.Transformation = Enums.Transformation.Drawdown;
         SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
 
         Assert.NotEmpty(results);
-        Assert.Equal(0, results.ElementAt(0).Value.Close);
+        Assert.True(results.ElementAt(0).Value.IsEmptyOrInvalid());
         Assert.Equal(0, results.ElementAt(1).Value.Close);
-        Assert.Equal(-0.25m, results.ElementAt(2).Value.Close);
+        Assert.Equal(-1m, results.ElementAt(2).Value.Close);
     }
 
 
@@ -226,6 +242,7 @@ public class TimeSeries_Test
         SortedDictionary<DateOnlyCustom, BarObservation> results = time_series.GetSeriesDataTransformed();
 
         Assert.NotEmpty(results);
+        Assert.True(results.ElementAt(0).Value.IsEmptyOrInvalid());
         Assert.Equal(3, results.ElementAt(1).Value.Close);
         Assert.Equal(3.5m, results.ElementAt(2).Value.Close);
     }

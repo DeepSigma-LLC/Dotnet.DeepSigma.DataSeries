@@ -92,8 +92,8 @@ internal class ReferencePointTransformer
     internal static TValue DrawdownAmount<TValue>(TValue current, TValue max)
        where TValue : class, IDataModel<TValue>, IDataModelStatic<TValue>
     {
-        IAccumulator<TValue> accumulator = max.GetAccumulator();
-        accumulator.Subtract(current);
+        IAccumulator<TValue> accumulator = current.GetAccumulator();
+        accumulator.Subtract(max);
         return accumulator.ToRecord();
     }
 

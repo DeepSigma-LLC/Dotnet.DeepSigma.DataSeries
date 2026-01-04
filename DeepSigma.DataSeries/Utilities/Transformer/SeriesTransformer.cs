@@ -22,6 +22,10 @@ internal static class SeriesTransformer
                 }
                 return Data.GetExpandingWindowedSeriesWithMethodApplied(VectorTransformer.GetVectorOperationMethod<TValue>(transformation.Transformation, transformation.Scalar));
             case DataTransformationType.ReferencePointTransformation:
+                if (transformation.ObservationWindowCount is not null)
+                {
+                    return Data.GetWindowedSeriesWithMethodApplied(ReferencePointTransformer.GetReferencePointOperationMethod<TValue>(transformation.Transformation, transformation.Scalar), transformation.ObservationWindowCount.Value, () => TValue.Empty);
+                }
                 return Data.GetExpandingWindowedSeriesWithMethodApplied(ReferencePointTransformer.GetReferencePointOperationMethod<TValue>(transformation.Transformation, transformation.Scalar));
             default:
                 throw new NotImplementedException();
