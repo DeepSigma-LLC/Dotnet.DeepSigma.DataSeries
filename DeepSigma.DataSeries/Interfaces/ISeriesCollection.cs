@@ -58,4 +58,16 @@ public interface ISeriesCollection<TKey, TDataType, TTransformation>
     /// </summary>
     /// <returns></returns>
     SortedDictionary<TKey, TDataType> GetCombinedScaledAndTransformedSeriesData();
+
+    /// <summary>
+    /// Gets the overall minimum key across all data series in the collection.
+    /// </summary>
+    /// <returns></returns>
+    TKey? GetOverallMinimumKey();
+
+    /// <summary>
+    /// Gets the overall maximum key across all data series in the collection.
+    /// </summary>
+    /// <returns></returns>
+    TKey? GetOverallMaximumKey();
 }

@@ -74,6 +74,14 @@ public abstract class AbstractSeriesOfSeries<TCollectionKey, TCollectionDataType
     }
 
     /// <inheritdoc/>
+    public sealed override TCollectionKey? GetMinimumKey() => SubSeriesCollection.GetOverallMinimumKey();
+    
+
+    /// <inheritdoc/>
+    public sealed override TCollectionKey? GetMaximumKey() => SubSeriesCollection.GetOverallMaximumKey();
+    
+
+    /// <inheritdoc/>
     public IEnumerator<SeriesCollectionPair<TCollectionKey, TCollectionDataType, TTransformation>> GetEnumerator() => SubSeriesCollection.GetEnumerator();
 
     /// <inheritdoc/>

@@ -56,4 +56,9 @@ public abstract class AbstractSeries<TCollectionKey, TCollectionDataType, TTrans
     /// <inheritdoc/>
     public abstract void Clear();
 
+    /// <inheritdoc/>
+    public abstract TCollectionKey? GetMinimumKey();
+
+    /// <inheritdoc/>
+    public abstract TCollectionKey? GetMaximumKey();
 }

@@ -370,4 +370,40 @@ public class TimeSeries_Test
             i++;
         }
     }
+
+    [Fact]
+    public void Test_Minimum_Maximum_Date_Across_MultipleSub_Series()
+    {
+        SortedDictionary<DateOnlyCustom, Observation> data = new()
+        {
+            { new DateTime(2024, 1, 6), new(3) }, // intentionally added out of order
+            { new DateTime(2024, 1, 4), new(1) },
+            { new DateTime(2024, 1, 5), new(2) },
+        };
+        SortedDictionary<DateOnlyCustom, Observation> data1 = new()
+        {
+            { new DateTime(2024, 1, 2), new(0) }, // intentionally added out of order
+            { new DateTime(2024, 1, 12), new(5) },
+             { new DateTime(2024, 1, 1), new(3) },
+        };
+
+        TimeSeriesBase<DateOnlyCustom, Observation> timeSeriesdata0 = new(data);
+        TimeSeriesBase<DateOnlyCustom, Observation> timeSeriesdata1 = new(data1);
+
+        TimeSeries<DateOnlyCustom, Observation> timeSeries = new()
+        {
+            SeriesName = "Test Series"
+        };
+
+        timeSeries.Add(timeSeriesdata0);
+        timeSeries.Add(timeSeriesdata1, MathematicalOperation.Add);
+
+        DateOnlyCustom? min_result = timeSeries.GetMinimumKey();
+        Assert.NotNull(min_result);
+        Assert.Equal(new DateTime(2024, 1, 1), min_result);
+
+        DateOnlyCustom? max_result = timeSeries.GetMaximumKey();
+        Assert.NotNull(max_result);
+        Assert.Equal(new DateTime(2024, 1, 12), max_result);
+    }
 }

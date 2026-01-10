@@ -47,4 +47,18 @@ public interface ISeries<TCollectionKey, TCollectionDataType, TTransformation>
     /// </summary>
     /// <returns></returns>
     int GetSubSeriesCount();
+
+    /// <summary>
+    /// Gets the minimum key in the series.
+    /// </summary>
+    /// <returns></returns>
+    TCollectionKey? GetMinimumKey();
+
+    /// <summary>
+    /// Gets the maximum key in the series.
+    /// </summary>
+    /// <returns></returns>
+    TCollectionKey? GetMaximumKey();
+
+   
 }

@@ -67,6 +67,18 @@ public abstract class AbstractSeriesBase<TCollectionKey, TCollectionDataType, TT
     }
 
     /// <inheritdoc/>
+    public sealed override TCollectionKey? GetMinimumKey()
+    {
+        return Data.FirstOrDefault().Key; // since SortedDictionary is sorted, the first key is the minimum
+    }
+
+    /// <inheritdoc/>
+    public sealed override TCollectionKey? GetMaximumKey()
+    {
+        return Data.LastOrDefault().Key; // since SortedDictionary is sorted, the last key is the maximum
+    }
+
+    /// <inheritdoc/>
     public IEnumerator<KeyValuePair<TCollectionKey, TCollectionDataType>> GetEnumerator() => Data.GetEnumerator();
 
     /// <inheritdoc/>

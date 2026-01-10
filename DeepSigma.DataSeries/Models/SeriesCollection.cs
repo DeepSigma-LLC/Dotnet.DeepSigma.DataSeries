@@ -112,5 +112,11 @@ public class SeriesCollection<TKey, TDataType, TTransformation>
 
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    /// <inheritdoc/>
+    public TKey? GetOverallMinimumKey() => SubSeriesCollection.Select(x => x.Series.GetMinimumKey()).Min();
     
+
+    /// <inheritdoc/>
+    public TKey? GetOverallMaximumKey() => SubSeriesCollection.Select(x => x.Series.GetMaximumKey()).Max();
 }
