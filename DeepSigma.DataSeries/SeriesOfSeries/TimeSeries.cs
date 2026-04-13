@@ -4,11 +4,11 @@ using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using DeepSigma.DataSeries.Utilities.Transformer;
-using DeepSigma.General;
-using DeepSigma.General.DateTimeUnification;
-using DeepSigma.General.Enums;
-using DeepSigma.General.Extensions;
-using DeepSigma.General.TimeStepper;
+using DeepSigma.Core;
+using DeepSigma.Core.DateTimeUnification;
+using DeepSigma.Core.Enums;
+using DeepSigma.Core.Extensions;
+using DeepSigma.Core.TimeStepper;
 using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Series;

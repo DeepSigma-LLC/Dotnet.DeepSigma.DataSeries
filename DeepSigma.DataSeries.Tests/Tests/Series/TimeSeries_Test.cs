@@ -1,10 +1,10 @@
 ﻿using Xunit;
 using DeepSigma.DataSeries.DataModels;
-using DeepSigma.General.DateTimeUnification;
+using DeepSigma.Core.DateTimeUnification;
 using DeepSigma.DataSeries.Series;
-using DeepSigma.General.Enums;
+using DeepSigma.Core.Enums;
 using DeepSigma.DataSeries.Utilities;
-using DeepSigma.General.Extensions;
+using DeepSigma.Core.Extensions;
 
 namespace DeepSigma.DataSeries.Tests.Tests.Series;
 

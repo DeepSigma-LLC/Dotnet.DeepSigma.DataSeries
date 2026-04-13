@@ -1,8 +1,8 @@
 ﻿using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
-using DeepSigma.General.Enums;
-using DeepSigma.General.Extensions;
+using DeepSigma.Core.Enums;
+using DeepSigma.Core.Extensions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DeepSigma.DataSeries.Utilities.Transformer;

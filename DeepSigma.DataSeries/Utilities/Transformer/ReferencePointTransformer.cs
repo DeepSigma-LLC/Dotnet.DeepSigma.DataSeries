@@ -1,7 +1,7 @@
 ﻿using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
-using DeepSigma.General.Extensions;
+using DeepSigma.Core.Extensions;
 
 namespace DeepSigma.DataSeries.Utilities.Transformer;
 

@@ -1,6 +1,6 @@
 ﻿using DeepSigma.DataSeries.DataModels;
 using DeepSigma.DataSeries.Interfaces;
-using DeepSigma.General.Extensions;
+using DeepSigma.Core.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Accumulators;

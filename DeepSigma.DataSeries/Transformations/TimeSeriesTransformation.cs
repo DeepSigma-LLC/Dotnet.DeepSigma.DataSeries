@@ -1,6 +1,6 @@
 ﻿using DeepSigma.DataSeries.Enums;
 using DeepSigma.DataSeries.Interfaces;
-using DeepSigma.General.Enums;
+using DeepSigma.Core.Enums;
 
 namespace DeepSigma.DataSeries.Transformations;
 

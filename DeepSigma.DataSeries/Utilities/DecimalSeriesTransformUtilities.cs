@@ -1,6 +1,6 @@
 ﻿using DeepSigma.DataSeries.Enums;
-using DeepSigma.General.DateTimeUnification;
-using DeepSigma.General.Extensions;
+using DeepSigma.Core.DateTimeUnification;
+using DeepSigma.Core.Extensions;
 
 namespace DeepSigma.DataSeries.Utilities;
 

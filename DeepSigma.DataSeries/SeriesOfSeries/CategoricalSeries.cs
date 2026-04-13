@@ -2,7 +2,7 @@
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using DeepSigma.DataSeries.Utilities.Transformer;
-using DeepSigma.General.Extensions;
+using DeepSigma.Core.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace DeepSigma.DataSeries.Series;

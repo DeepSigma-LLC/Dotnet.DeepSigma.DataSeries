@@ -1,8 +1,8 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
-using DeepSigma.General.Enums;
-using DeepSigma.General.Extensions;
+using DeepSigma.Core.Enums;
+using DeepSigma.Core.Extensions;
 using Microsoft.Extensions.Logging;
 using System.Collections;
 using DeepSigma.DataSeries.Models;

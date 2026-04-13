@@ -2,8 +2,8 @@
 using DeepSigma.DataSeries.Transformations;
 using DeepSigma.DataSeries.Utilities;
 using DeepSigma.DataSeries.Utilities.Transformer;
-using DeepSigma.General.DateTimeUnification;
-using DeepSigma.General.Extensions;
+using DeepSigma.Core.DateTimeUnification;
+using DeepSigma.Core.Extensions;
 
 namespace DeepSigma.DataSeries.Series;
 

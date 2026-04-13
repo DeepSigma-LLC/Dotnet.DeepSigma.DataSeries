@@ -1,6 +1,6 @@
 ﻿using DeepSigma.DataSeries.Interfaces;
 using DeepSigma.DataSeries.DataModels;
-using DeepSigma.General.Extensions;
+using DeepSigma.Core.Extensions;
 
 namespace DeepSigma.DataSeries.Accumulators;
 
