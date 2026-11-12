@@ -1,6 +1,7 @@
 ﻿using Xunit;
 using DeepSigma.DataSeries.Tests.Model;
 using DeepSigma.DataSeries.Series;
+using DeepSigma.Core.Enums;
 
 namespace DeepSigma.DataSeries.Tests.Tests.Series;
 
@@ -16,7 +17,7 @@ public class CategoricalSeries_Test
         CategoricalSeriesBase<Assets> data = new(Categories);
 
         CategoricalSeries<Assets> categoricalSeries = [];
-        categoricalSeries.Add(data,General.Enums.MathematicalOperation.Add);
+        categoricalSeries.Add(data,MathematicalOperation.Add);
 
         // Assert
         Assert.NotNull(categoricalSeries);
